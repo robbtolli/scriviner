@@ -30,6 +30,54 @@ class CharacterSheetScreen extends ConsumerStatefulWidget {
 }
 
 class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
+  bool _isEditingName = false;
+  late final TextEditingController _nameController;
+  final FocusNode _nameFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _nameFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _startEditingName(String currentName) {
+    setState(() {
+      _nameController.text = currentName;
+      _isEditingName = true;
+    });
+    _nameFocusNode.requestFocus();
+  }
+
+  void _saveName(String newName, CharacterSheetNotifier notifier) {
+    final trimmed = newName.trim();
+    if (trimmed.isNotEmpty) {
+      notifier.updateName(trimmed);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Character name updated to "$trimmed"!'),
+          backgroundColor: Colors.green.shade700,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+    setState(() {
+      _isEditingName = false;
+    });
+  }
+
+  void _cancelEditingName() {
+    setState(() {
+      _isEditingName = false;
+    });
+  }
+
   void _showRestDialog(CombatSessionState combatState, CombatSessionNotifier combatNotifier) {
     showDialog(
       context: context,
@@ -63,15 +111,87 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
         appBar: AppBar(
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                sheetState.name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: AppTheme.primaryGold,
+              if (!_isEditingName)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        sheetState.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: AppTheme.primaryGold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined, size: 18),
+                      tooltip: 'Edit character name',
+                      color: AppTheme.primaryGold.withAlpha(220),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                      onPressed: () => _startEditingName(sheetState.name),
+                    ),
+                  ],
+                )
+              else
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: SizedBox(
+                        height: 36,
+                        child: TextField(
+                          controller: _nameController,
+                          focusNode: _nameFocusNode,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: AppTheme.primaryGold,
+                          ),
+                          cursorColor: AppTheme.primaryGold,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                            filled: true,
+                            fillColor: AppTheme.surfaceDark,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: const BorderSide(color: AppTheme.primaryGold),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: const BorderSide(color: AppTheme.primaryGold, width: 1.5),
+                            ),
+                          ),
+                          onSubmitted: (val) => _saveName(val, sheetNotifier),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    IconButton(
+                      icon: const Icon(Icons.check, size: 20),
+                      tooltip: 'Confirm new name',
+                      color: Colors.greenAccent,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                      onPressed: () => _saveName(_nameController.text, sheetNotifier),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 20),
+                      tooltip: 'Cancel edit',
+                      color: Colors.redAccent,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                      onPressed: _cancelEditingName,
+                    ),
+                  ],
                 ),
-              ),
               Text(
                 'Level ${sheetState.level} ${sheetState.className} (${sheetState.raceName})',
                 style: TextStyle(

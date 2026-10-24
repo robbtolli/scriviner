@@ -310,6 +310,31 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     );
   }
 
+  Future<void> updateName(String newName) async {
+    final trimmed = newName.trim();
+    if (state == null || trimmed.isEmpty) return;
+
+    state = state!.copyWith(name: trimmed);
+
+    final db = ref.read(databaseProvider);
+    final char = await db.getCharacter(characterId);
+    if (char != null) {
+      Map<String, dynamic> raw = {};
+      try {
+        raw = jsonDecode(char.rawPropertiesJson) as Map<String, dynamic>;
+      } catch (_) {}
+      raw['name'] = trimmed;
+
+      await db.upsertCharacter(
+        char.toCompanion(true).copyWith(
+          name: Value(trimmed),
+          rawPropertiesJson: Value(jsonEncode(raw)),
+        ),
+      );
+    }
+    ref.invalidate(combatSessionProvider(characterId));
+  }
+
   void toggleSavingThrowProficiency(String abilityKey) {
     if (state == null) return;
     final updated = Set<String>.from(state!.savingThrowProficiencies);
