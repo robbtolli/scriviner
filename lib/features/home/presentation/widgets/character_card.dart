@@ -9,6 +9,7 @@ class CharacterCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onDuplicate;
   final VoidCallback onDelete;
+  final VoidCallback? onExport;
 
   const CharacterCard({
     super.key,
@@ -16,6 +17,7 @@ class CharacterCard extends StatelessWidget {
     required this.onTap,
     required this.onDuplicate,
     required this.onDelete,
+    this.onExport,
   });
 
   @override
@@ -95,6 +97,7 @@ class CharacterCard extends StatelessWidget {
                     onSelected: (value) {
                       if (value == 'open') onTap();
                       if (value == 'duplicate') onDuplicate();
+                      if (value == 'export') onExport?.call();
                       if (value == 'delete') _showDeleteDialog(context);
                     },
                     itemBuilder: (context) => [
@@ -115,6 +118,16 @@ class CharacterCard extends StatelessWidget {
                             Icon(Icons.copy, size: 18),
                             SizedBox(width: 8),
                             Text('Duplicate'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'export',
+                        child: Row(
+                          children: [
+                            Icon(Icons.file_download_outlined, size: 18),
+                            SizedBox(width: 8),
+                            Text('Export (JSON)'),
                           ],
                         ),
                       ),

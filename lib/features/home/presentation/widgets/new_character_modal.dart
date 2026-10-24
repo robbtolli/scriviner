@@ -6,10 +6,12 @@ enum CreationMode { guidedWizard, freeformSheet }
 
 class NewCharacterModal extends StatefulWidget {
   final void Function(String systemId, CreationMode mode) onStartCreation;
+  final VoidCallback? onImportCharacter;
 
   const NewCharacterModal({
     super.key,
     required this.onStartCreation,
+    this.onImportCharacter,
   });
 
   @override
@@ -99,19 +101,34 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
               ),
               const SizedBox(height: 24),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
-                  ),
-                  const SizedBox(width: 12),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      widget.onStartCreation(_selectedSystem, _selectedMode);
-                    },
-                    child: const Text('START CREATING'),
+                  if (widget.onImportCharacter != null)
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        widget.onImportCharacter!();
+                      },
+                      icon: const Icon(Icons.file_upload_outlined, size: 16),
+                      label: const Text('IMPORT JSON', style: TextStyle(fontSize: 12)),
+                    )
+                  else
+                    const SizedBox.shrink(),
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          widget.onStartCreation(_selectedSystem, _selectedMode);
+                        },
+                        child: const Text('START CREATING'),
+                      ),
+                    ],
                   ),
                 ],
               ),

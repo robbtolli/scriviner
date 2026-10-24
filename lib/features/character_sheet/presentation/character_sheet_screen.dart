@@ -7,6 +7,7 @@ import '../../combat/presentation/widgets/rest_dialog.dart';
 import '../../combat/providers/combat_session_provider.dart';
 import '../../dice/presentation/dice_roller_drawer.dart';
 import '../../dice/presentation/widgets/floating_dice_fab.dart';
+import '../../export_import/presentation/export_character_dialog.dart';
 import '../providers/character_sheet_provider.dart';
 import 'tabs/bio_notes_tab.dart';
 import 'tabs/features_tab.dart';
@@ -202,6 +203,18 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
             ],
           ),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.file_download_outlined),
+              tooltip: 'Export Character (JSON)',
+              color: AppTheme.primaryGold,
+              onPressed: () {
+                ExportCharacterDialog.show(
+                  context,
+                  characterId: widget.characterId,
+                  characterName: sheetState.name,
+                );
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.casino_outlined),
               tooltip: 'Dice Roller',

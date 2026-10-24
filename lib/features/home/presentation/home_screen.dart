@@ -6,9 +6,13 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/database/database_provider.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/theme_selector_dialog.dart';
 import '../../character_sheet/presentation/character_sheet_screen.dart';
 import '../../character_wizard/presentation/character_wizard_screen.dart';
 import '../../character_wizard/providers/wizard_provider.dart';
+import '../../export_import/presentation/export_character_dialog.dart';
+import '../../export_import/presentation/import_character_dialog.dart';
+import '../../plugins/presentation/plugins_dialog.dart';
 import '../providers/home_providers.dart';
 import 'widgets/character_card.dart';
 import 'widgets/empty_home_state.dart';
@@ -74,6 +78,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void _deleteCharacter(CharactersTableData character) async {
     final db = ref.read(databaseProvider);
     await db.deleteCharacter(character.id);
+  }
+
+  void _exportCharacter(CharactersTableData character) {
+    ExportCharacterDialog.show(
+      context,
+      characterId: character.id,
+      characterName: character.name,
+    );
+  }
+
+  void _importCharacter() {
+    ImportCharacterDialog.show(
+      context,
+      onCharacterImported: (newCharId) async {
+        final db = ref.read(databaseProvider);
+        final char = await db.getCharacter(newCharId);
+        if (char != null && mounted) {
+          _openCharacter(char);
+        }
+      },
+    );
   }
 
   void _startCreation(String systemId, CreationMode mode) {
@@ -145,6 +170,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
         actions: [
           IconButton(
+            icon: const Icon(Icons.palette_outlined),
+            tooltip: 'App Theme',
+            onPressed: () => ThemeSelectorDialog.show(context),
+          ),
+          IconButton(
+            icon: const Icon(Icons.extension_outlined),
+            tooltip: 'Plugins & Compendiums',
+            onPressed: () => PluginsDialog.show(context),
+          ),
+          IconButton(
             icon: Icon(_isSearching ? Icons.close : Icons.search),
             onPressed: () {
               setState(() {
@@ -165,7 +200,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (ctx) => NewCharacterModal(onStartCreation: _startCreation),
+                  builder: (ctx) => NewCharacterModal(
+                    onStartCreation: _startCreation,
+                    onImportCharacter: _importCharacter,
+                  ),
                 );
               },
               icon: const Icon(Icons.add, size: 18),
@@ -189,7 +227,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               onCreateNew: () {
                 showDialog(
                   context: context,
-                  builder: (ctx) => NewCharacterModal(onStartCreation: _startCreation),
+                  builder: (ctx) => NewCharacterModal(
+                    onStartCreation: _startCreation,
+                    onImportCharacter: _importCharacter,
+                  ),
                 );
               },
               onLoadSamples: () => seedSampleCharacters(db),
@@ -283,6 +324,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               onTap: () => _openCharacter(char),
                               onDuplicate: () => _duplicateCharacter(char),
                               onDelete: () => _deleteCharacter(char),
+                              onExport: () => _exportCharacter(char),
                             );
                           },
                           childCount: remainingCharacters.length,
@@ -305,7 +347,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (ctx) => NewCharacterModal(onStartCreation: _startCreation),
+            builder: (ctx) => NewCharacterModal(
+              onStartCreation: _startCreation,
+              onImportCharacter: _importCharacter,
+            ),
           );
         },
         child: const Icon(Icons.add),

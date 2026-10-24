@@ -91,6 +91,13 @@ class AppDatabase extends _$AppDatabase {
         .watch();
   }
 
+  Future<List<ConditionsTableData>> getConditionsForCharacter(
+      String characterId) {
+    return (select(conditionsTable)
+          ..where((t) => t.characterId.equals(characterId)))
+        .get();
+  }
+
   Future<void> addCondition(ConditionsTableCompanion condition) {
     return into(conditionsTable).insert(condition);
   }
@@ -106,6 +113,13 @@ class AppDatabase extends _$AppDatabase {
     return (select(inventoryTable)
           ..where((t) => t.characterId.equals(characterId)))
         .watch();
+  }
+
+  Future<List<InventoryTableData>> getInventoryForCharacter(
+      String characterId) {
+    return (select(inventoryTable)
+          ..where((t) => t.characterId.equals(characterId)))
+        .get();
   }
 
   Future<void> upsertInventoryItem(InventoryTableCompanion item) {
@@ -142,5 +156,10 @@ class AppDatabase extends _$AppDatabase {
     await batch((b) {
       b.insertAllOnConflictUpdate(compendiumTable, entries);
     });
+  }
+
+  /// Removes compendium entries matching a given ID prefix (e.g. for plugin uninstall).
+  Future<int> deleteCompendiumEntriesByPrefix(String idPrefix) {
+    return (delete(compendiumTable)..where((t) => t.id.like('$idPrefix%'))).go();
   }
 }
