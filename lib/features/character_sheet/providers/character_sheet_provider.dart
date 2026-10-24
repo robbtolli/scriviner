@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/database/app_database.dart';
 import '../../../core/database/database_provider.dart';
+import '../../character_wizard/models/srd_starter_data.dart';
 import '../../combat/providers/combat_session_provider.dart';
 import '../models/character_sheet_data.dart';
 
@@ -95,6 +96,8 @@ class CharacterSheetState {
 
   CharacterSheetState copyWith({
     String? name,
+    int? level,
+    int? proficiencyBonus,
     int? armorClass,
     int? strengthScore,
     int? dexterityMod,
@@ -107,13 +110,15 @@ class CharacterSheetState {
     CharacterBioNotes? bioNotes,
     List<InventoryTableData>? inventoryItems,
   }) {
+    final newLevel = level ?? this.level;
+    final newProf = proficiencyBonus ?? (2 + ((newLevel - 1) / 4).floor());
     return CharacterSheetState(
       characterId: characterId,
       name: name ?? this.name,
       className: className,
       raceName: raceName,
-      level: level,
-      proficiencyBonus: proficiencyBonus,
+      level: newLevel,
+      proficiencyBonus: newProf,
       spellcastingAbility: spellcastingAbility,
       spellcastingMod: spellcastingMod,
       strengthScore: strengthScore ?? this.strengthScore,
@@ -214,17 +219,58 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
       spellMod = chaMod;
     }
 
-    // Load Spells
+    // Load Spells (handles both Map objects and raw String spell names)
     final rawSpells = raw['spells'] as List? ?? [];
-    final spells = rawSpells
-        .map((s) => CharacterSpellItem.fromJson(s as Map<String, dynamic>))
-        .toList();
+    final spells = <CharacterSpellItem>[];
+    for (final s in rawSpells) {
+      if (s is Map<String, dynamic>) {
+        spells.add(CharacterSpellItem.fromJson(s));
+      } else if (s is Map) {
+        spells.add(CharacterSpellItem.fromJson(Map<String, dynamic>.from(s)));
+      } else if (s is String) {
+        final found = SrdStarterData.spells.cast<SpellDefinition?>().firstWhere(
+          (def) => def?.name.toLowerCase() == s.toLowerCase() || def?.id.toLowerCase() == s.toLowerCase(),
+          orElse: () => null,
+        );
+        if (found != null) {
+          spells.add(CharacterSpellItem(
+            id: 'spell_${found.id}',
+            name: found.name,
+            level: found.level,
+            school: found.school,
+            castingTime: found.castingTime,
+            range: found.range,
+            description: found.description,
+            isPrepared: true,
+          ));
+        } else {
+          spells.add(CharacterSpellItem(
+            id: 'spell_${s.toLowerCase().replaceAll(' ', '_')}',
+            name: s,
+            level: 0,
+            isPrepared: true,
+          ));
+        }
+      }
+    }
 
-    // Load Features
-    final rawFeatures = raw['featuresList'] as List? ?? [];
-    final features = rawFeatures
-        .map((f) => CharacterFeatureItem.fromJson(f as Map<String, dynamic>))
-        .toList();
+    // Load Features (handles both Map objects and raw String feature names)
+    final rawFeatures = raw['featuresList'] as List? ?? raw['features'] as List? ?? [];
+    final features = <CharacterFeatureItem>[];
+    for (final f in rawFeatures) {
+      if (f is Map<String, dynamic>) {
+        features.add(CharacterFeatureItem.fromJson(f));
+      } else if (f is Map) {
+        features.add(CharacterFeatureItem.fromJson(Map<String, dynamic>.from(f)));
+      } else if (f is String) {
+        features.add(CharacterFeatureItem(
+          id: 'feat_${f.toLowerCase().replaceAll(' ', '_')}',
+          name: f,
+          source: className,
+          description: '$f granted by $className',
+        ));
+      }
+    }
 
     // Load Currency
     final rawCurrency = raw['currency'] as Map? ?? {};
@@ -303,6 +349,105 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
       dexterityMod: key == 'dex' ? ((newScore - 10) / 2).floor() : state!.dexterityMod,
     );
     _persistRawJson();
+  }
+
+  void updateLevel(int newLevel) async {
+    if (state == null) return;
+    final clamped = newLevel.clamp(1, 20);
+    final newProf = 2 + ((clamped - 1) / 4).floor();
+
+    state = state!.copyWith(
+      level: clamped,
+      proficiencyBonus: newProf,
+    );
+
+    final db = ref.read(databaseProvider);
+    final char = await db.getCharacter(characterId);
+    if (char != null) {
+      Map<String, dynamic> raw = {};
+      try {
+        raw = jsonDecode(char.rawPropertiesJson) as Map<String, dynamic>;
+      } catch (_) {}
+      raw['level'] = clamped;
+      raw['proficiencyBonus'] = newProf;
+
+      final hd = Map<String, dynamic>.from(raw['hitDice'] as Map? ?? {});
+      hd['total'] = clamped;
+      raw['hitDice'] = hd;
+
+      await db.upsertCharacter(
+        char.toCompanion(true).copyWith(
+          rawPropertiesJson: Value(jsonEncode(raw)),
+        ),
+      );
+    }
+
+    _persistRawJson();
+    ref.invalidate(combatSessionProvider(characterId));
+  }
+
+  Future<void> applyLevelUp({
+    required int hpIncrease,
+    Map<String, int>? abilityScoreIncreases,
+    List<CharacterFeatureItem>? newFeatures,
+  }) async {
+    if (state == null) return;
+    final newLevel = (state!.level + 1).clamp(1, 20);
+    final newProf = 2 + ((newLevel - 1) / 4).floor();
+
+    var updatedAbilities = Map<String, int>.from(state!.abilityScores);
+    if (abilityScoreIncreases != null) {
+      abilityScoreIncreases.forEach((k, v) {
+        final current = updatedAbilities[k] ?? 10;
+        updatedAbilities[k] = current + v;
+      });
+    }
+
+    var updatedFeatures = List<CharacterFeatureItem>.from(state!.features);
+    if (newFeatures != null && newFeatures.isNotEmpty) {
+      updatedFeatures.addAll(newFeatures);
+    }
+
+    state = state!.copyWith(
+      level: newLevel,
+      proficiencyBonus: newProf,
+      abilityScores: updatedAbilities,
+      features: updatedFeatures,
+      strengthScore: updatedAbilities['str'] ?? state!.strengthScore,
+      dexterityMod: (((updatedAbilities['dex'] ?? 10) - 10) / 2).floor(),
+    );
+
+    final db = ref.read(databaseProvider);
+    final char = await db.getCharacter(characterId);
+    if (char != null) {
+      Map<String, dynamic> raw = {};
+      try {
+        raw = jsonDecode(char.rawPropertiesJson) as Map<String, dynamic>;
+      } catch (_) {}
+
+      final hp = Map<String, dynamic>.from(raw['hp'] as Map? ?? {});
+      final currentMax = (hp['max'] as num?)?.toInt() ?? 10;
+      final currentHp = (hp['current'] as num?)?.toInt() ?? 10;
+      hp['max'] = currentMax + hpIncrease;
+      hp['current'] = currentHp + hpIncrease;
+      raw['hp'] = hp;
+
+      final hd = Map<String, dynamic>.from(raw['hitDice'] as Map? ?? {});
+      hd['total'] = newLevel;
+      raw['hitDice'] = hd;
+
+      raw['level'] = newLevel;
+      raw['proficiencyBonus'] = newProf;
+
+      await db.upsertCharacter(
+        char.toCompanion(true).copyWith(
+          rawPropertiesJson: Value(jsonEncode(raw)),
+        ),
+      );
+    }
+
+    _persistRawJson();
+    ref.invalidate(combatSessionProvider(characterId));
   }
 
   void toggleSpellPreparation(String spellId) {
@@ -526,6 +671,12 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     raw['armorClass'] = state!.armorClass;
     raw['savingThrows'] = state!.savingThrowProficiencies.toList();
     raw['skillProficiencies'] = state!.skillProficiencies;
+    raw['level'] = state!.level;
+    raw['proficiencyBonus'] = state!.proficiencyBonus;
+
+    final hd = Map<String, dynamic>.from(raw['hitDice'] as Map? ?? {});
+    hd['total'] = state!.level;
+    raw['hitDice'] = hd;
 
     final existingAbilities = raw['abilities'] as Map<String, dynamic>? ?? {};
     final updatedAbilities = Map<String, dynamic>.from(existingAbilities);

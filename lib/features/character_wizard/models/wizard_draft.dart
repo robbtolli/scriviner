@@ -224,8 +224,39 @@ class WizardDraft {
               'mod': abilityModifiers[stat] ?? 0,
             },
           )),
+      'savingThrows': (charClass?.savingThrows ?? []).map((e) => e.toLowerCase()).toList(),
       'skills': allProficientSkills.toList(),
-      'spells': selectedSpells.toList(),
+      'skillProficiencies': {for (final s in allProficientSkills) s: 1},
+      'spells': selectedSpells.map((spellName) {
+        final found = SrdStarterData.spells.cast<SpellDefinition?>().firstWhere(
+          (s) => s?.name.toLowerCase() == spellName.toLowerCase() || s?.id.toLowerCase() == spellName.toLowerCase(),
+          orElse: () => null,
+        );
+        return {
+          'id': 'spell_${(found?.id ?? spellName).toLowerCase().replaceAll(' ', '_')}',
+          'name': found?.name ?? spellName,
+          'level': found?.level ?? 0,
+          'school': found?.school ?? 'Evocation',
+          'castingTime': found?.castingTime ?? '1 action',
+          'range': found?.range ?? 'Touch',
+          'components': 'V, S',
+          'duration': 'Instantaneous',
+          'isPrepared': true,
+          'isRitual': false,
+          'description': found?.description ?? '',
+        };
+      }).toList(),
+      'featuresList': (charClass?.startingFeatures ?? []).map((featName) {
+        return {
+          'id': 'feat_${featName.toLowerCase().replaceAll(' ', '_')}',
+          'name': featName,
+          'source': charClass?.name ?? 'Class',
+          'recharge': 'Short or Long Rest',
+          'usesMax': 1,
+          'usesSpent': 0,
+          'description': '$featName granted by ${charClass?.name}',
+        };
+      }).toList(),
       'hitDice': {
         'total': 1,
         'spent': 0,
@@ -233,7 +264,7 @@ class WizardDraft {
       },
       'spellSlots': charClass?.isSpellcaster == true
           ? {
-              'level1': {'total': 2, 'spent': 0}
+              '1': {'total': 2, 'spent': 0}
             }
           : {},
       'equipment': [equipmentPackage],

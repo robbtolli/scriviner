@@ -197,9 +197,9 @@ void main() {
     }));
     await tester.pumpAndSettle();
 
-    // Tap edit icon on STR card
-    final editIcons = find.byIcon(Icons.edit_outlined);
-    await tester.tap(editIcons.first);
+    // Tap edit icon on STR card specifically
+    final editStrIcon = find.byTooltip('Edit Strength Score');
+    await tester.tap(editStrIcon);
     await tester.pumpAndSettle();
 
     expect(find.text('Edit Strength Score'), findsOneWidget);
@@ -222,6 +222,127 @@ void main() {
     final updated = capturedRef!.read(characterSheetProvider('char_test'))!;
     expect(updated.getAbilityScore('str'), 18);
     expect(updated.getAbilityModifier('str'), 4);
+
+    // Clean teardown
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 50));
+  });
+
+  testWidgets('displays player level and allows manual level editing', (tester) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    await seedCharacter();
+    WidgetRef? capturedRef;
+
+    await tester.pumpWidget(createWidgetUnderTest((ref) {
+      capturedRef = ref;
+      return ref;
+    }));
+    await tester.pumpAndSettle();
+
+    // Verify Hero Level card display
+    expect(find.text('HERO LEVEL'), findsOneWidget);
+    expect(find.text('Level 3 Fighter'), findsOneWidget);
+
+    // Tap manual edit icon button
+    final manualEditBtn = find.byTooltip('Manually Edit Level');
+    expect(manualEditBtn, findsOneWidget);
+    await tester.tap(manualEditBtn);
+    await tester.pumpAndSettle();
+
+    // Verify Manual Level Edit dialog
+    expect(find.text('Manual Level Edit'), findsOneWidget);
+    expect(find.text('3'), findsWidgets);
+
+    // Tap + to change level from 3 to 5
+    final addIcon = find.descendant(
+      of: find.byType(AlertDialog),
+      matching: find.byIcon(Icons.add),
+    );
+    await tester.tap(addIcon); // 4
+    await tester.pumpAndSettle();
+    await tester.tap(addIcon); // 5
+    await tester.pumpAndSettle();
+
+    expect(find.text('5'), findsWidgets);
+    expect(find.textContaining('Proficiency Bonus: +3'), findsOneWidget);
+
+    // Save
+    await tester.tap(find.widgetWithText(ElevatedButton, 'SAVE'));
+    await tester.pumpAndSettle();
+
+    // Verify character sheet state updated
+    final updatedChar = capturedRef!.read(characterSheetProvider('char_test'))!;
+    expect(updatedChar.level, 5);
+    expect(updatedChar.proficiencyBonus, 3);
+    expect(find.text('Level 5 Fighter'), findsOneWidget);
+
+    // Clean teardown
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 50));
+  });
+
+  testWidgets('launches level up wizard and guides advancement through steps', (tester) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    await seedCharacter();
+    WidgetRef? capturedRef;
+
+    await tester.pumpWidget(createWidgetUnderTest((ref) {
+      capturedRef = ref;
+      return ref;
+    }));
+    await tester.pumpAndSettle();
+
+    // Find and tap LEVEL UP button
+    final levelUpBtn = find.widgetWithText(ElevatedButton, 'LEVEL UP');
+    expect(levelUpBtn, findsOneWidget);
+    await tester.tap(levelUpBtn);
+    await tester.pumpAndSettle();
+
+    // Verify Wizard Dialog Header
+    expect(find.text('LEVEL UP WIZARD'), findsOneWidget);
+    expect(find.textContaining('Advance Bruenor from Level 3 to 4'), findsOneWidget);
+
+    // Step 1: Hit Points
+    expect(find.text('Fighter Hit Die: 1d10'), findsOneWidget);
+    expect(find.text('Take Fixed Average (Recommended)'), findsOneWidget);
+    expect(find.text('+9 HP'), findsWidgets); // avg 6 + CON 3 = 9 HP
+
+    // Proceed to Step 2
+    await tester.tap(find.widgetWithText(ElevatedButton, 'NEXT'));
+    await tester.pumpAndSettle();
+
+    // Step 2: Improvements (Level 4 is an ASI Level!)
+    expect(find.text('ABILITY SCORE IMPROVEMENT (ASI)'), findsOneWidget);
+    expect(find.text('+2 Single'), findsOneWidget);
+
+    // Proceed to Step 3
+    await tester.tap(find.widgetWithText(ElevatedButton, 'NEXT'));
+    await tester.pumpAndSettle();
+
+    // Step 3: Review & Confirm
+    expect(find.text('ADVANCEMENT SUMMARY'), findsOneWidget);
+    expect(find.text('+9 Max HP'), findsOneWidget);
+    expect(find.text('Level 4'), findsWidgets);
+
+    // Confirm Level Up
+    await tester.tap(find.widgetWithText(ElevatedButton, 'CONFIRM LEVEL UP'));
+    await tester.pumpAndSettle();
+
+    // Dialog closed and state updated
+    final updatedChar = capturedRef!.read(characterSheetProvider('char_test'))!;
+    expect(updatedChar.level, 4);
+    // In step 2 default ASI was +2 to STR (16 + 2 = 18)
+    expect(updatedChar.getAbilityScore('str'), 18);
+    expect(updatedChar.getAbilityModifier('str'), 4);
+
+    // Verify celebratory feedback
+    expect(find.textContaining('Level Up Complete! Welcome to Level 4 Fighter!'), findsOneWidget);
 
     // Clean teardown
     await tester.pumpWidget(const SizedBox());

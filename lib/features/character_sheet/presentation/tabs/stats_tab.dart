@@ -5,6 +5,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../dice/presentation/widgets/floating_dice_fab.dart';
 import '../../../dice/providers/dice_drawer_provider.dart';
 import '../../providers/character_sheet_provider.dart';
+import '../widgets/level_up_wizard_dialog.dart';
 
 class AbilityMeta {
   final String key;
@@ -194,11 +195,221 @@ class StatsTab extends ConsumerWidget {
     );
   }
 
+  void _showManualLevelDialog(BuildContext context) {
+    int level = state.level;
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final prof = 2 + ((level - 1) / 4).floor();
+            return AlertDialog(
+              backgroundColor: AppTheme.cardDark,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: const BorderSide(color: Color(0xFF4A4037)),
+              ),
+              title: const Text(
+                'Manual Level Edit',
+                style: TextStyle(
+                  color: AppTheme.primaryGold,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$level',
+                    style: const TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    'Proficiency Bonus: +$prof  •  Hit Dice: ${level}d',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppTheme.primaryGold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton.filledTonal(
+                        onPressed: level > 1 ? () => setState(() => level--) : null,
+                        icon: const Icon(Icons.remove),
+                        style: IconButton.styleFrom(
+                          backgroundColor: AppTheme.surfaceDark,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      IconButton.filledTonal(
+                        onPressed: level < 20 ? () => setState(() => level++) : null,
+                        icon: const Icon(Icons.add),
+                        style: IconButton.styleFrom(
+                          backgroundColor: AppTheme.surfaceDark,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('CANCEL', style: TextStyle(color: Colors.grey)),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    notifier.updateLevel(level);
+                    Navigator.pop(ctx);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Level updated to Level $level!'),
+                        backgroundColor: Colors.green.shade700,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryGold,
+                    foregroundColor: Colors.black,
+                  ),
+                  child: const Text('SAVE'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _openLevelUpWizard(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => LevelUpWizardDialog(
+        state: state,
+        notifier: notifier,
+      ),
+    );
+  }
+
+  Widget _buildHeroLevelCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppTheme.cardDark,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.primaryGold.withAlpha(120)),
+      ),
+      child: Row(
+        children: [
+          // Level Badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppTheme.surfaceDark,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppTheme.primaryGold),
+            ),
+            child: Column(
+              children: [
+                const Text(
+                  'HERO LEVEL',
+                  style: TextStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.0,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${state.level}',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.primaryGold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 14),
+
+          // Character Class & Subtext
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Level ${state.level} ${state.className}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  state.level >= 20
+                      ? 'Maximum Level Cap (Level 20)'
+                      : 'Advance to Level ${state.level + 1}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade400,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+
+          // Action Buttons: Manual Edit & Level Up Wizard
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                color: Colors.grey,
+                tooltip: 'Manually Edit Level',
+                onPressed: () => _showManualLevelDialog(context),
+              ),
+              const SizedBox(width: 6),
+              ElevatedButton.icon(
+                onPressed: state.level < 20 ? () => _openLevelUpWizard(context) : null,
+                icon: const Icon(Icons.auto_awesome, size: 15),
+                label: const Text('LEVEL UP'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryGold,
+                  foregroundColor: Colors.black,
+                  textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        // Hero Level & Advancement Card
+        _buildHeroLevelCard(context),
+        const SizedBox(height: 12),
+
         // Top Overview Banner: Proficiency Bonus & Passive Scores
         _buildOverviewBanner(context),
         const SizedBox(height: 16),

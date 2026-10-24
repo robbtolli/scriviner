@@ -163,7 +163,11 @@ class CombatSessionNotifier extends Notifier<CombatSessionState?> {
     final slotsMap = <String, SpellSlotInfo>{};
     rawSlots.forEach((k, v) {
       if (v is Map) {
-        slotsMap[k.toString()] = SpellSlotInfo(
+        String keyStr = k.toString();
+        if (keyStr.toLowerCase().startsWith('level')) {
+          keyStr = keyStr.toLowerCase().replaceFirst('level', '');
+        }
+        slotsMap[keyStr] = SpellSlotInfo(
           total: (v['total'] as num?)?.toInt() ?? 0,
           spent: (v['spent'] as num?)?.toInt() ?? 0,
         );
@@ -397,7 +401,11 @@ class CombatSessionNotifier extends Notifier<CombatSessionState?> {
     final slotsMap = <String, SpellSlotInfo>{};
     rawSlots.forEach((k, v) {
       if (v is Map) {
-        slotsMap[k.toString()] = SpellSlotInfo(
+        String keyStr = k.toString();
+        if (keyStr.toLowerCase().startsWith('level')) {
+          keyStr = keyStr.toLowerCase().replaceFirst('level', '');
+        }
+        slotsMap[keyStr] = SpellSlotInfo(
           total: (v['total'] as num?)?.toInt() ?? 0,
           spent: (v['spent'] as num?)?.toInt() ?? 0,
         );
