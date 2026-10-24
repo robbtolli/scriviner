@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
 import '../../providers/dice_drawer_provider.dart';
 
 class SituationalChipsRow extends StatelessWidget {
@@ -15,6 +14,8 @@ class SituationalChipsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -27,18 +28,18 @@ class SituationalChipsRow extends StatelessWidget {
               label: Text(bonus.label),
               selected: isSelected,
               onSelected: (_) => onToggleBonus(bonus.id),
-              selectedColor: AppTheme.primaryGold.withAlpha(40),
-              backgroundColor: AppTheme.surfaceDark,
-              checkmarkColor: AppTheme.primaryGold,
+              selectedColor: theme.colorScheme.primary.withAlpha(40),
+              backgroundColor: theme.colorScheme.surface,
+              checkmarkColor: theme.colorScheme.primary,
               labelStyle: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? AppTheme.primaryGold : Colors.white70,
+                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withAlpha(180),
               ),
               side: BorderSide(
                 color: isSelected
-                    ? AppTheme.primaryGold
-                    : const Color(0xFF4A4037),
+                    ? theme.colorScheme.primary
+                    : theme.dividerColor,
               ),
               visualDensity: VisualDensity.compact,
             ),

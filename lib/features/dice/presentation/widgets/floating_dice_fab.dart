@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
 import '../dice_roller_drawer.dart';
 
 class FloatingDiceFab extends StatelessWidget {
@@ -30,10 +29,11 @@ class FloatingDiceFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return FloatingActionButton(
       onPressed: () => openDiceRoller(context),
-      backgroundColor: AppTheme.primaryGold,
-      foregroundColor: Colors.black,
+      backgroundColor: theme.colorScheme.primary,
+      foregroundColor: theme.colorScheme.onPrimary,
       elevation: 4,
       tooltip: 'Roll Dice (d4 - d100)',
       child: const Icon(Icons.casino, size: 26),

@@ -4,31 +4,55 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_theme.dart';
 import 'theme_provider.dart';
 
-/// Modal dialog allowing the user to select from available visual themes.
+/// Modal dialog allowing the user to select from available visual themes,
+/// optionally supporting an "App Default" option for character-level overrides.
 class ThemeSelectorDialog extends ConsumerWidget {
-  const ThemeSelectorDialog({super.key});
+  final String title;
+  final AppThemeMode? currentSelectedMode;
+  final bool isCharacterLevel;
+  final ValueChanged<AppThemeMode?>? onThemeSelected;
 
-  static Future<void> show(BuildContext context) {
+  const ThemeSelectorDialog({
+    super.key,
+    this.title = 'SELECT APP THEME',
+    this.currentSelectedMode,
+    this.isCharacterLevel = false,
+    this.onThemeSelected,
+  });
+
+  static Future<void> show(
+    BuildContext context, {
+    String title = 'SELECT APP THEME',
+    AppThemeMode? currentSelectedMode,
+    bool isCharacterLevel = false,
+    ValueChanged<AppThemeMode?>? onThemeSelected,
+  }) {
     return showDialog(
       context: context,
-      builder: (context) => const ThemeSelectorDialog(),
+      builder: (context) => ThemeSelectorDialog(
+        title: title,
+        currentSelectedMode: currentSelectedMode,
+        isCharacterLevel: isCharacterLevel,
+        onThemeSelected: onThemeSelected,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentTheme = ref.watch(themeProvider);
+    final globalAppTheme = ref.watch(themeProvider);
     final themeData = Theme.of(context);
+    final activeSelection = isCharacterLevel ? currentSelectedMode : globalAppTheme;
 
     return AlertDialog(
       title: Row(
         children: [
           Icon(Icons.palette, color: themeData.colorScheme.primary),
           const SizedBox(width: 10),
-          const Expanded(
+          Expanded(
             child: Text(
-              'SELECT APP THEME',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -36,24 +60,89 @@ class ThemeSelectorDialog extends ConsumerWidget {
       ),
       contentPadding: const EdgeInsets.symmetric(vertical: 12),
       content: SizedBox(
-        width: 480,
+        width: 500,
+        height: 480,
         child: SingleChildScrollView(
-          child: RadioGroup<AppThemeMode>(
-            groupValue: currentTheme,
-            onChanged: (val) {
-              if (val != null) {
-                ref.read(themeProvider.notifier).setTheme(val);
-              }
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: AppThemeMode.values.map((mode) {
-                final isSelected = mode == currentTheme;
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isCharacterLevel) ...[
+                // "App Default" option
+                InkWell(
+                  onTap: () {
+                    onThemeSelected?.call(null);
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: activeSelection == null
+                          ? themeData.colorScheme.primary.withAlpha(25)
+                          : themeData.cardColor,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: activeSelection == null
+                            ? themeData.colorScheme.primary
+                            : themeData.dividerColor.withAlpha(80),
+                        width: activeSelection == null ? 2 : 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          activeSelection == null
+                              ? Icons.radio_button_checked
+                              : Icons.radio_button_unchecked,
+                          color: activeSelection == null
+                              ? themeData.colorScheme.primary
+                              : themeData.colorScheme.onSurface.withAlpha(120),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'App Default (${globalAppTheme.displayName})',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  color: themeData.colorScheme.onSurface,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Inherits whatever theme is selected in global settings',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: themeData.colorScheme.onSurface.withAlpha(180),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Divider(),
+                ),
+              ],
+              ...AppThemeMode.values.map((mode) {
+                final isSelected = activeSelection == mode;
                 final previewTheme = AppTheme.getThemeData(mode);
 
                 return InkWell(
                   onTap: () {
-                    ref.read(themeProvider.notifier).setTheme(mode);
+                    if (isCharacterLevel) {
+                      onThemeSelected?.call(mode);
+                      Navigator.of(context).pop();
+                    } else {
+                      ref.read(themeProvider.notifier).setTheme(mode);
+                    }
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -73,8 +162,13 @@ class ThemeSelectorDialog extends ConsumerWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Radio<AppThemeMode>(
-                          value: mode,
+                        Icon(
+                          isSelected
+                              ? Icons.radio_button_checked
+                              : Icons.radio_button_unchecked,
+                          color: isSelected
+                              ? themeData.colorScheme.primary
+                              : themeData.colorScheme.onSurface.withAlpha(120),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -151,8 +245,8 @@ class ThemeSelectorDialog extends ConsumerWidget {
                     ),
                   ),
                 );
-              }).toList(),
-            ),
+              }),
+            ],
           ),
         ),
       ),

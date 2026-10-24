@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/database/database_provider.dart';
-import '../../../core/theme/app_theme.dart';
 import '../data/srd_compendium_seed.dart';
 import '../models/compendium_entry.dart';
 
@@ -77,11 +76,13 @@ class _CompendiumSearchDialogState
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Dialog(
-      backgroundColor: AppTheme.surfaceDark,
+      backgroundColor: theme.colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: AppTheme.primaryGold, width: 1.5),
+        side: BorderSide(color: theme.colorScheme.primary, width: 1.5),
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 600, maxHeight: 680),
@@ -94,16 +95,16 @@ class _CompendiumSearchDialogState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
-                    children: const [
-                      Icon(Icons.menu_book, color: AppTheme.primaryGold, size: 22),
-                      SizedBox(width: 8),
+                    children: [
+                      Icon(Icons.menu_book, color: theme.colorScheme.primary, size: 22),
+                      const SizedBox(width: 8),
                       Text(
                         'SRD 5.1 COMPENDIUM',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                           letterSpacing: 1.1,
-                          color: AppTheme.primaryGold,
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ],
@@ -123,7 +124,7 @@ class _CompendiumSearchDialogState
                 onChanged: (_) => _performSearch(),
                 decoration: InputDecoration(
                   hintText: 'Search spells, equipment, features...',
-                  prefixIcon: const Icon(Icons.search, color: AppTheme.primaryGold),
+                  prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Icons.clear, size: 18),
@@ -134,14 +135,14 @@ class _CompendiumSearchDialogState
                         )
                       : null,
                   filled: true,
-                  fillColor: AppTheme.cardDark,
+                  fillColor: theme.cardColor,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Color(0xFF4A4037)),
+                    borderSide: BorderSide(color: theme.dividerColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppTheme.primaryGold),
+                    borderSide: BorderSide(color: theme.colorScheme.primary),
                   ),
                 ),
               ),
@@ -160,24 +161,24 @@ class _CompendiumSearchDialogState
                 ),
               ),
               const SizedBox(height: 10),
-              const Divider(color: Color(0xFF4A4037)),
+              Divider(color: theme.dividerColor),
 
               // Results List
               Expanded(
                 child: _isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(color: AppTheme.primaryGold),
+                    ? Center(
+                        child: CircularProgressIndicator(color: theme.colorScheme.primary),
                       )
                     : _results.isEmpty
                         ? Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Icon(Icons.search_off, size: 40, color: Colors.grey),
-                                SizedBox(height: 8),
+                              children: [
+                                Icon(Icons.search_off, size: 40, color: theme.colorScheme.onSurface.withAlpha(80)),
+                                const SizedBox(height: 8),
                                 Text(
                                   'No entries found matching your search.',
-                                  style: TextStyle(color: Colors.grey),
+                                  style: TextStyle(color: theme.colorScheme.onSurface.withAlpha(120)),
                                 ),
                               ],
                             ),
@@ -199,7 +200,9 @@ class _CompendiumSearchDialogState
   }
 
   Widget _buildCategoryChip(String catId, String label) {
+    final theme = Theme.of(context);
     final isSelected = _selectedCategory == catId;
+
     return Padding(
       padding: const EdgeInsets.only(right: 6),
       child: FilterChip(
@@ -209,16 +212,16 @@ class _CompendiumSearchDialogState
           setState(() => _selectedCategory = catId);
           _performSearch();
         },
-        selectedColor: AppTheme.primaryGold.withAlpha(40),
-        backgroundColor: AppTheme.cardDark,
-        checkmarkColor: AppTheme.primaryGold,
+        selectedColor: theme.colorScheme.primary.withAlpha(40),
+        backgroundColor: theme.cardColor,
+        checkmarkColor: theme.colorScheme.primary,
         labelStyle: TextStyle(
           fontSize: 11,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? AppTheme.primaryGold : Colors.white70,
+          color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withAlpha(180),
         ),
         side: BorderSide(
-          color: isSelected ? AppTheme.primaryGold : const Color(0xFF4A4037),
+          color: isSelected ? theme.colorScheme.primary : theme.dividerColor,
         ),
         visualDensity: VisualDensity.compact,
       ),
@@ -226,6 +229,7 @@ class _CompendiumSearchDialogState
   }
 
   Widget _buildResultCard(CompendiumEntry entry) {
+    final theme = Theme.of(context);
     final isSpell = entry.category == 'spell';
     final isEquip = entry.category == 'equipment';
 
@@ -248,9 +252,9 @@ class _CompendiumSearchDialogState
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.cardDark,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF4A4037)),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,10 +265,10 @@ class _CompendiumSearchDialogState
               Expanded(
                 child: Text(
                   entry.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: Colors.white,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -283,8 +287,8 @@ class _CompendiumSearchDialogState
                   icon: const Icon(Icons.add, size: 14),
                   label: const Text('ADD', style: TextStyle(fontSize: 11)),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryGold,
-                    foregroundColor: Colors.black,
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     visualDensity: VisualDensity.compact,
                   ),
@@ -294,9 +298,9 @@ class _CompendiumSearchDialogState
           const SizedBox(height: 2),
           Text(
             metaSubtitle,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
-              color: AppTheme.primaryGold,
+              color: theme.colorScheme.primary,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -306,7 +310,7 @@ class _CompendiumSearchDialogState
             style: TextStyle(
               fontSize: 12,
               height: 1.3,
-              color: Colors.white.withAlpha(180),
+              color: theme.colorScheme.onSurface.withAlpha(180),
             ),
           ),
         ],

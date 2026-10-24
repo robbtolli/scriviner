@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
-
 class PolyhedralDiceTray extends StatelessWidget {
   final Map<int, int> diceCounts;
   final int flatModifier;
@@ -22,6 +20,8 @@ class PolyhedralDiceTray extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -44,13 +44,13 @@ class PolyhedralDiceTray extends StatelessWidget {
                     height: 58,
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppTheme.primaryGold.withAlpha(30)
-                          : AppTheme.surfaceDark,
+                          ? theme.colorScheme.primary.withAlpha(30)
+                          : theme.colorScheme.surface,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: isSelected
-                            ? AppTheme.primaryGold
-                            : const Color(0xFF4A4037),
+                            ? theme.colorScheme.primary
+                            : theme.dividerColor,
                         width: isSelected ? 1.5 : 1,
                       ),
                     ),
@@ -66,8 +66,8 @@ class PolyhedralDiceTray extends StatelessWidget {
                                   : Icons.change_history,
                               size: 16,
                               color: isSelected
-                                  ? AppTheme.primaryGold
-                                  : Colors.white70,
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.onSurface.withAlpha(180),
                             ),
                             const SizedBox(height: 2),
                             Text(
@@ -76,8 +76,8 @@ class PolyhedralDiceTray extends StatelessWidget {
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
                                 color: isSelected
-                                    ? AppTheme.primaryGold
-                                    : Colors.white,
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.onSurface,
                               ),
                             ),
                           ],
@@ -88,8 +88,8 @@ class PolyhedralDiceTray extends StatelessWidget {
                             right: 2,
                             child: Container(
                               padding: const EdgeInsets.all(3),
-                              decoration: const BoxDecoration(
-                                color: AppTheme.primaryGold,
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary,
                                 shape: BoxShape.circle,
                               ),
                               constraints: const BoxConstraints(
@@ -98,8 +98,8 @@ class PolyhedralDiceTray extends StatelessWidget {
                               ),
                               child: Text(
                                 '$count',
-                                style: const TextStyle(
-                                  color: Colors.black,
+                                style: TextStyle(
+                                  color: theme.colorScheme.onPrimary,
                                   fontSize: 9,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -121,16 +121,16 @@ class PolyhedralDiceTray extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: AppTheme.surfaceDark,
+            color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: const Color(0xFF4A4037)),
+            border: Border.all(color: theme.dividerColor),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Flat Modifier:',
-                style: TextStyle(fontSize: 13, color: Colors.white70),
+                style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withAlpha(180)),
               ),
               Row(
                 children: [
@@ -138,17 +138,17 @@ class PolyhedralDiceTray extends StatelessWidget {
                     icon: const Icon(Icons.remove, size: 18),
                     visualDensity: VisualDensity.compact,
                     onPressed: () => onAdjustModifier(-1),
-                    color: AppTheme.primaryGold,
+                    color: theme.colorScheme.primary,
                   ),
                   Container(
                     constraints: const BoxConstraints(minWidth: 36),
                     alignment: Alignment.center,
                     child: Text(
                       flatModifier >= 0 ? '+$flatModifier' : '$flatModifier',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -156,7 +156,7 @@ class PolyhedralDiceTray extends StatelessWidget {
                     icon: const Icon(Icons.add, size: 18),
                     visualDensity: VisualDensity.compact,
                     onPressed: () => onAdjustModifier(1),
-                    color: AppTheme.primaryGold,
+                    color: theme.colorScheme.primary,
                   ),
                 ],
               ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/models/scrivener_theme_tokens.dart';
 import '../../providers/combat_session_provider.dart';
 
 class SpellSlotsMatrix extends StatelessWidget {
@@ -27,6 +27,9 @@ class SpellSlotsMatrix extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+
     if (state.spellSlots.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -37,24 +40,24 @@ class SpellSlotsMatrix extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardDark,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF4A4037)),
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(tokens.cardRadius),
+        border: Border.fromBorderSide(tokens.cardBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
-              const Icon(Icons.auto_awesome, color: AppTheme.primaryGold, size: 18),
+              Icon(tokens.iconography.spells, color: theme.colorScheme.primary, size: 18),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'SPELL SLOTS & RESOURCES',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
-                  color: AppTheme.primaryGold,
+                  color: theme.colorScheme.primary,
                 ),
               ),
               const Spacer(),
@@ -62,7 +65,7 @@ class SpellSlotsMatrix extends StatelessWidget {
                 'Tap pip to expend/restore',
                 style: TextStyle(
                   fontSize: 10,
-                  color: Colors.white.withAlpha(120),
+                  color: theme.colorScheme.onSurface.withAlpha(120),
                 ),
               ),
             ],
@@ -81,10 +84,10 @@ class SpellSlotsMatrix extends StatelessWidget {
                     width: 100,
                     child: Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -106,7 +109,7 @@ class SpellSlotsMatrix extends StatelessWidget {
                                   : Icons.circle,
                               color: isSpent
                                   ? Colors.grey
-                                  : AppTheme.primaryGold,
+                                  : theme.colorScheme.primary,
                               size: 20,
                             ),
                           ),
@@ -120,7 +123,7 @@ class SpellSlotsMatrix extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: slotInfo.available > 0
-                          ? AppTheme.primaryGold
+                          ? theme.colorScheme.primary
                           : Colors.grey,
                     ),
                   ),

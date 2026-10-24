@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/models/scrivener_theme_tokens.dart';
 
 enum CreationMode { guidedWizard, freeformSheet }
 
@@ -24,11 +24,14 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = context.tokens;
+
     return Dialog(
-      backgroundColor: AppTheme.surfaceDark,
+      backgroundColor: theme.colorScheme.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: AppTheme.primaryGold, width: 1.5),
+        borderRadius: BorderRadius.circular(tokens.cardRadius),
+        side: tokens.cardBorder,
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
@@ -40,54 +43,57 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.shield_outlined, color: AppTheme.primaryGold, size: 28),
+                  Icon(tokens.iconography.tabCombat, color: theme.colorScheme.primary, size: 28),
                   const SizedBox(width: 10),
                   Text(
                     'Create New Character',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: AppTheme.primaryGold,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                          color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'GAME SYSTEM',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
-                  color: AppTheme.primaryGold,
+                  color: theme.colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 8),
               _buildSystemTile(
+                context,
                 id: 'dnd5e',
                 title: 'Dungeons & Dragons 5e / 2024',
                 subtitle: 'Full SRD 5.1 rules, classes, races, and spellbook.',
-                icon: Icons.auto_awesome,
+                icon: tokens.iconography.tabSpells,
               ),
               const SizedBox(height: 8),
               _buildSystemTile(
+                context,
                 id: 'pf2e',
                 title: 'Pathfinder 2e (Remaster)',
                 subtitle: 'Modular support coming in upcoming milestones.',
-                icon: Icons.military_tech,
+                icon: tokens.iconography.tabFeatures,
                 isComingSoon: true,
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'CREATION MODE',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
-                  color: AppTheme.primaryGold,
+                  color: theme.colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 8),
               _buildModeOption(
+                context,
                 mode: CreationMode.guidedWizard,
                 title: 'Guided Step-by-Step Wizard',
                 subtitle: 'Recommended for new & leveling players. Educational tips, auto-assigned stats, and live sheet preview.',
@@ -95,6 +101,7 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
               ),
               const SizedBox(height: 8),
               _buildModeOption(
+                context,
                 mode: CreationMode.freeformSheet,
                 title: 'Freeform / Smart Paper Sheet',
                 subtitle: 'Direct blank sheet for veteran players with total manual control and custom house rules.',
@@ -139,13 +146,15 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
     );
   }
 
-  Widget _buildSystemTile({
+  Widget _buildSystemTile(
+    BuildContext context, {
     required String id,
     required String title,
     required String subtitle,
     required IconData icon,
     bool isComingSoon = false,
   }) {
+    final theme = Theme.of(context);
     final isSelected = _selectedSystem == id;
 
     return InkWell(
@@ -154,16 +163,16 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryGold.withAlpha(25) : AppTheme.cardDark,
+          color: isSelected ? theme.colorScheme.primary.withAlpha(25) : theme.cardColor,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected ? AppTheme.primaryGold : Colors.white.withAlpha(20),
+            color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withAlpha(60),
             width: isSelected ? 1.5 : 1,
           ),
         ),
         child: Row(
           children: [
-            Icon(icon, color: isComingSoon ? Colors.grey : AppTheme.primaryGold),
+            Icon(icon, color: isComingSoon ? Colors.grey : theme.colorScheme.primary),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -175,7 +184,7 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                         title,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: isComingSoon ? Colors.grey : Colors.white,
+                          color: isComingSoon ? Colors.grey : theme.colorScheme.onSurface,
                         ),
                       ),
                       if (isComingSoon) ...[
@@ -183,7 +192,7 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: Colors.white.withAlpha(20),
+                            color: theme.colorScheme.onSurface.withAlpha(20),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Text(
@@ -197,7 +206,7 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(150)),
+                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(150)),
                   ),
                 ],
               ),
@@ -208,12 +217,14 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
     );
   }
 
-  Widget _buildModeOption({
+  Widget _buildModeOption(
+    BuildContext context, {
     required CreationMode mode,
     required String title,
     required String subtitle,
     String? badge,
   }) {
+    final theme = Theme.of(context);
     final isSelected = _selectedMode == mode;
 
     return InkWell(
@@ -222,10 +233,10 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryGold.withAlpha(25) : AppTheme.cardDark,
+          color: isSelected ? theme.colorScheme.primary.withAlpha(25) : theme.cardColor,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected ? AppTheme.primaryGold : Colors.white.withAlpha(20),
+            color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withAlpha(60),
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -234,7 +245,7 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
           children: [
             Icon(
               isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-              color: isSelected ? AppTheme.primaryGold : Colors.white.withAlpha(120),
+              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withAlpha(120),
               size: 20,
             ),
             const SizedBox(width: 10),
@@ -246,21 +257,21 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                        style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
                       ),
                       if (badge != null) ...[
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryGold,
+                            color: theme.colorScheme.primary,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             badge,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 9,
-                              color: Colors.black,
+                              color: theme.colorScheme.onPrimary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -271,7 +282,7 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(150)),
+                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(150)),
                   ),
                 ],
               ),

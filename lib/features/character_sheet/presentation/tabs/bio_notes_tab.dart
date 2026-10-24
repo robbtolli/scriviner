@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/models/scrivener_theme_tokens.dart';
 import '../../models/character_sheet_data.dart';
 import '../../providers/character_sheet_provider.dart';
 
@@ -70,28 +70,37 @@ class _BioNotesTabState extends State<BioNotesTab> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'ROLEPLAYING TRAITS & NOTES',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.1,
-                color: AppTheme.primaryGold,
-              ),
+            Row(
+              children: [
+                Icon(tokens.iconography.bio, color: theme.colorScheme.primary, size: 16),
+                const SizedBox(width: 6),
+                Text(
+                  'ROLEPLAYING TRAITS & NOTES',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.1,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ],
             ),
             ElevatedButton.icon(
               onPressed: _saveChanges,
               icon: const Icon(Icons.save, size: 16),
               label: const Text('SAVE'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryGold,
-                foregroundColor: Colors.black,
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 visualDensity: VisualDensity.compact,
               ),
@@ -104,61 +113,64 @@ class _BioNotesTabState extends State<BioNotesTab> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: _buildBioField('Personality Traits', _traitsCtrl, maxLines: 3)),
+            Expanded(child: _buildBioField(context, 'Personality Traits', _traitsCtrl, maxLines: 3)),
             const SizedBox(width: 10),
-            Expanded(child: _buildBioField('Ideals', _idealsCtrl, maxLines: 3)),
+            Expanded(child: _buildBioField(context, 'Ideals', _idealsCtrl, maxLines: 3)),
           ],
         ),
         const SizedBox(height: 10),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: _buildBioField('Bonds', _bondsCtrl, maxLines: 3)),
+            Expanded(child: _buildBioField(context, 'Bonds', _bondsCtrl, maxLines: 3)),
             const SizedBox(width: 10),
-            Expanded(child: _buildBioField('Flaws', _flawsCtrl, maxLines: 3)),
+            Expanded(child: _buildBioField(context, 'Flaws', _flawsCtrl, maxLines: 3)),
           ],
         ),
         const SizedBox(height: 14),
 
         // Backstory
-        _buildBioField('Character Backstory', _backstoryCtrl, maxLines: 5),
+        _buildBioField(context, 'Character Backstory', _backstoryCtrl, maxLines: 5),
         const SizedBox(height: 14),
 
         // Campaign / Session Notes
-        _buildBioField('Campaign & Session Notes (Markdown)', _notesCtrl, maxLines: 8),
+        _buildBioField(context, 'Campaign & Session Notes (Markdown)', _notesCtrl, maxLines: 8),
       ],
     );
   }
 
-  Widget _buildBioField(String label, TextEditingController controller, {int maxLines = 3}) {
+  Widget _buildBioField(BuildContext context, String label, TextEditingController controller, {int maxLines = 3}) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.cardDark,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF4A4037)),
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(tokens.cardRadius * 0.8),
+        border: Border.fromBorderSide(tokens.cardBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
-              color: AppTheme.primaryGold,
+              color: theme.colorScheme.primary,
             ),
           ),
           const SizedBox(height: 6),
           TextField(
             controller: controller,
             maxLines: maxLines,
-            style: const TextStyle(fontSize: 13, color: Colors.white, height: 1.4),
+            style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface, height: 1.4),
             decoration: InputDecoration(
               isDense: true,
               border: InputBorder.none,
               hintText: 'Enter $label...',
-              hintStyle: TextStyle(color: Colors.white.withAlpha(70)),
+              hintStyle: TextStyle(color: theme.colorScheme.onSurface.withAlpha(70)),
             ),
           ),
         ],

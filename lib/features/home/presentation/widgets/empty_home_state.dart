@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
-
 class EmptyHomeState extends StatelessWidget {
   final VoidCallback onCreateNew;
   final VoidCallback onLoadSamples;
@@ -14,6 +12,8 @@ class EmptyHomeState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -23,29 +23,29 @@ class EmptyHomeState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.surfaceDark,
+                color: theme.colorScheme.surface,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.primaryGold.withAlpha(120), width: 2),
+                border: Border.all(color: theme.colorScheme.primary.withAlpha(120), width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryGold.withAlpha(40),
+                    color: theme.colorScheme.primary.withAlpha(40),
                     blurRadius: 20,
                     spreadRadius: 2,
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.auto_stories,
                 size: 64,
-                color: AppTheme.primaryGold,
+                color: theme.colorScheme.primary,
               ),
             ),
             const SizedBox(height: 24),
             Text(
               'Your Chronicle Begins Here',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryGold,
+                    color: theme.colorScheme.primary,
                   ),
               textAlign: TextAlign.center,
             ),
@@ -55,7 +55,7 @@ class EmptyHomeState extends StatelessWidget {
               child: Text(
                 'No characters found. Create your own custom hero with our beginner-friendly Guided Wizard, or load pre-made sample heroes to start exploring.',
                 style: TextStyle(
-                  color: Colors.white.withAlpha(190),
+                  color: theme.colorScheme.onSurface.withAlpha(190),
                   fontSize: 15,
                   height: 1.4,
                 ),
@@ -73,6 +73,8 @@ class EmptyHomeState extends StatelessWidget {
                   icon: const Icon(Icons.add),
                   label: const Text('CREATE NEW CHARACTER'),
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                   ),
                 ),
@@ -81,6 +83,8 @@ class EmptyHomeState extends StatelessWidget {
                   icon: const Icon(Icons.download),
                   label: const Text('LOAD SAMPLE HEROES'),
                   style: ElevatedButton.styleFrom(
+                    foregroundColor: theme.colorScheme.primary,
+                    side: BorderSide(color: theme.colorScheme.primary),
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                   ),
                 ),

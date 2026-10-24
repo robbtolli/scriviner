@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/models/scrivener_theme_tokens.dart';
 import '../../../../systems/dnd5e/dnd5e_conditions.dart';
 import '../../providers/combat_session_provider.dart';
 
@@ -15,9 +15,10 @@ class ConditionsBar extends StatelessWidget {
   });
 
   void _showConditionPicker(BuildContext context) {
+    final theme = Theme.of(context);
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.surfaceDark,
+      backgroundColor: theme.colorScheme.surface,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -37,7 +38,7 @@ class ConditionsBar extends StatelessWidget {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey.withAlpha(100),
+                      color: theme.colorScheme.onSurface.withAlpha(60),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -45,12 +46,12 @@ class ConditionsBar extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Select Conditions & Buffs',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryGold,
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                       IconButton(
@@ -59,33 +60,33 @@ class ConditionsBar extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const Divider(color: Color(0xFF4A4037)),
+                  Divider(color: theme.dividerColor),
                   Expanded(
                     child: ListView.separated(
                       controller: scrollController,
                       itemCount: Dnd5eCondition.all.length,
                       separatorBuilder: (_, _) =>
-                          const Divider(height: 1, color: Color(0xFF332C26)),
+                          Divider(height: 1, color: theme.dividerColor.withAlpha(50)),
                       itemBuilder: (context, index) {
                         final condition = Dnd5eCondition.all[index];
                         final isActive = state.activeConditions.contains(condition.id);
 
                         return CheckboxListTile(
                           value: isActive,
-                          activeColor: AppTheme.primaryGold,
-                          checkColor: Colors.black,
+                          activeColor: theme.colorScheme.primary,
+                          checkColor: theme.colorScheme.onPrimary,
                           title: Text(
                             condition.name,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: isActive ? AppTheme.primaryGold : Colors.white,
+                              color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface,
                             ),
                           ),
                           subtitle: Text(
                             condition.description,
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white.withAlpha(160),
+                              color: theme.colorScheme.onSurface.withAlpha(160),
                             ),
                           ),
                           onChanged: (_) {
@@ -105,24 +106,25 @@ class ConditionsBar extends StatelessWidget {
   }
 
   void _showConditionDetail(BuildContext context, Dnd5eCondition condition) {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppTheme.surfaceDark,
+        backgroundColor: theme.colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppTheme.primaryGold),
+          side: BorderSide(color: theme.colorScheme.primary),
         ),
         title: Text(
           condition.name,
-          style: const TextStyle(
-            color: AppTheme.primaryGold,
+          style: TextStyle(
+            color: theme.colorScheme.primary,
             fontWeight: FontWeight.bold,
           ),
         ),
         content: Text(
           condition.description,
-          style: const TextStyle(fontSize: 14, height: 1.4, color: Colors.white),
+          style: TextStyle(fontSize: 14, height: 1.4, color: theme.colorScheme.onSurface),
         ),
         actions: [
           TextButton(
@@ -143,6 +145,9 @@ class ConditionsBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+
     final activeConditionsList = state.activeConditions
         .map((id) => Dnd5eCondition.all.firstWhere(
               (c) => c.id == id,
@@ -157,9 +162,9 @@ class ConditionsBar extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardDark,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF4A4037)),
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(tokens.cardRadius),
+        border: Border.fromBorderSide(tokens.cardBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -169,15 +174,15 @@ class ConditionsBar extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.shield_moon_outlined, color: AppTheme.primaryGold, size: 18),
+                  Icon(Icons.shield_moon_outlined, color: theme.colorScheme.primary, size: 18),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'ACTIVE CONDITIONS & BUFFS',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.1,
-                      color: AppTheme.primaryGold,
+                      color: theme.colorScheme.primary,
                     ),
                   ),
                 ],
@@ -187,8 +192,8 @@ class ConditionsBar extends StatelessWidget {
                 icon: const Icon(Icons.add, size: 14),
                 label: const Text('MANAGE', style: TextStyle(fontSize: 11)),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: AppTheme.primaryGold,
-                  side: const BorderSide(color: AppTheme.primaryGold, width: 0.8),
+                  foregroundColor: theme.colorScheme.primary,
+                  side: BorderSide(color: theme.colorScheme.primary, width: 0.8),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   visualDensity: VisualDensity.compact,
                 ),
@@ -204,7 +209,7 @@ class ConditionsBar extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontStyle: FontStyle.italic,
-                  color: Colors.white.withAlpha(120),
+                  color: theme.colorScheme.onSurface.withAlpha(120),
                 ),
               ),
             )

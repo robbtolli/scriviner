@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/theme/app_theme.dart';
 import '../models/dice_roll_record.dart';
 import '../providers/dice_drawer_provider.dart';
 import 'widgets/polyhedral_dice_tray.dart';
@@ -18,6 +17,7 @@ class DiceRollerDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final state = ref.watch(diceDrawerProvider);
     final notifier = ref.read(diceDrawerProvider.notifier);
 
@@ -32,15 +32,15 @@ class DiceRollerDrawer extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.casino, color: AppTheme.primaryGold, size: 22),
+                  Icon(Icons.casino, color: theme.colorScheme.primary, size: 22),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     'DICE ROLLER',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                       letterSpacing: 1.2,
-                      color: AppTheme.primaryGold,
+                      color: theme.colorScheme.primary,
                     ),
                   ),
                 ],
@@ -72,22 +72,22 @@ class DiceRollerDrawer extends ConsumerWidget {
               margin: const EdgeInsets.symmetric(vertical: 4),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: AppTheme.primaryGold.withAlpha(25),
+                color: theme.colorScheme.primary.withAlpha(25),
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: AppTheme.primaryGold.withAlpha(80)),
+                border: Border.all(color: theme.colorScheme.primary.withAlpha(80)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.bookmark_outline, size: 12, color: AppTheme.primaryGold),
+                  Icon(Icons.bookmark_outline, size: 12, color: theme.colorScheme.primary),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       state.contextTitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryGold,
+                        color: theme.colorScheme.primary,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -101,12 +101,12 @@ class DiceRollerDrawer extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppTheme.surfaceDark,
+              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppTheme.primaryGold, width: 1.5),
+              border: Border.all(color: theme.colorScheme.primary, width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: AppTheme.primaryGold.withAlpha(25),
+                  color: theme.colorScheme.primary.withAlpha(25),
                   blurRadius: 8,
                 ),
               ],
@@ -124,16 +124,16 @@ class DiceRollerDrawer extends ConsumerWidget {
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
-                          color: Colors.white.withAlpha(140),
+                          color: theme.colorScheme.onSurface.withAlpha(140),
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         state.formula,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: theme.colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -206,15 +206,15 @@ class DiceRollerDrawer extends ConsumerWidget {
               visualDensity: VisualDensity.compact,
               backgroundColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
-                  return AppTheme.primaryGold.withAlpha(60);
+                  return theme.colorScheme.primary.withAlpha(60);
                 }
-                return AppTheme.surfaceDark;
+                return theme.colorScheme.surface;
               }),
               foregroundColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
-                  return AppTheme.primaryGold;
+                  return theme.colorScheme.primary;
                 }
-                return Colors.white70;
+                return theme.colorScheme.onSurface.withAlpha(180);
               }),
             ),
           ),
@@ -246,7 +246,7 @@ class DiceRollerDrawer extends ConsumerWidget {
                       ? Colors.green
                       : record.isCriticalMiss
                           ? Colors.redAccent
-                          : AppTheme.cardDark,
+                          : theme.cardColor,
                   duration: const Duration(seconds: 2),
                 ),
               );
@@ -257,14 +257,14 @@ class DiceRollerDrawer extends ConsumerWidget {
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryGold,
-              foregroundColor: Colors.black,
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
           ),
           const SizedBox(height: 16),
-          const Divider(color: Color(0xFF4A4037)),
+          Divider(color: theme.dividerColor),
           const SizedBox(height: 8),
 
           // Roll History Log
@@ -283,16 +283,16 @@ class DiceRollerDrawer extends ConsumerWidget {
 
     if (isBottomSheet) {
       return Container(
-        decoration: const BoxDecoration(
-          color: AppTheme.parchmentDark,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: content,
       );
     }
 
     return Drawer(
-      backgroundColor: AppTheme.parchmentDark,
+      backgroundColor: theme.scaffoldBackgroundColor,
       width: 380,
       child: SafeArea(child: content),
     );

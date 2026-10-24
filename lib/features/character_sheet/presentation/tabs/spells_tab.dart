@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/models/scrivener_theme_tokens.dart';
 import '../../../compendium/presentation/compendium_search_dialog.dart';
 import '../../models/character_sheet_data.dart';
 import '../../providers/character_sheet_provider.dart';
@@ -42,6 +42,9 @@ class SpellsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+
     // Group spells by level (0 = Cantrips, 1 = 1st Level, etc.)
     final groupedSpells = <int, List<CharacterSpellItem>>{};
     for (final s in state.spells) {
@@ -56,22 +59,24 @@ class SpellsTab extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: AppTheme.cardDark,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF4A4037)),
+            color: theme.cardColor,
+            borderRadius: BorderRadius.circular(tokens.cardRadius),
+            border: Border.fromBorderSide(tokens.cardBorder),
           ),
           child: Row(
             children: [
               Expanded(
                 child: _buildStatTile(
+                  context,
                   'SPELL SAVE DC',
                   '${state.spellSaveDc}',
                   '8 + Prof + ${state.spellcastingAbility.toUpperCase()}',
                 ),
               ),
-              Container(width: 1, height: 40, color: const Color(0xFF4A4037)),
+              Container(width: 1, height: 40, color: theme.dividerColor),
               Expanded(
                 child: _buildStatTile(
+                  context,
                   'SPELL ATTACK',
                   '+${state.spellAttackBonus}',
                   'Prof + ${state.spellcastingAbility.toUpperCase()}',
@@ -86,22 +91,28 @@ class SpellsTab extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'KNOWN & PREPARED SPELLS',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.1,
-                color: AppTheme.primaryGold,
-              ),
+            Row(
+              children: [
+                Icon(tokens.iconography.spells, color: theme.colorScheme.primary, size: 16),
+                const SizedBox(width: 6),
+                Text(
+                  'KNOWN & PREPARED SPELLS',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.1,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ],
             ),
             ElevatedButton.icon(
               onPressed: () => _openAddSpellDialog(context),
               icon: const Icon(Icons.add, size: 16),
               label: const Text('ADD SPELL'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryGold,
-                foregroundColor: Colors.black,
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 visualDensity: VisualDensity.compact,
               ),
@@ -116,7 +127,7 @@ class SpellsTab extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 40),
               child: Column(
                 children: [
-                  Icon(Icons.auto_fix_high, size: 48, color: Colors.white.withAlpha(50)),
+                  Icon(tokens.iconography.spells, size: 48, color: theme.colorScheme.onSurface.withAlpha(50)),
                   const SizedBox(height: 12),
                   const Text(
                     'No spells in spellbook yet',
@@ -139,10 +150,10 @@ class SpellsTab extends StatelessWidget {
 
             return Card(
               margin: const EdgeInsets.only(bottom: 16),
-              color: AppTheme.cardDark,
+              color: theme.cardColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: const BorderSide(color: Color(0xFF4A4037)),
+                borderRadius: BorderRadius.circular(tokens.cardRadius),
+                side: BorderSide(color: theme.dividerColor),
               ),
               clipBehavior: Clip.antiAlias,
               child: Column(
@@ -151,16 +162,16 @@ class SpellsTab extends StatelessWidget {
                   // Section Header
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    decoration: const BoxDecoration(
-                      color: AppTheme.surfaceDark,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(tokens.cardRadius)),
                     ),
                     child: Text(
                       levelTitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
-                        color: AppTheme.primaryGold,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
                   ),
@@ -173,32 +184,33 @@ class SpellsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildStatTile(String label, String value, String subtitle) {
+  Widget _buildStatTile(BuildContext context, String label, String value, String subtitle) {
+    final theme = Theme.of(context);
     return Column(
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.8,
-            color: Colors.white70,
+            color: theme.colorScheme.onSurface.withAlpha(170),
           ),
         ),
         const SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: AppTheme.primaryGold,
+            color: theme.colorScheme.primary,
           ),
         ),
         Text(
           subtitle,
           style: TextStyle(
             fontSize: 10,
-            color: Colors.white.withAlpha(120),
+            color: theme.colorScheme.onSurface.withAlpha(120),
           ),
         ),
       ],
@@ -206,18 +218,19 @@ class SpellsTab extends StatelessWidget {
   }
 
   Widget _buildSpellTile(BuildContext context, CharacterSpellItem spell) {
+    final theme = Theme.of(context);
     return ExpansionTile(
       leading: spell.level > 0
           ? IconButton(
               icon: Icon(
                 spell.isPrepared ? Icons.star : Icons.star_border,
-                color: spell.isPrepared ? AppTheme.primaryGold : Colors.grey,
+                color: spell.isPrepared ? theme.colorScheme.primary : Colors.grey,
                 size: 22,
               ),
               tooltip: spell.isPrepared ? 'Prepared' : 'Unprepared',
               onPressed: () => notifier.toggleSpellPreparation(spell.id),
             )
-          : const Icon(Icons.bolt, color: AppTheme.primaryGold, size: 22),
+          : Icon(Icons.bolt, color: theme.colorScheme.primary, size: 22),
       title: Row(
         children: [
           Expanded(
@@ -227,8 +240,8 @@ class SpellsTab extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
                 color: (spell.level == 0 || spell.isPrepared)
-                    ? Colors.white
-                    : Colors.white.withAlpha(120),
+                    ? theme.colorScheme.onSurface
+                    : theme.colorScheme.onSurface.withAlpha(120),
               ),
             ),
           ),
@@ -246,13 +259,13 @@ class SpellsTab extends StatelessWidget {
       ),
       subtitle: Text(
         '${spell.school} • ${spell.castingTime} • ${spell.range}',
-        style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(140)),
+        style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withAlpha(140)),
       ),
       trailing: ElevatedButton(
         onPressed: () => notifier.castSpell(spell, context),
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.primaryGold,
-          foregroundColor: Colors.black,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           visualDensity: VisualDensity.compact,
         ),
@@ -266,12 +279,12 @@ class SpellsTab extends StatelessWidget {
             children: [
               Text(
                 'Components: ${spell.components} • Duration: ${spell.duration}',
-                style: const TextStyle(fontSize: 11, color: AppTheme.primaryGold),
+                style: TextStyle(fontSize: 11, color: theme.colorScheme.primary),
               ),
               const SizedBox(height: 4),
               Text(
                 spell.description,
-                style: TextStyle(fontSize: 12, height: 1.3, color: Colors.white.withAlpha(180)),
+                style: TextStyle(fontSize: 12, height: 1.3, color: theme.colorScheme.onSurface.withAlpha(180)),
               ),
               const SizedBox(height: 6),
               Align(

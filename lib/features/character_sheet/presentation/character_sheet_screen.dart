@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/models/scrivener_theme_tokens.dart';
+import '../../../core/theme/theme_provider.dart';
+import '../../../core/theme/theme_selector_dialog.dart';
 import '../../combat/presentation/combat_dashboard_screen.dart';
 import '../../combat/presentation/widgets/rest_dialog.dart';
 import '../../combat/providers/combat_session_provider.dart';
@@ -30,7 +33,9 @@ class CharacterSheetScreen extends ConsumerStatefulWidget {
   ConsumerState<CharacterSheetScreen> createState() => _CharacterSheetScreenState();
 }
 
-class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
+class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
   bool _isEditingName = false;
   late final TextEditingController _nameController;
   final FocusNode _nameFocusNode = FocusNode();
@@ -38,11 +43,20 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(
+      length: 7,
+      vsync: this,
+      initialIndex: widget.initialTabIndex,
+    );
+    _tabController.addListener(() {
+      if (mounted) setState(() {});
+    });
     _nameController = TextEditingController();
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     _nameController.dispose();
     _nameFocusNode.dispose();
     super.dispose();
@@ -91,23 +105,141 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveThemeMode = ref.watch(characterThemeModeProvider(widget.characterId));
+    final themeData = AppTheme.getThemeData(effectiveThemeMode);
+    final tokens = themeData.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.defaultTokens;
+    final icons = tokens.iconography;
+
     final sheetState = ref.watch(characterSheetProvider(widget.characterId));
     final sheetNotifier = ref.read(characterSheetProvider(widget.characterId).notifier);
     final combatState = ref.watch(combatSessionProvider(widget.characterId));
     final combatNotifier = ref.read(combatSessionProvider(widget.characterId).notifier);
 
     if (sheetState == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Character Sheet')),
-        body: const Center(
-          child: CircularProgressIndicator(color: AppTheme.primaryGold),
+      return Theme(
+        data: themeData,
+        child: Scaffold(
+          appBar: AppBar(title: const Text('Character Sheet')),
+          body: Center(
+            child: CircularProgressIndicator(color: themeData.colorScheme.primary),
+          ),
         ),
       );
     }
 
-    return DefaultTabController(
-      length: 7,
-      initialIndex: widget.initialTabIndex,
+    final pages = [
+      (title: 'Stats', icon: icons.tabStats),
+      (title: 'Skills', icon: icons.tabSkills),
+      (title: 'Combat', icon: icons.tabCombat),
+      (title: 'Spells', icon: icons.tabSpells),
+      (title: 'Features', icon: icons.tabFeatures),
+      (title: 'Gear', icon: icons.tabGear),
+      (title: 'Bio & Notes', icon: icons.tabBio),
+    ];
+
+    PreferredSizeWidget bottomNav;
+    if (tokens.navigationStyle == CharacterNavigationStyle.headerDropdown) {
+      bottomNav = PreferredSize(
+        preferredSize: const Size.fromHeight(48),
+        child: Container(
+          height: 48,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: themeData.colorScheme.surface,
+            border: Border(
+              bottom: BorderSide(color: themeData.dividerColor.withAlpha(80)),
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                pages[_tabController.index].icon,
+                size: 20,
+                color: themeData.colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              DropdownButtonHideUnderline(
+                child: DropdownButton<int>(
+                  value: _tabController.index,
+                  dropdownColor: themeData.colorScheme.surface,
+                  icon: Icon(Icons.arrow_drop_down, color: themeData.colorScheme.primary),
+                  style: TextStyle(
+                    color: themeData.colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                  onChanged: (newIdx) {
+                    if (newIdx != null) {
+                      _tabController.animateTo(newIdx);
+                    }
+                  },
+                  items: List.generate(pages.length, (idx) {
+                    final p = pages[idx];
+                    Widget label;
+                    switch (tokens.tabContentStyle) {
+                      case CharacterTabContentStyle.iconsAndText:
+                      case CharacterTabContentStyle.iconsOnly:
+                        label = Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              p.icon,
+                              size: 18,
+                              color: idx == _tabController.index
+                                  ? themeData.colorScheme.primary
+                                  : themeData.colorScheme.onSurface.withAlpha(160),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(p.title),
+                          ],
+                        );
+                        break;
+                      case CharacterTabContentStyle.textOnly:
+                        label = Text(p.title);
+                        break;
+                    }
+                    return DropdownMenuItem<int>(
+                      value: idx,
+                      child: label,
+                    );
+                  }),
+                ),
+              ),
+              const Spacer(),
+              Text(
+                'Page ${_tabController.index + 1} of ${pages.length}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: themeData.colorScheme.onSurface.withAlpha(140),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      bottomNav = TabBar(
+        controller: _tabController,
+        isScrollable: true,
+        tabAlignment: TabAlignment.start,
+        indicatorColor: themeData.colorScheme.primary,
+        labelColor: themeData.colorScheme.primary,
+        unselectedLabelColor: themeData.colorScheme.onSurface.withAlpha(140),
+        tabs: pages.map((page) {
+          switch (tokens.tabContentStyle) {
+            case CharacterTabContentStyle.iconsAndText:
+              return Tab(icon: Icon(page.icon, size: 18), text: page.title);
+            case CharacterTabContentStyle.iconsOnly:
+              return Tab(icon: Icon(page.icon, size: 20));
+            case CharacterTabContentStyle.textOnly:
+              return Tab(text: page.title);
+          }
+        }).toList(),
+      );
+    }
+
+    return Theme(
+      data: themeData,
       child: Scaffold(
         appBar: AppBar(
           title: Column(
@@ -121,10 +253,10 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
                     Flexible(
                       child: Text(
                         sheetState.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
-                          color: AppTheme.primaryGold,
+                          color: themeData.colorScheme.primary,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -133,7 +265,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
                     IconButton(
                       icon: const Icon(Icons.edit_outlined, size: 18),
                       tooltip: 'Edit character name',
-                      color: AppTheme.primaryGold.withAlpha(220),
+                      color: themeData.colorScheme.primary.withAlpha(220),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
                       onPressed: () => _startEditingName(sheetState.name),
@@ -150,24 +282,24 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
                         child: TextField(
                           controller: _nameController,
                           focusNode: _nameFocusNode,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
-                            color: AppTheme.primaryGold,
+                            color: themeData.colorScheme.primary,
                           ),
-                          cursorColor: AppTheme.primaryGold,
+                          cursorColor: themeData.colorScheme.primary,
                           decoration: InputDecoration(
                             isDense: true,
                             contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                             filled: true,
-                            fillColor: AppTheme.surfaceDark,
+                            fillColor: themeData.colorScheme.surface,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(6),
-                              borderSide: const BorderSide(color: AppTheme.primaryGold),
+                              borderSide: BorderSide(color: themeData.colorScheme.primary),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(6),
-                              borderSide: const BorderSide(color: AppTheme.primaryGold, width: 1.5),
+                              borderSide: BorderSide(color: themeData.colorScheme.primary, width: 1.5),
                             ),
                           ),
                           onSubmitted: (val) => _saveName(val, sheetNotifier),
@@ -197,16 +329,32 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
                 'Level ${sheetState.level} ${sheetState.className} (${sheetState.raceName})',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.white.withAlpha(160),
+                  color: themeData.colorScheme.onSurface.withAlpha(160),
                 ),
               ),
             ],
           ),
           actions: [
             IconButton(
+              icon: Icon(icons.themeSelector),
+              tooltip: 'Character Theme (${effectiveThemeMode.displayName})',
+              color: themeData.colorScheme.primary,
+              onPressed: () {
+                ThemeSelectorDialog.show(
+                  context,
+                  title: 'THEME: ${sheetState.name.toUpperCase()}',
+                  currentSelectedMode: sheetState.customTheme,
+                  isCharacterLevel: true,
+                  onThemeSelected: (mode) {
+                    sheetNotifier.setTheme(mode);
+                  },
+                );
+              },
+            ),
+            IconButton(
               icon: const Icon(Icons.file_download_outlined),
               tooltip: 'Export Character (JSON)',
-              color: AppTheme.primaryGold,
+              color: themeData.colorScheme.primary,
               onPressed: () {
                 ExportCharacterDialog.show(
                   context,
@@ -216,9 +364,9 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.casino_outlined),
+              icon: Icon(icons.diceAction),
               tooltip: 'Dice Roller',
-              color: AppTheme.primaryGold,
+              color: themeData.colorScheme.primary,
               onPressed: () => FloatingDiceFab.openDiceRoller(context),
             ),
             if (combatState != null)
@@ -226,35 +374,21 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                 child: ElevatedButton.icon(
                   onPressed: () => _showRestDialog(combatState, combatNotifier),
-                  icon: const Icon(Icons.hotel_outlined, size: 16),
+                  icon: Icon(icons.restAction, size: 16),
                   label: const Text('REST'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.surfaceDark,
-                    foregroundColor: AppTheme.primaryGold,
-                    side: const BorderSide(color: AppTheme.primaryGold, width: 1),
+                    backgroundColor: themeData.colorScheme.surface,
+                    foregroundColor: themeData.colorScheme.primary,
+                    side: BorderSide(color: themeData.colorScheme.primary, width: 1),
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                   ),
                 ),
               ),
           ],
-          bottom: const TabBar(
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            indicatorColor: AppTheme.primaryGold,
-            labelColor: AppTheme.primaryGold,
-            unselectedLabelColor: Colors.grey,
-            tabs: [
-              Tab(icon: Icon(Icons.analytics_outlined, size: 18), text: 'Stats'),
-              Tab(icon: Icon(Icons.psychology_outlined, size: 18), text: 'Skills'),
-              Tab(icon: Icon(Icons.sports_martial_arts, size: 18), text: 'Combat'),
-              Tab(icon: Icon(Icons.auto_awesome, size: 18), text: 'Spells'),
-              Tab(icon: Icon(Icons.shield_outlined, size: 18), text: 'Features'),
-              Tab(icon: Icon(Icons.inventory_2_outlined, size: 18), text: 'Gear'),
-              Tab(icon: Icon(Icons.history_edu, size: 18), text: 'Bio & Notes'),
-            ],
-          ),
+          bottom: bottomNav,
         ),
         body: TabBarView(
+          controller: _tabController,
           children: [
             StatsTab(state: sheetState, notifier: sheetNotifier),
             SkillsTab(state: sheetState, notifier: sheetNotifier),

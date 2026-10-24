@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
 import '../../providers/character_sheet_provider.dart';
 
 class LevelUpWizardDialog extends StatefulWidget {
@@ -19,6 +18,9 @@ class LevelUpWizardDialog extends StatefulWidget {
 }
 
 class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
+  ThemeData get _theme => Theme.of(context);
+  ColorScheme get _colors => _theme.colorScheme;
+
   int _currentStep = 0; // 0: HP Gain, 1: Improvements, 2: Review
 
   // Hit Die & HP Gain State
@@ -117,11 +119,11 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: AppTheme.cardDark,
+      backgroundColor: _theme.cardColor,
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFF4A4037)),
+        side: BorderSide(color: _theme.dividerColor),
       ),
       child: SizedBox(
         width: 520,
@@ -130,11 +132,11 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
           children: [
             // Header
             _buildDialogHeader(),
-            const Divider(height: 1, color: Color(0xFF4A4037)),
+            Divider(height: 1, color: _theme.dividerColor),
 
             // Step Progress Indicator
             _buildStepIndicator(),
-            const Divider(height: 1, color: Color(0xFF4A4037)),
+            Divider(height: 1, color: _theme.dividerColor),
 
             // Step Content
             Expanded(
@@ -144,7 +146,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
               ),
             ),
 
-            const Divider(height: 1, color: Color(0xFF4A4037)),
+            Divider(height: 1, color: _theme.dividerColor),
             // Bottom Action Bar
             _buildBottomActionBar(),
           ],
@@ -161,31 +163,31 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppTheme.surfaceDark,
+              color: _colors.surface,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppTheme.primaryGold),
+              border: Border.all(color: _colors.primary),
             ),
-            child: const Icon(Icons.auto_awesome, color: AppTheme.primaryGold, size: 22),
+            child: Icon(Icons.auto_awesome, color: _colors.primary, size: 22),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'LEVEL UP WIZARD',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.0,
-                    color: AppTheme.primaryGold,
+                    color: _colors.primary,
                   ),
                 ),
                 Text(
                   'Advance ${widget.state.name} from Level ${widget.state.level} to $_targetLevel',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.white.withAlpha(180),
+                    color: _colors.onSurface.withAlpha(180),
                   ),
                 ),
               ],
@@ -203,7 +205,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
   Widget _buildStepIndicator() {
     final steps = ['1. Hit Points', '2. Improvements', '3. Confirm'];
     return Container(
-      color: AppTheme.surfaceDark,
+      color: _colors.surface,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -219,10 +221,10 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isCurrent
-                      ? AppTheme.primaryGold
+                      ? _colors.primary
                       : isPast
                           ? Colors.green
-                          : AppTheme.cardDark,
+                          : _theme.cardColor,
                   border: Border.all(
                     color: isCurrent || isPast
                         ? Colors.transparent
@@ -236,7 +238,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: isCurrent ? Colors.black : Colors.grey,
+                          color: isCurrent ? _colors.onPrimary : Colors.grey,
                         ),
                       ),
               ),
@@ -247,9 +249,9 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                   fontSize: 11,
                   fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
                   color: isCurrent
-                      ? AppTheme.primaryGold
+                      ? _colors.primary
                       : isPast
-                          ? Colors.white
+                          ? _colors.onSurface
                           : Colors.grey,
                 ),
               ),
@@ -288,7 +290,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: AppTheme.surfaceDark,
+            color: _colors.surface,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: const Color(0xFF4A4037)),
           ),
@@ -318,16 +320,16 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppTheme.cardDark,
+                  color: _theme.cardColor,
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: AppTheme.primaryGold),
+                  border: Border.all(color: _colors.primary),
                 ),
                 child: Text(
                   '+$hpGain HP',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    color: AppTheme.primaryGold,
+                    color: _colors.primary,
                   ),
                 ),
               ),
@@ -336,13 +338,13 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
         ),
         const SizedBox(height: 20),
 
-        const Text(
+        Text(
           'CHOOSE HP INCREASE METHOD',
           style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.0,
-            color: AppTheme.primaryGold,
+            color: _colors.primary,
           ),
         ),
         const SizedBox(height: 10),
@@ -355,11 +357,11 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: !_useRoll
-                  ? AppTheme.primaryGold.withAlpha(25)
-                  : AppTheme.surfaceDark,
+                  ? _colors.primary.withAlpha(25)
+                  : _colors.surface,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: !_useRoll ? AppTheme.primaryGold : const Color(0xFF4A4037),
+                color: !_useRoll ? _colors.primary : const Color(0xFF4A4037),
                 width: !_useRoll ? 1.5 : 1,
               ),
             ),
@@ -367,7 +369,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
               children: [
                 Icon(
                   !_useRoll ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                  color: !_useRoll ? AppTheme.primaryGold : Colors.grey,
+                  color: !_useRoll ? _colors.primary : Colors.grey,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
@@ -395,7 +397,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    color: !_useRoll ? AppTheme.primaryGold : Colors.white,
+                    color: !_useRoll ? _colors.primary : Colors.white,
                   ),
                 ),
               ],
@@ -415,11 +417,11 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: _useRoll
-                  ? AppTheme.primaryGold.withAlpha(25)
-                  : AppTheme.surfaceDark,
+                  ? _colors.primary.withAlpha(25)
+                  : _colors.surface,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: _useRoll ? AppTheme.primaryGold : const Color(0xFF4A4037),
+                color: _useRoll ? _colors.primary : const Color(0xFF4A4037),
                 width: _useRoll ? 1.5 : 1,
               ),
             ),
@@ -432,7 +434,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                       _useRoll
                           ? Icons.radio_button_checked
                           : Icons.radio_button_unchecked,
-                      color: _useRoll ? AppTheme.primaryGold : Colors.grey,
+                      color: _useRoll ? _colors.primary : Colors.grey,
                       size: 20,
                     ),
                     const SizedBox(width: 12),
@@ -458,10 +460,10 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                     if (_useRoll && _rolledValue != null)
                       Text(
                         '+$hpGain',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: AppTheme.primaryGold,
+                          color: _colors.primary,
                         ),
                       ),
                   ],
@@ -478,7 +480,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                             ? 'ROLL 1d$_hitDie'
                             : 'RE-ROLL (Rolled $_rolledValue)'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryGold,
+                          backgroundColor: _colors.primary,
                           foregroundColor: Colors.black,
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         ),
@@ -490,9 +492,9 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                     Center(
                       child: Text(
                         'Die: $_rolledValue + CON (${_conMod >= 0 ? '+$_conMod' : '$_conMod'}) = $hpGain HP',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppTheme.primaryGold,
+                          color: _colors.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -573,9 +575,9 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
             style: ButtonStyle(
               backgroundColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
-                  return AppTheme.primaryGold;
+                  return _colors.primary;
                 }
-                return AppTheme.surfaceDark;
+                return _colors.surface;
               }),
               foregroundColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
@@ -597,7 +599,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: AppTheme.surfaceDark,
+                color: _colors.surface,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: const Color(0xFF4A4037)),
               ),
@@ -605,7 +607,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                 child: DropdownButton<String>(
                   value: _singleAbility,
                   isExpanded: true,
-                  dropdownColor: AppTheme.cardDark,
+                  dropdownColor: _theme.cardColor,
                   items: abilities.map((k) {
                     final cur = widget.state.getAbilityScore(k);
                     return DropdownMenuItem(
@@ -637,7 +639,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: AppTheme.surfaceDark,
+                      color: _colors.surface,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: const Color(0xFF4A4037)),
                     ),
@@ -645,7 +647,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                       child: DropdownButton<String>(
                         value: _twoAbilityA,
                         isExpanded: true,
-                        dropdownColor: AppTheme.cardDark,
+                        dropdownColor: _theme.cardColor,
                         items: abilities.map((k) {
                           final cur = widget.state.getAbilityScore(k);
                           return DropdownMenuItem(
@@ -668,7 +670,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      color: AppTheme.surfaceDark,
+                      color: _colors.surface,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: const Color(0xFF4A4037)),
                     ),
@@ -676,7 +678,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                       child: DropdownButton<String>(
                         value: _twoAbilityB,
                         isExpanded: true,
-                        dropdownColor: AppTheme.cardDark,
+                        dropdownColor: _theme.cardColor,
                         items: abilities.map((k) {
                           final cur = widget.state.getAbilityScore(k);
                           return DropdownMenuItem(
@@ -702,7 +704,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.surfaceDark,
+                color: _colors.surface,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Text(
@@ -715,13 +717,13 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
         ],
 
         // Milestone Perks Banner
-        const Text(
+        Text(
           'LEVEL MILESTONE HIGHLIGHTS',
           style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.bold,
             letterSpacing: 1.0,
-            color: AppTheme.primaryGold,
+            color: _colors.primary,
           ),
         ),
         const SizedBox(height: 8),
@@ -729,7 +731,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: AppTheme.surfaceDark,
+            color: _colors.surface,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: const Color(0xFF4A4037)),
           ),
@@ -738,7 +740,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.shield_outlined, color: AppTheme.primaryGold, size: 18),
+                  Icon(Icons.shield_outlined, color: _colors.primary, size: 18),
                   const SizedBox(width: 8),
                   Text(
                     'Level $_targetLevel ${widget.state.className}',
@@ -817,19 +819,19 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppTheme.surfaceDark,
+            color: _colors.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppTheme.primaryGold),
+            border: Border.all(color: _colors.primary),
           ),
           child: Column(
             children: [
-              const Text(
+              Text(
                 'ADVANCEMENT SUMMARY',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
-                  color: AppTheme.primaryGold,
+                  color: _colors.primary,
                 ),
               ),
               const SizedBox(height: 14),
@@ -873,7 +875,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                   'Base Scores',
                   increases.entries.map((e) => '+${e.value} ${e.key.toUpperCase()}').join(', '),
                   Icons.fitness_center,
-                  highlightColor: AppTheme.primaryGold,
+                  highlightColor: _colors.primary,
                 ),
               ],
             ],
@@ -904,7 +906,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.bold,
-            color: highlightColor ?? AppTheme.primaryGold,
+            color: highlightColor ?? _colors.primary,
           ),
         ),
       ],
@@ -936,7 +938,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
             ElevatedButton(
               onPressed: () => setState(() => _currentStep++),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryGold,
+                backgroundColor: _colors.primary,
                 foregroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               ),
@@ -951,7 +953,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryGold,
+                backgroundColor: _colors.primary,
                 foregroundColor: Colors.black,
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               ),

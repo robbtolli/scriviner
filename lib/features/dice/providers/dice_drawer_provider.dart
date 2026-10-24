@@ -161,6 +161,22 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
     );
   }
 
+  void resetDrawer() => clearDice();
+
+  void setDiceCount(int sides, int count) {
+    final updated = Map<int, int>.from(state.diceCounts);
+    if (count <= 0) {
+      updated.remove(sides);
+    } else {
+      updated[sides] = count;
+    }
+    state = state.copyWith(diceCounts: updated);
+  }
+
+  void setRollTitle(String title) {
+    state = state.copyWith(contextTitle: title);
+  }
+
   void setFlatModifier(int mod) {
     state = state.copyWith(flatModifier: mod);
   }

@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../../../core/dice/dice_roller.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../providers/combat_session_provider.dart';
 
 class RestDialog extends StatefulWidget {
@@ -95,11 +94,13 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Dialog(
-      backgroundColor: AppTheme.surfaceDark,
+      backgroundColor: theme.colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: AppTheme.primaryGold, width: 1.5),
+        side: BorderSide(color: theme.colorScheme.primary, width: 1.5),
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 440, maxHeight: 560),
@@ -109,9 +110,9 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
             children: [
               TabBar(
                 controller: _tabController,
-                labelColor: AppTheme.primaryGold,
-                unselectedLabelColor: Colors.grey,
-                indicatorColor: AppTheme.primaryGold,
+                labelColor: theme.colorScheme.primary,
+                unselectedLabelColor: theme.colorScheme.onSurface.withAlpha(120),
+                indicatorColor: theme.colorScheme.primary,
                 tabs: const [
                   Tab(text: 'Short Rest (1 hr)'),
                   Tab(text: 'Long Rest (8 hrs)'),
@@ -122,8 +123,8 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    _buildShortRestTab(),
-                    _buildLongRestTab(),
+                    _buildShortRestTab(theme),
+                    _buildLongRestTab(theme),
                   ],
                 ),
               ),
@@ -134,7 +135,7 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildShortRestTab() {
+  Widget _buildShortRestTab(ThemeData theme) {
     final canRoll = _remainingHitDice > 0 && _projectedHp < widget.state.maxHp;
 
     return SingleChildScrollView(
@@ -153,7 +154,7 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
               const SizedBox(width: 8),
               Text(
                 widget.state.hitDiceDie,
-                style: const TextStyle(color: AppTheme.primaryGold, fontWeight: FontWeight.bold),
+                style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -162,17 +163,17 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
             value: widget.state.hitDiceTotal > 0
                 ? _remainingHitDice / widget.state.hitDiceTotal
                 : 0.0,
-            backgroundColor: Colors.white12,
-            valueColor: const AlwaysStoppedAnimation(AppTheme.primaryGold),
+            backgroundColor: theme.colorScheme.onSurface.withAlpha(20),
+            valueColor: AlwaysStoppedAnimation(theme.colorScheme.primary),
           ),
           const SizedBox(height: 16),
           // Projected HP Box
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppTheme.cardDark,
+              color: theme.cardColor,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFF4A4037)),
+              border: Border.all(color: theme.dividerColor),
             ),
             child: Row(
               children: [
@@ -181,7 +182,7 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
                   '$_projectedHp / ${widget.state.maxHp} HP',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: _healedThisRest > 0 ? Colors.greenAccent : Colors.white,
+                    color: _healedThisRest > 0 ? Colors.greenAccent : theme.colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -210,8 +211,8 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
             icon: const Icon(Icons.casino_outlined, size: 18),
             label: Text('ROLL HIT DIE (${widget.state.hitDiceDie})'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryGold,
-              foregroundColor: Colors.black,
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
               padding: const EdgeInsets.symmetric(vertical: 12),
             ),
           ),
@@ -219,17 +220,17 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(10),
+              color: theme.colorScheme.onSurface.withAlpha(10),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
-              children: const [
-                Icon(Icons.autorenew, size: 16, color: AppTheme.primaryGold),
-                SizedBox(width: 8),
+              children: [
+                Icon(Icons.autorenew, size: 16, color: theme.colorScheme.primary),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Recharges: Second Wind & Pact Spell Slots',
-                    style: TextStyle(fontSize: 11, color: Colors.white70),
+                    style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withAlpha(170)),
                   ),
                 ),
               ],
@@ -262,30 +263,30 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildLongRestTab() {
+  Widget _buildLongRestTab(ThemeData theme) {
     final halfDice = max(1, (widget.state.hitDiceTotal / 2).floor());
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Icon(Icons.nightlight_round, size: 48, color: AppTheme.primaryGold),
+        Icon(Icons.nightlight_round, size: 48, color: theme.colorScheme.primary),
         const SizedBox(height: 12),
-        const Text(
+        Text(
           'Take an 8-Hour Long Rest',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: AppTheme.primaryGold,
+            color: theme.colorScheme.primary,
           ),
         ),
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: AppTheme.cardDark,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFF4A4037)),
+            border: Border.all(color: theme.dividerColor),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -312,8 +313,8 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
               child: ElevatedButton(
                 onPressed: _finishLongRest,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryGold,
-                  foregroundColor: Colors.black,
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 child: const Text('CONFIRM REST'),

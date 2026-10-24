@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
 import '../../providers/combat_session_provider.dart';
 import 'damage_heal_dialog.dart';
 
@@ -16,6 +15,7 @@ class HpTrackerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final hpPercent = state.maxHp > 0
         ? (state.currentHp / state.maxHp).clamp(0.0, 1.0)
         : 0.0;
@@ -29,10 +29,10 @@ class HpTrackerCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppTheme.cardDark,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: state.currentHp == 0 ? Colors.redAccent : AppTheme.primaryGold.withAlpha(120),
+          color: state.currentHp == 0 ? Colors.redAccent : theme.colorScheme.primary.withAlpha(120),
           width: state.currentHp == 0 ? 2 : 1.5,
         ),
         boxShadow: [
@@ -50,13 +50,13 @@ class HpTrackerCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'HIT POINTS',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
-                  color: AppTheme.primaryGold,
+                  color: theme.colorScheme.primary,
                 ),
               ),
               if (state.tempHp > 0)
@@ -105,7 +105,7 @@ class HpTrackerCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white.withAlpha(150),
+                  color: theme.colorScheme.onSurface.withAlpha(150),
                 ),
               ),
             ],
@@ -117,7 +117,7 @@ class HpTrackerCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: hpPercent,
               minHeight: 12,
-              backgroundColor: Colors.white.withAlpha(20),
+              backgroundColor: theme.colorScheme.onSurface.withAlpha(20),
               valueColor: AlwaysStoppedAnimation<Color>(hpColor),
             ),
           ),
@@ -149,9 +149,9 @@ class HpTrackerCard extends StatelessWidget {
             icon: const Icon(Icons.calculate_outlined, size: 18),
             label: const Text('CUSTOM DAMAGE / HEAL'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.surfaceDark,
-              foregroundColor: AppTheme.primaryGold,
-              side: const BorderSide(color: AppTheme.primaryGold, width: 1),
+              backgroundColor: theme.colorScheme.surface,
+              foregroundColor: theme.colorScheme.primary,
+              side: BorderSide(color: theme.colorScheme.primary, width: 1),
               padding: const EdgeInsets.symmetric(vertical: 12),
             ),
           ),

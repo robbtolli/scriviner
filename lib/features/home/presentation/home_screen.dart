@@ -5,7 +5,6 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/database/app_database.dart';
 import '../../../../core/database/database_provider.dart';
-import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/theme_selector_dialog.dart';
 import '../../character_sheet/presentation/character_sheet_screen.dart';
 import '../../character_wizard/presentation/character_wizard_screen.dart';
@@ -135,6 +134,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final charactersAsync = ref.watch(filteredCharactersProvider);
     final allRecentAsync = ref.watch(recentCharactersStreamProvider);
 
@@ -147,21 +147,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 decoration: InputDecoration(
                   hintText: 'Search characters by name or system...',
                   border: InputBorder.none,
-                  hintStyle: TextStyle(color: Colors.white.withAlpha(120)),
+                  hintStyle: TextStyle(color: theme.colorScheme.onSurface.withAlpha(120)),
                 ),
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 onChanged: (val) {
                   ref.read(characterSearchQueryProvider.notifier).setQuery(val);
                 },
               )
             : Row(
                 children: [
-                  const Icon(Icons.auto_stories, color: AppTheme.primaryGold),
+                  Icon(Icons.auto_stories, color: theme.colorScheme.primary),
                   const SizedBox(width: 10),
                   Text(
                     'SCRIVENER',
                     style: TextStyle(
-                      color: AppTheme.primaryGold,
+                      color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
                     ),
@@ -216,7 +216,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ],
       ),
       body: charactersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator(color: AppTheme.primaryGold)),
+        loading: () => Center(child: CircularProgressIndicator(color: theme.colorScheme.primary)),
         error: (err, stack) => Center(child: Text('Error loading characters: $err')),
         data: (characters) {
           final totalCount = allRecentAsync.value?.length ?? 0;
@@ -288,15 +288,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               style: Theme.of(context).textTheme.labelLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.2,
-                                    color: AppTheme.primaryGold,
+                                    color: theme.colorScheme.primary,
                                   ),
                             ),
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: AppTheme.cardDark,
+                                color: theme.colorScheme.surface,
                                 borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: theme.dividerColor.withAlpha(60)),
                               ),
                               child: Text(
                                 '${characters.length}',
@@ -342,8 +343,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: AppTheme.primaryGold,
-        foregroundColor: Colors.black,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         onPressed: () {
           showDialog(
             context: context,

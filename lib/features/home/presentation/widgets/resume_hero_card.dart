@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../../../../core/database/app_database.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/models/scrivener_theme_tokens.dart';
 
 class ResumeHeroCard extends StatelessWidget {
   final CharactersTableData character;
@@ -16,6 +16,9 @@ class ResumeHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tokens = context.tokens;
+
     Map<String, dynamic> props = {};
     try {
       props = jsonDecode(character.rawPropertiesJson) as Map<String, dynamic>;
@@ -34,25 +37,23 @@ class ResumeHeroCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF382D20), Color(0xFF261F17)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.primaryGold, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(80),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        gradient: tokens.cardGradient,
+        borderRadius: BorderRadius.circular(tokens.cardRadius),
+        border: Border.fromBorderSide(tokens.cardBorder),
+        boxShadow: tokens.cardElevation > 0
+            ? [
+                BoxShadow(
+                  color: Colors.black.withAlpha(60),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(tokens.cardRadius),
           onTap: onResume,
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -61,12 +62,12 @@ class ResumeHeroCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.flash_on, color: AppTheme.primaryGold, size: 20),
-                    const SizedBox(width: 6),
+                    Icon(tokens.iconography.diceAction, color: theme.colorScheme.primary, size: 20),
+                    const SizedBox(width: 8),
                     Text(
                       'RESUME SESSION',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: AppTheme.primaryGold,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                            color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.2,
                           ),
@@ -75,7 +76,7 @@ class ResumeHeroCard extends StatelessWidget {
                     Text(
                       timeAgo,
                       style: TextStyle(
-                        color: Colors.white.withAlpha(160),
+                        color: theme.colorScheme.onSurface.withAlpha(160),
                         fontSize: 12,
                       ),
                     ),
@@ -87,15 +88,15 @@ class ResumeHeroCard extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 30,
-                      backgroundColor: AppTheme.cardDark,
+                      backgroundColor: theme.colorScheme.surface,
                       child: Text(
                         character.name.isNotEmpty
                             ? character.name[0].toUpperCase()
                             : '?',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryGold,
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ),
@@ -106,10 +107,10 @@ class ResumeHeroCard extends StatelessWidget {
                         children: [
                           Text(
                             character.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                              color: theme.colorScheme.onSurface,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -119,7 +120,7 @@ class ResumeHeroCard extends StatelessWidget {
                             'Level $level $race $className • ${character.systemId.toUpperCase()}',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.white.withAlpha(200),
+                              color: theme.colorScheme.onSurface.withAlpha(190),
                             ),
                           ),
                         ],
@@ -130,17 +131,29 @@ class ResumeHeroCard extends StatelessWidget {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    _buildStatPill('HP', '$currentHp / $maxHp', Icons.favorite, Colors.redAccent),
+                    _buildStatPill(
+                      context,
+                      'HP',
+                      '$currentHp / $maxHp',
+                      Icons.favorite,
+                      Colors.redAccent,
+                    ),
                     const SizedBox(width: 10),
-                    _buildStatPill('AC', '$ac', Icons.shield, Colors.blueAccent),
+                    _buildStatPill(
+                      context,
+                      'AC',
+                      '$ac',
+                      tokens.iconography.tabCombat,
+                      theme.colorScheme.primary,
+                    ),
                     const Spacer(),
                     ElevatedButton.icon(
                       onPressed: onResume,
                       icon: const Icon(Icons.play_arrow, size: 18),
                       label: const Text('CONTINUE'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryGold,
-                        foregroundColor: Colors.black,
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
                     ),
@@ -154,13 +167,21 @@ class ResumeHeroCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatPill(String label, String value, IconData icon, Color iconColor) {
+  Widget _buildStatPill(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+    Color iconColor,
+  ) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.black.withAlpha(100),
+        color: theme.colorScheme.surface.withAlpha(180),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white.withAlpha(30)),
+        border: Border.all(color: theme.dividerColor.withAlpha(80)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -171,15 +192,15 @@ class ResumeHeroCard extends StatelessWidget {
             '$label: ',
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white.withAlpha(180),
+              color: theme.colorScheme.onSurface.withAlpha(180),
               fontWeight: FontWeight.w600,
             ),
           ),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: Colors.white,
+              color: theme.colorScheme.onSurface,
               fontWeight: FontWeight.bold,
             ),
           ),

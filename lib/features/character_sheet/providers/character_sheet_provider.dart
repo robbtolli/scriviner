@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/database/app_database.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../character_wizard/models/srd_starter_data.dart';
 import '../../combat/providers/combat_session_provider.dart';
 import '../models/character_sheet_data.dart';
@@ -29,6 +30,7 @@ class CharacterSheetState {
   final CharacterCurrency currency;
   final CharacterBioNotes bioNotes;
   final List<InventoryTableData> inventoryItems;
+  final AppThemeMode? customTheme;
 
   const CharacterSheetState({
     required this.characterId,
@@ -57,6 +59,7 @@ class CharacterSheetState {
     this.currency = const CharacterCurrency(),
     this.bioNotes = const CharacterBioNotes(),
     this.inventoryItems = const [],
+    this.customTheme,
   });
 
   int get spellSaveDc => 8 + proficiencyBonus + spellcastingMod;
@@ -109,6 +112,8 @@ class CharacterSheetState {
     CharacterCurrency? currency,
     CharacterBioNotes? bioNotes,
     List<InventoryTableData>? inventoryItems,
+    AppThemeMode? customTheme,
+    bool clearTheme = false,
   }) {
     final newLevel = level ?? this.level;
     final newProf = proficiencyBonus ?? (2 + ((newLevel - 1) / 4).floor());
@@ -133,6 +138,7 @@ class CharacterSheetState {
       currency: currency ?? this.currency,
       bioNotes: bioNotes ?? this.bioNotes,
       inventoryItems: inventoryItems ?? this.inventoryItems,
+      customTheme: clearTheme ? null : (customTheme ?? this.customTheme),
     );
   }
 }
@@ -254,22 +260,34 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
       }
     }
 
-    // Load Features (handles both Map objects and raw String feature names)
-    final rawFeatures = raw['featuresList'] as List? ?? raw['features'] as List? ?? [];
+    // Load Features (handles List of objects/strings, Map of flags, or null)
     final features = <CharacterFeatureItem>[];
-    for (final f in rawFeatures) {
-      if (f is Map<String, dynamic>) {
-        features.add(CharacterFeatureItem.fromJson(f));
-      } else if (f is Map) {
-        features.add(CharacterFeatureItem.fromJson(Map<String, dynamic>.from(f)));
-      } else if (f is String) {
-        features.add(CharacterFeatureItem(
-          id: 'feat_${f.toLowerCase().replaceAll(' ', '_')}',
-          name: f,
-          source: className,
-          description: '$f granted by $className',
-        ));
+    final rawFeatures = raw['featuresList'] ?? raw['features'];
+    if (rawFeatures is List) {
+      for (final f in rawFeatures) {
+        if (f is Map<String, dynamic>) {
+          features.add(CharacterFeatureItem.fromJson(f));
+        } else if (f is Map) {
+          features.add(CharacterFeatureItem.fromJson(Map<String, dynamic>.from(f)));
+        } else if (f is String) {
+          features.add(CharacterFeatureItem(
+            id: 'feat_${f.toLowerCase().replaceAll(' ', '_')}',
+            name: f,
+            source: className,
+            description: '$f granted by $className',
+          ));
+        }
       }
+    } else if (rawFeatures is Map) {
+      rawFeatures.forEach((key, val) {
+        final featName = key.toString();
+        features.add(CharacterFeatureItem(
+          id: 'feat_${featName.toLowerCase().replaceAll(' ', '_')}',
+          name: featName,
+          source: className,
+          description: '$featName granted by $className',
+        ));
+      });
     }
 
     // Load Currency
@@ -286,6 +304,17 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
         .get();
 
     final ac = (raw['armorClass'] as num?)?.toInt() ?? 10;
+
+    AppThemeMode? customTheme;
+    final themeStr = raw['theme'] as String?;
+    if (themeStr != null) {
+      for (final mode in AppThemeMode.values) {
+        if (mode.name == themeStr) {
+          customTheme = mode;
+          break;
+        }
+      }
+    }
 
     state = CharacterSheetState(
       characterId: characterId,
@@ -307,7 +336,22 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
       currency: currency,
       bioNotes: bioNotes,
       inventoryItems: inventoryItems,
+      customTheme: customTheme,
     );
+  }
+
+  Future<void> refresh() async {
+    await _loadFromDatabase();
+  }
+
+  Future<void> setTheme(AppThemeMode? mode) async {
+    if (state == null) return;
+    if (mode == null) {
+      state = state!.copyWith(clearTheme: true);
+    } else {
+      state = state!.copyWith(customTheme: mode);
+    }
+    await _persistRawJson();
   }
 
   Future<void> updateName(String newName) async {
@@ -698,6 +742,11 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     raw['skillProficiencies'] = state!.skillProficiencies;
     raw['level'] = state!.level;
     raw['proficiencyBonus'] = state!.proficiencyBonus;
+    if (state!.customTheme != null) {
+      raw['theme'] = state!.customTheme!.name;
+    } else {
+      raw.remove('theme');
+    }
 
     final hd = Map<String, dynamic>.from(raw['hitDice'] as Map? ?? {});
     hd['total'] = state!.level;

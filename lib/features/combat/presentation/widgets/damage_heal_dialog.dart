@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
-
 class DamageHealDialog extends StatefulWidget {
   final void Function(int amount) onDamage;
   final void Function(int amount) onHeal;
@@ -31,11 +29,13 @@ class _DamageHealDialogState extends State<DamageHealDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Dialog(
-      backgroundColor: AppTheme.surfaceDark,
+      backgroundColor: theme.colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: AppTheme.primaryGold, width: 1.5),
+        side: BorderSide(color: theme.colorScheme.primary, width: 1.5),
       ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 380),
@@ -47,8 +47,8 @@ class _DamageHealDialogState extends State<DamageHealDialog> {
             children: [
               Text(
                 'Adjust Hit Points',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: AppTheme.primaryGold,
+                style: theme.textTheme.titleLarge?.copyWith(
+                      color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,
                     ),
                 textAlign: TextAlign.center,

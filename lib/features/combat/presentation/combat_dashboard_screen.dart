@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/dice/dice_roller.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/models/scrivener_theme_tokens.dart';
+import '../../../../core/theme/theme_provider.dart';
 import '../../dice/presentation/dice_roller_drawer.dart';
 import '../../dice/presentation/widgets/floating_dice_fab.dart';
 import '../../dice/providers/dice_drawer_provider.dart';
@@ -26,76 +28,84 @@ class CombatDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final effectiveTheme = ref.watch(characterThemeModeProvider(characterId));
+    final themeData = AppTheme.getThemeData(effectiveTheme);
     final state = ref.watch(combatSessionProvider(characterId));
     final notifier = ref.read(combatSessionProvider(characterId).notifier);
 
     if (state == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Combat Session')),
-        body: const Center(
-          child: CircularProgressIndicator(color: AppTheme.primaryGold),
+      return Theme(
+        data: themeData,
+        child: Scaffold(
+          appBar: AppBar(title: const Text('Combat Session')),
+          body: Center(
+            child: CircularProgressIndicator(color: themeData.colorScheme.primary),
+          ),
         ),
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              state.name,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: AppTheme.primaryGold,
+    return Theme(
+      data: themeData,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                state.name,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: themeData.colorScheme.primary,
+                ),
               ),
+              Text(
+                'Level ${state.level} ${state.className} (${state.raceName})',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: themeData.colorScheme.onSurface.withAlpha(160),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.casino_outlined),
+              tooltip: 'Dice Roller',
+              color: themeData.colorScheme.primary,
+              onPressed: () => FloatingDiceFab.openDiceRoller(context),
             ),
-            Text(
-              'Level ${state.level} ${state.className} (${state.raceName})',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.white.withAlpha(160),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: ElevatedButton.icon(
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (ctx) => RestDialog(
+                    state: state,
+                    notifier: notifier,
+                    diceRoller: diceRoller,
+                  ),
+                ),
+                icon: const Icon(Icons.hotel_outlined, size: 16),
+                label: const Text('REST'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: themeData.colorScheme.surface,
+                  foregroundColor: themeData.colorScheme.primary,
+                  side: BorderSide(color: themeData.colorScheme.primary, width: 1),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                ),
               ),
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.casino_outlined),
-            tooltip: 'Dice Roller',
-            color: AppTheme.primaryGold,
-            onPressed: () => FloatingDiceFab.openDiceRoller(context),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: ElevatedButton.icon(
-              onPressed: () => showDialog(
-                context: context,
-                builder: (ctx) => RestDialog(
-                  state: state,
-                  notifier: notifier,
-                  diceRoller: diceRoller,
-                ),
-              ),
-              icon: const Icon(Icons.hotel_outlined, size: 16),
-              label: const Text('REST'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.surfaceDark,
-                foregroundColor: AppTheme.primaryGold,
-                side: const BorderSide(color: AppTheme.primaryGold, width: 1),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-              ),
-            ),
-          ),
-        ],
+        body: CombatDashboardView(
+          characterId: characterId,
+          diceRoller: diceRoller,
+        ),
+        endDrawer: const DiceRollerDrawer(),
+        floatingActionButton: const FloatingDiceFab(),
       ),
-      body: CombatDashboardView(
-        characterId: characterId,
-        diceRoller: diceRoller,
-      ),
-      endDrawer: const DiceRollerDrawer(),
-      floatingActionButton: const FloatingDiceFab(),
     );
   }
 }
@@ -139,6 +149,7 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
       message = '💀 CRITICAL MISS (Natural 1) on ${weapon.name}!';
     }
 
+    final theme = Theme.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -146,18 +157,22 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
             ? Colors.green
             : record.isCriticalMiss
                 ? Colors.redAccent
-                : AppTheme.cardDark,
+                : theme.cardColor,
         duration: const Duration(seconds: 2),
       ),
     );
   }
 
   void _rollWeaponDamage(WeaponAttackInfo weapon, CombatSessionState state) {
+    final theme = Theme.of(context);
     final roll = _diceRoller.rollFormula(weapon.damageFormula);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${weapon.name} Damage: ${roll.total} (${weapon.damageFormula})'),
-        backgroundColor: AppTheme.primaryGold,
+        content: Text(
+          '${weapon.name} Damage: ${roll.total} (${weapon.damageFormula})',
+          style: TextStyle(color: theme.colorScheme.onPrimary),
+        ),
+        backgroundColor: theme.colorScheme.primary,
         duration: const Duration(seconds: 2),
       ),
     );
@@ -178,12 +193,13 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final state = ref.watch(combatSessionProvider(widget.characterId));
     final notifier = ref.read(combatSessionProvider(widget.characterId).notifier);
 
     if (state == null) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppTheme.primaryGold),
+      return Center(
+        child: CircularProgressIndicator(color: theme.colorScheme.primary),
       );
     }
 
@@ -224,7 +240,7 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
             ],
 
             // Actions & Attacks Section
-            _buildActionsSection(state, notifier),
+            _buildActionsSection(context, state, notifier),
             const SizedBox(height: 24),
           ],
         ),
@@ -232,28 +248,31 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
     );
   }
 
-  Widget _buildActionsSection(CombatSessionState state, CombatSessionNotifier notifier) {
+  Widget _buildActionsSection(BuildContext context, CombatSessionState state, CombatSessionNotifier notifier) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.cardDark,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF4A4037)),
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(tokens.cardRadius),
+        border: Border.fromBorderSide(tokens.cardBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            children: const [
-              Icon(Icons.sports_martial_arts, color: AppTheme.primaryGold, size: 18),
-              SizedBox(width: 8),
+            children: [
+              Icon(tokens.iconography.combat, color: theme.colorScheme.primary, size: 18),
+              const SizedBox(width: 8),
               Text(
                 'ATTACKS & ACTIONS',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
-                  color: AppTheme.primaryGold,
+                  color: theme.colorScheme.primary,
                 ),
               ),
             ],
@@ -266,9 +285,9 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.surfaceDark,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color(0xFF4A4037)),
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(tokens.cardRadius * 0.7),
+                border: Border.all(color: theme.dividerColor),
               ),
               child: Row(
                 children: [
@@ -283,7 +302,7 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
                         const SizedBox(height: 2),
                         Text(
                           '${w.type} • $toHitSign${w.toHit} to hit • ${w.damageFormula}',
-                          style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(160)),
+                          style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(160)),
                         ),
                       ],
                     ),
@@ -291,8 +310,8 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
                   OutlinedButton(
                     onPressed: () => _rollWeaponAttack(w, state),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppTheme.primaryGold,
-                      side: const BorderSide(color: AppTheme.primaryGold),
+                      foregroundColor: theme.colorScheme.primary,
+                      side: BorderSide(color: theme.colorScheme.primary),
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       visualDensity: VisualDensity.compact,
                     ),
@@ -302,8 +321,8 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
                   ElevatedButton(
                     onPressed: () => _rollWeaponDamage(w, state),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryGold,
-                      foregroundColor: Colors.black,
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       visualDensity: VisualDensity.compact,
                     ),
@@ -318,9 +337,9 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppTheme.surfaceDark,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: const Color(0xFF4A4037)),
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(tokens.cardRadius * 0.7),
+              border: Border.all(color: theme.dividerColor),
             ),
             child: Row(
               children: [
@@ -335,7 +354,7 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
                       const SizedBox(height: 2),
                       Text(
                         'Regain 1d10 + ${state.level} HP (1/Short Rest)',
-                        style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(160)),
+                        style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(160)),
                       ),
                     ],
                   ),

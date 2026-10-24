@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
 import '../../models/dice_roll_record.dart';
 
 class RollHistoryList extends StatelessWidget {
@@ -25,20 +24,22 @@ class RollHistoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     if (history.isEmpty) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: Column(
             children: [
-              Icon(Icons.history, size: 36, color: Colors.white.withAlpha(60)),
+              Icon(Icons.history, size: 36, color: theme.colorScheme.onSurface.withAlpha(60)),
               const SizedBox(height: 8),
               Text(
                 'No rolls yet this session',
                 style: TextStyle(
                   fontSize: 13,
                   fontStyle: FontStyle.italic,
-                  color: Colors.white.withAlpha(120),
+                  color: theme.colorScheme.onSurface.withAlpha(120),
                 ),
               ),
             ],
@@ -55,15 +56,15 @@ class RollHistoryList extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.history, color: AppTheme.primaryGold, size: 16),
+                Icon(Icons.history, color: theme.colorScheme.primary, size: 16),
                 const SizedBox(width: 6),
                 Text(
                   'RECENT ROLLS (${history.length})',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.1,
-                    color: AppTheme.primaryGold,
+                    color: theme.colorScheme.primary,
                   ),
                 ),
               ],
@@ -85,17 +86,18 @@ class RollHistoryList extends StatelessWidget {
   }
 
   Widget _buildRollCard(BuildContext context, DiceRollRecord record) {
+    final theme = Theme.of(context);
     final cardBorderColor = record.isCriticalHit
-        ? AppTheme.accentEmerald
+        ? Colors.greenAccent
         : record.isCriticalMiss
             ? Colors.redAccent
-            : const Color(0xFF4A4037);
+            : theme.dividerColor;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceDark,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: cardBorderColor,
@@ -111,7 +113,7 @@ class RollHistoryList extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 6),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: AppTheme.accentEmerald.withAlpha(40),
+                color: Colors.green.withAlpha(40),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: const Text(
@@ -132,7 +134,7 @@ class RollHistoryList extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: const Text(
-                '💀 NATURAL 1 / CRITICAL MISS',
+                '💀 NATURAL 1 / CRITICAL MISS!',
                 style: TextStyle(
                   color: Colors.redAccent,
                   fontWeight: FontWeight.bold,
@@ -142,23 +144,24 @@ class RollHistoryList extends StatelessWidget {
             ),
           ],
 
+          // Title & Timestamp
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Text(
                   record.context,
-                  style: const TextStyle(
+                  style: TextStyle(
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    color: Colors.white,
+                    color: theme.colorScheme.onSurface,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               Text(
                 _formatTime(record.timestamp),
-                style: TextStyle(fontSize: 10, color: Colors.white.withAlpha(120)),
+                style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withAlpha(120)),
               ),
             ],
           ),
@@ -178,7 +181,7 @@ class RollHistoryList extends StatelessWidget {
                       ? Colors.greenAccent
                       : record.isCriticalMiss
                           ? Colors.redAccent
-                          : AppTheme.primaryGold,
+                          : theme.colorScheme.primary,
                 ),
               ),
               const SizedBox(width: 10),
@@ -190,15 +193,15 @@ class RollHistoryList extends StatelessWidget {
                       record.formula,
                       style: TextStyle(
                         fontSize: 11,
-                        color: Colors.white.withAlpha(160),
+                        color: theme.colorScheme.onSurface.withAlpha(160),
                       ),
                     ),
                     Text(
                       record.formattedBreakdown,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         fontFamily: 'monospace',
-                        color: Colors.white70,
+                        color: theme.colorScheme.onSurface.withAlpha(180),
                       ),
                     ),
                   ],
@@ -207,7 +210,7 @@ class RollHistoryList extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.refresh, size: 18),
                 tooltip: 'Re-roll this formula',
-                color: AppTheme.primaryGold,
+                color: theme.colorScheme.primary,
                 visualDensity: VisualDensity.compact,
                 onPressed: () => onReroll(record),
               ),

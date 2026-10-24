@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/models/scrivener_theme_tokens.dart';
 import '../../providers/combat_session_provider.dart';
 
 class CombatVitalsRow extends StatelessWidget {
@@ -71,12 +71,15 @@ class CombatVitalsRow extends StatelessWidget {
     required String value,
     required String subtitle,
   }) {
+    final theme = Theme.of(context);
+    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
       decoration: BoxDecoration(
-        color: AppTheme.cardDark,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF4A4037)),
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(tokens.cardRadius * 0.8),
+        border: Border.fromBorderSide(tokens.cardBorder),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -84,16 +87,16 @@ class CombatVitalsRow extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 14, color: AppTheme.primaryGold),
+              Icon(icon, size: 14, color: theme.colorScheme.primary),
               const SizedBox(width: 4),
               Flexible(
                 child: Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
-                    color: Colors.white70,
+                    color: theme.colorScheme.onSurface.withAlpha(180),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -103,17 +106,17 @@ class CombatVitalsRow extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           Text(
             subtitle,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
-              color: AppTheme.primaryGold,
+              color: theme.colorScheme.primary,
             ),
           ),
         ],
