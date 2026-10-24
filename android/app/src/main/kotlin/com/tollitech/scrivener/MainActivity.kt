@@ -1,4 +1,4 @@
-package com.scrivener.scrivener
+package com.tollitech.scrivener
 
 import io.flutter.embedding.android.FlutterActivity
 
