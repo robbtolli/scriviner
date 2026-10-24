@@ -1,0 +1,156 @@
+import 'dart:convert';
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:scrivener/core/database/app_database.dart';
+import 'package:scrivener/core/database/database_provider.dart';
+import 'package:scrivener/features/character_sheet/presentation/character_sheet_screen.dart';
+
+void main() {
+  late AppDatabase db;
+
+  setUp(() {
+    db = AppDatabase(NativeDatabase.memory());
+  });
+
+  tearDown(() async {
+    await db.close();
+  });
+
+  Future<void> seedFullCharacter() async {
+    final now = DateTime.now();
+    final props = {
+      'class': 'Paladin',
+      'race': 'Human',
+      'level': 2,
+      'abilities': {
+        'str': {'score': 16, 'mod': 3},
+        'dex': {'score': 10, 'mod': 0},
+        'con': {'score': 14, 'mod': 2},
+        'cha': {'score': 14, 'mod': 2},
+      },
+      'hp': {'current': 18, 'max': 18, 'temp': 0},
+      'armorClass': 18,
+      'speed': 30,
+      'spellSlots': {
+        '1': {'total': 2, 'spent': 0},
+      },
+      'spells': [
+        {
+          'id': 'spell_bless',
+          'name': 'Bless',
+          'level': 1,
+          'school': 'Enchantment',
+          'isPrepared': true,
+        },
+      ],
+      'bio': {
+        'traits': 'Honorable and upright.',
+        'ideals': 'Justice for all.',
+        'bonds': 'My oath binds me.',
+        'flaws': 'Too trusting of others.',
+        'backstory': 'Knight from the northern realm.',
+        'sessionNotes': 'Session 1: Traveled to the Sunken Citadel.',
+      },
+    };
+
+    await db.upsertCharacter(
+      CharactersTableCompanion.insert(
+        id: 'char_paladin',
+        name: 'Sir Gareth',
+        systemId: const Value('dnd5e'),
+        createdAt: now,
+        lastPlayedAt: now,
+        rawPropertiesJson: jsonEncode(props),
+      ),
+    );
+  }
+
+  Widget createWidgetUnderTest() {
+    return ProviderScope(
+      overrides: [
+        databaseProvider.overrideWithValue(db),
+      ],
+      child: const MaterialApp(
+        home: CharacterSheetScreen(characterId: 'char_paladin'),
+      ),
+    );
+  }
+
+  testWidgets('renders all 7 tabs and allows switching between them', (tester) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    await seedFullCharacter();
+    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpAndSettle();
+
+    // Verify AppBar
+    expect(find.text('Sir Gareth'), findsOneWidget);
+    expect(find.textContaining('Level 2 Paladin (Human)'), findsOneWidget);
+
+    // Verify 7 Tabs exist in TabBar
+    expect(find.text('Stats'), findsOneWidget);
+    expect(find.text('Skills'), findsOneWidget);
+    expect(find.text('Combat'), findsOneWidget);
+    expect(find.text('Spells'), findsOneWidget);
+    expect(find.text('Features'), findsOneWidget);
+    expect(find.text('Gear'), findsOneWidget);
+    expect(find.text('Bio & Notes'), findsOneWidget);
+
+    // On Stats tab initially: verify Ability Scores & Proficiency
+    expect(find.text('ABILITY SCORES & SAVING THROWS'), findsOneWidget);
+    expect(find.text('STRENGTH'), findsOneWidget);
+    expect(find.text('PROFICIENCY'), findsOneWidget);
+
+    // Switch to Skills tab
+    await tester.tap(find.text('Skills'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Athletics'), findsOneWidget);
+    expect(find.text('Perception'), findsOneWidget);
+    expect(find.text('TAP ICON TO CYCLE:'), findsOneWidget);
+
+    // Switch to Combat tab
+    await tester.tap(find.text('Combat'));
+    await tester.pumpAndSettle();
+
+    // On Combat tab: verify HP display (18 / 18)
+    expect(find.text('18'), findsWidgets);
+
+    // Switch to Spells tab
+    await tester.tap(find.text('Spells'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Bless'), findsOneWidget);
+    expect(find.text('SPELL SAVE DC'), findsOneWidget);
+
+    // Switch to Gear tab
+    await tester.tap(find.text('Gear'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('CURRENCY WALLET'), findsOneWidget);
+    expect(find.text('WEIGHT & CAPACITY'), findsOneWidget);
+
+    // Switch to Bio & Notes tab
+    await tester.tap(find.text('Bio & Notes'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('ROLEPLAYING TRAITS & NOTES'), findsOneWidget);
+    expect(find.text('Honorable and upright.'), findsOneWidget);
+    expect(find.text('SAVE'), findsOneWidget);
+
+    // Tap SAVE button
+    await tester.tap(find.text('SAVE'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Notes and Biography saved!'), findsOneWidget);
+
+    // Clean teardown
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(milliseconds: 50));
+  });
+}
