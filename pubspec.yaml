@@ -43,6 +43,8 @@ dependencies:
   expressions: ^0.2.5+3
   flutter_riverpod: ^3.4.3
   google_fonts: ^8.2.1
+  pdf: ^3.13.1
+  printing: ^5.15.1
 
 dev_dependencies:
   flutter_test:

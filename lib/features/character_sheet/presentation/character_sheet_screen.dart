@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/database/database_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/models/scrivener_theme_tokens.dart';
 import '../../../core/theme/theme_provider.dart';
@@ -10,7 +11,9 @@ import '../../combat/presentation/widgets/rest_dialog.dart';
 import '../../combat/providers/combat_session_provider.dart';
 import '../../dice/presentation/dice_roller_drawer.dart';
 import '../../dice/presentation/widgets/floating_dice_fab.dart';
+import '../../dice/providers/dice_drawer_provider.dart';
 import '../../export_import/presentation/export_character_dialog.dart';
+import '../../pdf_export/presentation/pdf_preview_screen.dart';
 import '../providers/character_sheet_provider.dart';
 import 'tabs/bio_notes_tab.dart';
 import 'tabs/features_tab.dart';
@@ -360,6 +363,28 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
               visualDensity: VisualDensity.compact,
               padding: const EdgeInsets.all(6),
               constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              icon: const Icon(Icons.print_outlined),
+              tooltip: 'Print / Export PDF Sheet',
+              color: themeData.colorScheme.primary,
+              onPressed: () async {
+                final db = ref.read(databaseProvider);
+                final char = await db.getCharacter(widget.characterId);
+                final inventory = await db.getInventoryForCharacter(widget.characterId);
+                final conditions = await db.getConditionsForCharacter(widget.characterId);
+                if (char != null && context.mounted) {
+                  PdfPreviewScreen.show(
+                    context,
+                    character: char,
+                    inventory: inventory,
+                    conditions: conditions,
+                  );
+                }
+              },
+            ),
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               icon: const Icon(Icons.file_download_outlined),
               tooltip: 'Export Character (JSON)',
               color: themeData.colorScheme.primary,
@@ -376,9 +401,12 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
               padding: const EdgeInsets.all(6),
               constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               icon: Icon(icons.diceAction),
-              tooltip: 'Dice Roller',
+              tooltip: 'Dice Roller (Quick Roll)',
               color: themeData.colorScheme.primary,
-              onPressed: () => FloatingDiceFab.openDiceRoller(context),
+              onPressed: () {
+                ref.read(diceDrawerProvider.notifier).setQuickRoll();
+                FloatingDiceFab.openDiceRoller(context);
+              },
             ),
             if (combatState != null)
               Padding(

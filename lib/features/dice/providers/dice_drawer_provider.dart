@@ -163,6 +163,17 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
 
   void resetDrawer() => clearDice();
 
+  /// Resets context to a neutral 'Quick Roll' for independent rolling.
+  /// Guarantees that rolling will not be associated with or modify character attributes.
+  void setQuickRoll() {
+    state = state.copyWith(
+      contextTitle: 'Quick Roll',
+      diceCounts: state.diceCounts.isEmpty ? const {20: 1} : state.diceCounts,
+      rollType: RollType.normal,
+      activeBonusIds: {},
+    );
+  }
+
   void setDiceCount(int sides, int count) {
     final updated = Map<int, int>.from(state.diceCounts);
     if (count <= 0) {

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,12 +7,17 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/database/app_database.dart';
 import '../../../../core/database/database_provider.dart';
+import '../../../../core/theme/models/scrivener_theme_tokens.dart';
 import '../../../../core/theme/theme_selector_dialog.dart';
 import '../../character_sheet/presentation/character_sheet_screen.dart';
 import '../../character_wizard/presentation/character_wizard_screen.dart';
 import '../../character_wizard/providers/wizard_provider.dart';
+import '../../dice/presentation/dice_roller_drawer.dart';
+import '../../dice/presentation/widgets/floating_dice_fab.dart';
+import '../../dice/providers/dice_drawer_provider.dart';
 import '../../export_import/presentation/export_character_dialog.dart';
 import '../../export_import/presentation/import_character_dialog.dart';
+import '../../pdf_export/presentation/pdf_preview_screen.dart';
 import '../../plugins/presentation/plugins_dialog.dart';
 import '../providers/home_providers.dart';
 import 'widgets/character_card.dart';
@@ -87,6 +94,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  void _printPdfCharacter(CharactersTableData character) async {
+    final db = ref.read(databaseProvider);
+    final inventory = await db.getInventoryForCharacter(character.id);
+    final conditions = await db.getConditionsForCharacter(character.id);
+    if (mounted) {
+      PdfPreviewScreen.show(
+        context,
+        character: character,
+        inventory: inventory,
+        conditions: conditions,
+      );
+    }
+  }
+
   void _importCharacter() {
     ImportCharacterDialog.show(
       context,
@@ -100,7 +121,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  void _startCreation(String systemId, CreationMode mode) {
+  void _startCreation(String systemId, CreationMode mode) async {
     ref.read(characterWizardProvider.notifier).reset();
 
     if (mode == CreationMode.guidedWizard) {
@@ -118,23 +139,91 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Freeform Sheet Mode starting soon! Launching Guided Wizard...'),
-          duration: Duration(seconds: 2),
+      // Freeform / Smart Paper Sheet Mode
+      final db = ref.read(databaseProvider);
+      final charId = const Uuid().v4();
+      final now = DateTime.now();
+
+      final rawProps = {
+        'level': 1,
+        'class': 'Adventurer',
+        'classId': 'custom',
+        'race': 'Human',
+        'raceId': 'human',
+        'background': 'Custom',
+        'hp': {
+          'current': 10,
+          'max': 10,
+          'temp': 0,
+        },
+        'armorClass': 10,
+        'speed': 30,
+        'proficiencyBonus': 2,
+        'abilities': {
+          'str': {'score': 10, 'mod': 0},
+          'dex': {'score': 10, 'mod': 0},
+          'con': {'score': 10, 'mod': 0},
+          'int': {'score': 10, 'mod': 0},
+          'wis': {'score': 10, 'mod': 0},
+          'cha': {'score': 10, 'mod': 0},
+        },
+        'savingThrows': <String>[],
+        'skills': <String>[],
+        'skillProficiencies': <String, int>{},
+        'spells': <Map<String, dynamic>>[],
+        'featuresList': <Map<String, dynamic>>[],
+        'hitDice': {
+          'total': 1,
+          'spent': 0,
+          'die': '1d8',
+        },
+        'spellSlots': <String, dynamic>{},
+        'equipment': <String>[],
+        'currency': {
+          'cp': 0,
+          'sp': 0,
+          'ep': 0,
+          'gp': 15,
+          'pp': 0,
+        },
+        'bio': {
+          'personalityTraits': '',
+          'ideals': '',
+          'bonds': '',
+          'flaws': '',
+          'backstory': '',
+        },
+      };
+
+      await db.upsertCharacter(
+        CharactersTableCompanion.insert(
+          id: charId,
+          name: 'New Adventurer',
+          systemId: Value(systemId),
+          createdAt: now,
+          lastPlayedAt: now,
+          rawPropertiesJson: jsonEncode(rawProps),
+          notes: const Value('Created via Freeform Smart Paper Mode'),
         ),
       );
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const CharacterWizardScreen(),
-        ),
-      );
+
+      final char = await db.getCharacter(charId);
+      if (char != null && mounted) {
+        _openCharacter(char);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Freeform character created! Tap any field to customize.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tokens = context.tokens;
     final charactersAsync = ref.watch(filteredCharactersProvider);
     final allRecentAsync = ref.watch(recentCharactersStreamProvider);
 
@@ -197,6 +286,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             visualDensity: VisualDensity.compact,
             padding: const EdgeInsets.all(6),
             constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+            icon: Icon(tokens.iconography.diceAction),
+            tooltip: 'Dice Roller (Quick Roll)',
+            onPressed: () {
+              ref.read(diceDrawerProvider.notifier).setQuickRoll();
+              FloatingDiceFab.openDiceRoller(context);
+            },
+          ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            padding: const EdgeInsets.all(6),
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
             icon: const Icon(Icons.palette_outlined),
             tooltip: 'App Theme',
             onPressed: () => ThemeSelectorDialog.show(context),
@@ -212,6 +312,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const SizedBox(width: 8),
         ],
       ),
+      endDrawer: const DiceRollerDrawer(),
       body: charactersAsync.when(
         loading: () => Center(child: CircularProgressIndicator(color: theme.colorScheme.primary)),
         error: (err, stack) => Center(child: Text('Error loading characters: $err')),
@@ -323,6 +424,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               onDuplicate: () => _duplicateCharacter(char),
                               onDelete: () => _deleteCharacter(char),
                               onExport: () => _exportCharacter(char),
+                              onPrintPdf: () => _printPdfCharacter(char),
                             );
                           },
                           childCount: remainingCharacters.length,

@@ -10,6 +10,7 @@ class CharacterCard extends StatelessWidget {
   final VoidCallback onDuplicate;
   final VoidCallback onDelete;
   final VoidCallback? onExport;
+  final VoidCallback? onPrintPdf;
 
   const CharacterCard({
     super.key,
@@ -18,6 +19,7 @@ class CharacterCard extends StatelessWidget {
     required this.onDuplicate,
     required this.onDelete,
     this.onExport,
+    this.onPrintPdf,
   });
 
   @override
@@ -105,6 +107,7 @@ class CharacterCard extends StatelessWidget {
                       if (value == 'open') onTap();
                       if (value == 'duplicate') onDuplicate();
                       if (value == 'export') onExport?.call();
+                      if (value == 'print_pdf') onPrintPdf?.call();
                       if (value == 'delete') _showDeleteDialog(context);
                     },
                     itemBuilder: (context) => [
@@ -125,6 +128,16 @@ class CharacterCard extends StatelessWidget {
                             Icon(Icons.copy, size: 18),
                             SizedBox(width: 8),
                             Text('Duplicate'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'print_pdf',
+                        child: Row(
+                          children: [
+                            Icon(Icons.print_outlined, size: 18),
+                            SizedBox(width: 8),
+                            Text('Print / PDF Sheet'),
                           ],
                         ),
                       ),
