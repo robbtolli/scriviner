@@ -95,9 +95,17 @@ class PluginsDialog extends ConsumerWidget {
           const SizedBox(width: 10),
           const Expanded(
             child: Text(
-              'PLUGINS & HOMEBREW',
+              'PLUGINS & CUSTOM CONTENT',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
               overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Tooltip(
+            message: "In tabletop gaming, 'Homebrew' refers to custom, user-created game rules, spells, and items—not the command-line package manager.",
+            child: Icon(
+              Icons.info_outline,
+              size: 20,
+              color: theme.colorScheme.onSurface.withAlpha(140),
             ),
           ),
         ],
@@ -112,7 +120,7 @@ class PluginsDialog extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Declarative, sandboxed homebrew packs extending spells, items, and rules.',
+                    'Custom player & DM-created spells, items, and rules (TTRPG Homebrew).',
                     style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(160)),
                   ),
                   const SizedBox(height: 12),
@@ -125,7 +133,7 @@ class PluginsDialog extends ConsumerWidget {
                                 Icon(Icons.inventory_2_outlined, size: 48, color: theme.colorScheme.primary.withAlpha(120)),
                                 const SizedBox(height: 12),
                                 const Text(
-                                  'No homebrew plugins installed',
+                                  'No custom plugins installed',
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 6),

@@ -128,8 +128,8 @@ void main() {
       await tester.tap(find.text('Open Plugins'));
       await tester.pumpAndSettle();
 
-      expect(find.text('PLUGINS & HOMEBREW'), findsOneWidget);
-      expect(find.text('No homebrew plugins installed'), findsOneWidget);
+      expect(find.text('PLUGINS & CUSTOM CONTENT'), findsOneWidget);
+      expect(find.text('No custom plugins installed'), findsOneWidget);
       expect(find.text('SAMPLE PACK'), findsOneWidget);
 
       // Tap SAMPLE PACK to install
@@ -145,7 +145,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.delete_outline));
       await tester.pumpAndSettle();
 
-      expect(find.text('No homebrew plugins installed'), findsOneWidget);
+      expect(find.text('No custom plugins installed'), findsOneWidget);
     });
   });
 }

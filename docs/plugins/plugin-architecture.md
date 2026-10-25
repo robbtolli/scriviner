@@ -2,6 +2,10 @@
 
 Scrivener provides an extensible, declarative plugin architecture designed specifically for the security and reliability demands of modern applications. This guide explains the core principles behind Scrivener's plugin system and how homebrew content is integrated into the local database.
 
+> [!NOTE] What Does "Homebrew" Mean in TTRPGs?
+> In tabletop roleplaying games like D&D and Pathfinder, **"homebrew"** refers to custom, unofficial content created by players or Game Masters—such as original spells, magical weapons, subclasses, or house rules. 
+> It is completely separate from and unrelated to the macOS/Linux `brew` package manager.
+
 ---
 
 ## 1. Declarative, Sandboxed Principles
