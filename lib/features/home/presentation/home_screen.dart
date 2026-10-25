@@ -38,8 +38,73 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _handleDemoUrl();
+    });
+  }
+
+  Future<void> _handleDemoUrl() async {
+    final uri = Uri.base;
+    final db = ref.read(databaseProvider);
+
+    if (uri.queryParameters['seed'] == 'true') {
+      final chars = await db.getRecentCharacters();
+      if (chars.isEmpty) {
+        await seedSampleCharacters(db);
+      }
+    }
+
+    final charId = uri.queryParameters['char'];
+    if (charId != null && mounted) {
+      final tabIndex = int.tryParse(uri.queryParameters['tab'] ?? '0') ?? 0;
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CharacterSheetScreen(
+            characterId: charId,
+            initialTabIndex: tabIndex,
+          ),
+        ),
+      );
+      if (uri.queryParameters['openPdf'] == 'true') {
+        final char = await db.getCharacter(charId);
+        final inventory = await db.getInventoryForCharacter(charId);
+        final conditions = await db.getConditionsForCharacter(charId);
+        if (char != null && mounted) {
+          PdfPreviewScreen.show(
+            context,
+            character: char,
+            inventory: inventory,
+            conditions: conditions,
+          );
+        }
+      }
+      return;
+    }
+
+    if (uri.queryParameters['openDice'] == 'true' && mounted) {
+      ref.read(diceDrawerProvider.notifier).setQuickRoll();
+      _scaffoldKey.currentState?.openEndDrawer();
+    } else if (uri.queryParameters['openTheme'] == 'true' && mounted) {
+      ThemeSelectorDialog.show(context);
+    } else if (uri.queryParameters['openPlugins'] == 'true' && mounted) {
+      PluginsDialog.show(context);
+    } else if (uri.queryParameters['openWizard'] == 'true' && mounted) {
+      showDialog(
+        context: context,
+        builder: (ctx) => NewCharacterModal(
+          onStartCreation: _startCreation,
+          onImportCharacter: _importCharacter,
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -228,6 +293,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final allRecentAsync = ref.watch(recentCharactersStreamProvider);
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         centerTitle: false,
         titleSpacing: 16,
