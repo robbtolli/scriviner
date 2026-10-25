@@ -159,35 +159,40 @@ class CharacterWizardScreen extends ConsumerWidget {
         },
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: AppTheme.surfaceDark,
+          color: Theme.of(context).colorScheme.surface,
           border: Border(top: BorderSide(color: Colors.white.withAlpha(20))),
         ),
-        child: Row(
-          children: [
-            if (currentStep > 0)
-              OutlinedButton.icon(
-                onPressed: () => notifier.previousStep(),
-                icon: const Icon(Icons.arrow_back, size: 18),
-                label: const Text('BACK'),
-              )
-            else
-              TextButton(
-                onPressed: () {
-                  notifier.reset();
-                  Navigator.of(context).pop();
-                },
-                child: const Text('CANCEL'),
-              ),
-            const Spacer(),
-            if (currentStep < 6)
-              ElevatedButton.icon(
-                onPressed: handleNext,
-                icon: const Icon(Icons.arrow_forward, size: 18),
-                label: const Text('NEXT STEP'),
-              ),
-          ],
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: Row(
+              children: [
+                if (currentStep > 0)
+                  OutlinedButton.icon(
+                    onPressed: () => notifier.previousStep(),
+                    icon: const Icon(Icons.arrow_back, size: 18),
+                    label: const Text('BACK'),
+                  )
+                else
+                  TextButton(
+                    onPressed: () {
+                      notifier.reset();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('CANCEL'),
+                  ),
+                const Spacer(),
+                if (currentStep < 6)
+                  ElevatedButton.icon(
+                    onPressed: handleNext,
+                    icon: const Icon(Icons.arrow_forward, size: 18),
+                    label: const Text('NEXT STEP'),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     ),

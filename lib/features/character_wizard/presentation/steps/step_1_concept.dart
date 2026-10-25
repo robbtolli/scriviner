@@ -8,7 +8,6 @@ import '../../models/wizard_draft.dart';
 import '../../providers/wizard_provider.dart';
 
 enum NameGender {
-  any('Any / Blank'),
   male('Male'),
   female('Female');
 
@@ -25,7 +24,7 @@ class Step1Concept extends ConsumerStatefulWidget {
 
 class _Step1ConceptState extends ConsumerState<Step1Concept> {
   late TextEditingController _nameController;
-  NameGender _selectedGender = NameGender.any;
+  NameGender _selectedGender = NameGender.male;
 
   static const List<String> _maleFirstNames = [
     'Eldrin',
@@ -103,12 +102,10 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
     _nameController = TextEditingController(
       text: currentDraft.name,
     );
-    if (currentDraft.gender == 'male') {
-      _selectedGender = NameGender.male;
-    } else if (currentDraft.gender == 'female') {
+    if (currentDraft.gender == 'female') {
       _selectedGender = NameGender.female;
     } else {
-      _selectedGender = NameGender.any;
+      _selectedGender = NameGender.male;
     }
   }
 
@@ -120,27 +117,15 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
 
   void _generateRandomName() {
     final rand = Random();
-    final String firstName;
-    switch (_selectedGender) {
-      case NameGender.male:
-        firstName = _maleFirstNames[rand.nextInt(_maleFirstNames.length)];
-        break;
-      case NameGender.female:
-        firstName = _femaleFirstNames[rand.nextInt(_femaleFirstNames.length)];
-        break;
-      case NameGender.any:
-        final all = [..._maleFirstNames, ..._femaleFirstNames];
-        firstName = all[rand.nextInt(all.length)];
-        break;
-    }
+    final String firstName = _selectedGender == NameGender.female
+        ? _femaleFirstNames[rand.nextInt(_femaleFirstNames.length)]
+        : _maleFirstNames[rand.nextInt(_maleFirstNames.length)];
 
     final surname = _surnames[rand.nextInt(_surnames.length)];
     final fullName = '$firstName $surname';
     _nameController.text = fullName;
     ref.read(characterWizardProvider.notifier).setName(fullName);
-    ref.read(characterWizardProvider.notifier).setGender(
-      _selectedGender == NameGender.any ? null : _selectedGender.name,
-    );
+    ref.read(characterWizardProvider.notifier).setGender(_selectedGender.name);
   }
 
   @override
@@ -187,19 +172,18 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
                   color: AppTheme.primaryGold,
                 ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 4,
                 children: [
                   const Text(
                     'Gender: ',
                     style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                   SegmentedButton<NameGender>(
+                    showSelectedIcon: false,
                     segments: const [
-                      ButtonSegment(
-                        value: NameGender.any,
-                        label: Text('Blank / Any'),
-                      ),
                       ButtonSegment(
                         value: NameGender.male,
                         label: Text('Male'),
@@ -215,9 +199,7 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
                     onSelectionChanged: (set) {
                       setState(() {
                         _selectedGender = set.first;
-                        ref.read(characterWizardProvider.notifier).setGender(
-                          _selectedGender == NameGender.any ? null : _selectedGender.name,
-                        );
+                        ref.read(characterWizardProvider.notifier).setGender(_selectedGender.name);
                       });
                     },
                     style: const ButtonStyle(

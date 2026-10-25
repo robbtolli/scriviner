@@ -64,15 +64,18 @@ class ResumeHeroCard extends StatelessWidget {
                   children: [
                     Icon(tokens.iconography.diceAction, color: theme.colorScheme.primary, size: 20),
                     const SizedBox(width: 8),
-                    Text(
-                      'RESUME SESSION',
-                      style: theme.textTheme.labelLarge?.copyWith(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                          ),
+                    Flexible(
+                      child: Text(
+                        'RESUME SESSION',
+                        style: theme.textTheme.labelLarge?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.1,
+                            ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 8),
                     Text(
                       timeAgo,
                       style: TextStyle(
@@ -122,6 +125,8 @@ class ResumeHeroCard extends StatelessWidget {
                               fontSize: 14,
                               color: theme.colorScheme.onSurface.withAlpha(190),
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -129,7 +134,11 @@ class ResumeHeroCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Row(
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     _buildStatPill(
                       context,
@@ -138,7 +147,6 @@ class ResumeHeroCard extends StatelessWidget {
                       Icons.favorite,
                       Colors.redAccent,
                     ),
-                    const SizedBox(width: 10),
                     _buildStatPill(
                       context,
                       'AC',
@@ -146,7 +154,6 @@ class ResumeHeroCard extends StatelessWidget {
                       tokens.iconography.tabCombat,
                       theme.colorScheme.primary,
                     ),
-                    const Spacer(),
                     ElevatedButton.icon(
                       onPressed: onResume,
                       icon: const Icon(Icons.play_arrow, size: 18),

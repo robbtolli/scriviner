@@ -34,8 +34,11 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
         side: tokens.cardBorder,
       ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
-        child: Padding(
+        constraints: BoxConstraints(
+          maxWidth: 500,
+          maxHeight: MediaQuery.sizeOf(context).height * 0.9,
+        ),
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -45,12 +48,14 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                 children: [
                   Icon(tokens.iconography.tabCombat, color: theme.colorScheme.primary, size: 28),
                   const SizedBox(width: 10),
-                  Text(
-                    'Create New Character',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  Expanded(
+                    child: Text(
+                      'Create New Character',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
                   ),
                 ],
               ),
@@ -107,27 +112,29 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                 subtitle: 'Direct blank sheet for veteran players with total manual control and custom house rules.',
               ),
               const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (widget.onImportCharacter != null)
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        widget.onImportCharacter!();
-                      },
-                      icon: const Icon(Icons.file_upload_outlined, size: 16),
-                      label: const Text('IMPORT JSON', style: TextStyle(fontSize: 12)),
-                    )
-                  else
-                    const SizedBox.shrink(),
-                  Row(
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final importBtn = widget.onImportCharacter != null
+                      ? OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            widget.onImportCharacter!();
+                          },
+                          icon: const Icon(Icons.file_upload_outlined, size: 16),
+                          label: const Text('IMPORT JSON', style: TextStyle(fontSize: 12)),
+                        )
+                      : null;
+
+                  final actionBtns = Wrap(
+                    alignment: WrapAlignment.end,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
                         child: const Text('Cancel'),
                       ),
-                      const SizedBox(width: 12),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
@@ -136,8 +143,35 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                         child: const Text('START CREATING'),
                       ),
                     ],
-                  ),
-                ],
+                  );
+
+                  // When buttons do not comfortably fit on the same line (< 520dp available content width),
+                  // place Cancel & START CREATING on the line below IMPORT JSON as requested.
+                  if (constraints.maxWidth < 520 && importBtn != null) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: importBtn,
+                        ),
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: actionBtns,
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      importBtn ?? const SizedBox.shrink(),
+                      Flexible(child: actionBtns),
+                    ],
+                  );
+                },
               ),
             ],
           ),
@@ -178,7 +212,10 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 6,
+                    runSpacing: 4,
                     children: [
                       Text(
                         title,
@@ -187,8 +224,7 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                           color: isComingSoon ? Colors.grey : theme.colorScheme.onSurface,
                         ),
                       ),
-                      if (isComingSoon) ...[
-                        const SizedBox(width: 6),
+                      if (isComingSoon)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
@@ -200,7 +236,6 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                             style: TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
                           ),
                         ),
-                      ],
                     ],
                   ),
                   const SizedBox(height: 2),
@@ -253,14 +288,16 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
                     children: [
                       Text(
                         title,
                         style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
                       ),
-                      if (badge != null) ...[
-                        const SizedBox(width: 8),
+                      if (badge != null)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
@@ -276,7 +313,6 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                             ),
                           ),
                         ),
-                      ],
                     ],
                   ),
                   const SizedBox(height: 2),

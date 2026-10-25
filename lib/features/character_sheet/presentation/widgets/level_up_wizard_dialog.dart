@@ -125,9 +125,11 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(color: _theme.dividerColor),
       ),
-      child: SizedBox(
-        width: 520,
-        height: 580,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 520,
+          maxHeight: min(580, MediaQuery.sizeOf(context).height * 0.9),
+        ),
         child: Column(
           children: [
             // Header

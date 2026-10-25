@@ -331,11 +331,16 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                   fontSize: 12,
                   color: themeData.colorScheme.onSurface.withAlpha(160),
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
           actions: [
             IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               icon: Icon(icons.themeSelector),
               tooltip: 'Character Theme (${effectiveThemeMode.displayName})',
               color: themeData.colorScheme.primary,
@@ -352,6 +357,9 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
               },
             ),
             IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               icon: const Icon(Icons.file_download_outlined),
               tooltip: 'Export Character (JSON)',
               color: themeData.colorScheme.primary,
@@ -364,6 +372,9 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
               },
             ),
             IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               icon: Icon(icons.diceAction),
               tooltip: 'Dice Roller',
               color: themeData.colorScheme.primary,

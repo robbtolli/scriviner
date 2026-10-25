@@ -140,6 +140,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: false,
+        titleSpacing: 16,
         title: _isSearching
             ? TextField(
                 controller: _searchController,
@@ -155,32 +157,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 },
               )
             : Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.auto_stories, color: theme.colorScheme.primary),
-                  const SizedBox(width: 10),
-                  Text(
-                    'SCRIVENER',
-                    style: TextStyle(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      'SCRIVENER',
+                      style: TextStyle(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.palette_outlined),
-            tooltip: 'App Theme',
-            onPressed: () => ThemeSelectorDialog.show(context),
-          ),
-          IconButton(
-            icon: const Icon(Icons.extension_outlined),
-            tooltip: 'Plugins & Compendiums',
-            onPressed: () => PluginsDialog.show(context),
-          ),
-          IconButton(
+            visualDensity: VisualDensity.compact,
+            padding: const EdgeInsets.all(6),
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
             icon: Icon(_isSearching ? Icons.close : Icons.search),
+            tooltip: _isSearching ? 'Close Search' : 'Search Heroes',
             onPressed: () {
               setState(() {
                 if (_isSearching) {
@@ -193,26 +193,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               });
             },
           ),
-          const SizedBox(width: 8),
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) => NewCharacterModal(
-                    onStartCreation: _startCreation,
-                    onImportCharacter: _importCharacter,
-                  ),
-                );
-              },
-              icon: const Icon(Icons.add, size: 18),
-              label: const Text('NEW HERO'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              ),
-            ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            padding: const EdgeInsets.all(6),
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+            icon: const Icon(Icons.palette_outlined),
+            tooltip: 'App Theme',
+            onPressed: () => ThemeSelectorDialog.show(context),
           ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            padding: const EdgeInsets.all(6),
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+            icon: const Icon(Icons.extension_outlined),
+            tooltip: 'Plugins & Compendiums',
+            onPressed: () => PluginsDialog.show(context),
+          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: charactersAsync.when(

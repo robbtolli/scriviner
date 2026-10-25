@@ -35,28 +35,31 @@ class Step4Abilities extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           // Generation Method Selector
-          SegmentedButton<AbilityGenMethod>(
-            segments: const [
-              ButtonSegment(
-                value: AbilityGenMethod.standardArray,
-                label: Text('Standard Array'),
-                icon: Icon(Icons.table_chart),
-              ),
-              ButtonSegment(
-                value: AbilityGenMethod.pointBuy,
-                label: Text('Point Buy'),
-                icon: Icon(Icons.tune),
-              ),
-              ButtonSegment(
-                value: AbilityGenMethod.rolled,
-                label: Text('Roll 4d6'),
-                icon: Icon(Icons.casino),
-              ),
-            ],
-            selected: {draft.abilityMethod},
-            onSelectionChanged: (selected) {
-              notifier.setAbilityMethod(selected.first);
-            },
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SegmentedButton<AbilityGenMethod>(
+              segments: const [
+                ButtonSegment(
+                  value: AbilityGenMethod.standardArray,
+                  label: Text('Standard Array'),
+                  icon: Icon(Icons.table_chart),
+                ),
+                ButtonSegment(
+                  value: AbilityGenMethod.pointBuy,
+                  label: Text('Point Buy'),
+                  icon: Icon(Icons.tune),
+                ),
+                ButtonSegment(
+                  value: AbilityGenMethod.rolled,
+                  label: Text('Roll 4d6'),
+                  icon: Icon(Icons.casino),
+                ),
+              ],
+              selected: {draft.abilityMethod},
+              onSelectionChanged: (selected) {
+                notifier.setAbilityMethod(selected.first);
+              },
+            ),
           ),
           const SizedBox(height: 16),
           // Helper banner based on method
@@ -68,26 +71,56 @@ class Step4Abilities extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: AppTheme.primaryGold.withAlpha(80)),
               ),
-              child: Row(
-                children: [
-                  const Icon(Icons.lightbulb_outline, color: AppTheme.primaryGold, size: 20),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Standard Array distributes [15, 14, 13, 12, 10, 8].',
-                      style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(200)),
-                    ),
-                  ),
-                  if (draft.charClass != null)
-                    ElevatedButton.icon(
-                      onPressed: () => notifier.autoAssignStandardArrayForClass(draft.charClass!),
-                      icon: const Icon(Icons.auto_fix_high, size: 16),
-                      label: Text('Auto-Assign (${draft.charClass!.name})'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: LayoutBuilder(
+                builder: (context, bannerConstraints) {
+                  final infoText = Row(
+                    children: [
+                      const Icon(Icons.lightbulb_outline, color: AppTheme.primaryGold, size: 20),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Standard Array distributes [15, 14, 13, 12, 10, 8].',
+                          style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(200)),
+                        ),
                       ),
-                    ),
-                ],
+                    ],
+                  );
+
+                  if (bannerConstraints.maxWidth < 450 && draft.charClass != null) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        infoText,
+                        const SizedBox(height: 10),
+                        ElevatedButton.icon(
+                          onPressed: () => notifier.autoAssignStandardArrayForClass(draft.charClass!),
+                          icon: const Icon(Icons.auto_fix_high, size: 16),
+                          label: Text('Auto-Assign (${draft.charClass!.name})'),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Row(
+                    children: [
+                      Expanded(child: infoText),
+                      if (draft.charClass != null) ...[
+                        const SizedBox(width: 10),
+                        ElevatedButton.icon(
+                          onPressed: () => notifier.autoAssignStandardArrayForClass(draft.charClass!),
+                          icon: const Icon(Icons.auto_fix_high, size: 16),
+                          label: Text('Auto-Assign (${draft.charClass!.name})'),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          ),
+                        ),
+                      ],
+                    ],
+                  );
+                },
               ),
             ),
           ] else if (draft.abilityMethod == AbilityGenMethod.pointBuy) ...[
@@ -167,6 +200,9 @@ class Step4Abilities extends ConsumerWidget {
                   if (draft.abilityMethod == AbilityGenMethod.pointBuy) ...[
                     IconButton(
                       icon: const Icon(Icons.remove_circle_outline),
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                       onPressed: base > 8 ? () => notifier.setAbilityScore(stat, base - 1) : null,
                     ),
                     Text(
@@ -175,6 +211,9 @@ class Step4Abilities extends ConsumerWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.add_circle_outline),
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.all(4),
+                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                       onPressed: base < 15 && draft.remainingPointBuyPoints >= WizardDraft.getPointBuyCost(base + 1) - WizardDraft.getPointBuyCost(base)
                           ? () => notifier.setAbilityScore(stat, base + 1)
                           : null,
@@ -199,13 +238,14 @@ class Step4Abilities extends ConsumerWidget {
                       },
                     ),
                   ],
-                  const SizedBox(width: 14),
-                  if (bonus > 0)
+                  const SizedBox(width: 8),
+                  if (bonus > 0) ...[
                     Text(
-                      '+$bonus racial',
-                      style: const TextStyle(fontSize: 11, color: Colors.greenAccent),
+                      '+$bonus',
+                      style: const TextStyle(fontSize: 11, color: Colors.greenAccent, fontWeight: FontWeight.bold),
                     ),
-                  const SizedBox(width: 14),
+                    const SizedBox(width: 8),
+                  ],
                   Container(
                     width: 44,
                     padding: const EdgeInsets.symmetric(vertical: 4),

@@ -320,10 +320,9 @@ class StatsTab extends ConsumerWidget {
         borderRadius: BorderRadius.circular(tokens.cardRadius),
         border: Border.all(color: theme.colorScheme.primary.withAlpha(120)),
       ),
-      child: Row(
-        children: [
-          // Level Badge
-          Container(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final levelBadge = Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
@@ -352,40 +351,35 @@ class StatsTab extends ConsumerWidget {
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: 14),
+          );
 
-          // Character Class & Subtext
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Level ${state.level} ${state.className}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+          final classInfo = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Level ${state.level} ${state.className}',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  state.level >= 20
-                      ? 'Maximum Level Cap (Level 20)'
-                      : 'Advance to Level ${state.level + 1}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: theme.colorScheme.onSurface.withAlpha(160),
-                  ),
-                  overflow: TextOverflow.ellipsis,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                state.level >= 20
+                    ? 'Maximum Level Cap (Level 20)'
+                    : 'Advance to Level ${state.level + 1}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: theme.colorScheme.onSurface.withAlpha(160),
                 ),
-              ],
-            ),
-          ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          );
 
-          // Actions: Manual Edit & Level Up Wizard
-          Row(
+          final actionButtons = Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
@@ -407,8 +401,37 @@ class StatsTab extends ConsumerWidget {
                 ),
               ),
             ],
-          ),
-        ],
+          );
+
+          if (constraints.maxWidth < 460) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    levelBadge,
+                    const SizedBox(width: 14),
+                    Expanded(child: classInfo),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: actionButtons,
+                ),
+              ],
+            );
+          }
+
+          return Row(
+            children: [
+              levelBadge,
+              const SizedBox(width: 14),
+              Expanded(child: classInfo),
+              actionButtons,
+            ],
+          );
+        },
       ),
     );
   }
