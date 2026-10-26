@@ -42,7 +42,9 @@ class ThemeSelectorDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final globalAppTheme = ref.watch(themeProvider);
     final themeData = Theme.of(context);
-    final activeSelection = isCharacterLevel ? currentSelectedMode : globalAppTheme;
+    final activeSelection = isCharacterLevel
+        ? currentSelectedMode
+        : globalAppTheme;
 
     return AlertDialog(
       title: Row(
@@ -52,7 +54,11 @@ class ThemeSelectorDialog extends ConsumerWidget {
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -74,7 +80,10 @@ class ThemeSelectorDialog extends ConsumerWidget {
                     Navigator.of(context).pop();
                   },
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: activeSelection == null
@@ -116,7 +125,8 @@ class ThemeSelectorDialog extends ConsumerWidget {
                                 'Inherits whatever theme is selected in global settings',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: themeData.colorScheme.onSurface.withAlpha(180),
+                                  color: themeData.colorScheme.onSurface
+                                      .withAlpha(180),
                                 ),
                               ),
                             ],
@@ -145,7 +155,10 @@ class ThemeSelectorDialog extends ConsumerWidget {
                     }
                   },
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: isSelected
@@ -201,7 +214,8 @@ class ThemeSelectorDialog extends ConsumerWidget {
                                 mode.description,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: themeData.colorScheme.onSurface.withAlpha(180),
+                                  color: themeData.colorScheme.onSurface
+                                      .withAlpha(180),
                                 ),
                               ),
                             ],
@@ -215,7 +229,9 @@ class ThemeSelectorDialog extends ConsumerWidget {
                             color: previewTheme.scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(6),
                             border: Border.all(
-                              color: previewTheme.colorScheme.primary.withAlpha(120),
+                              color: previewTheme.colorScheme.primary.withAlpha(
+                                120,
+                              ),
                             ),
                           ),
                           child: Row(

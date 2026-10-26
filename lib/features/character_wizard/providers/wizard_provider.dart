@@ -9,7 +9,7 @@ class CharacterWizardNotifier extends Notifier<WizardDraft> {
   final DiceRoller _diceRoller;
 
   CharacterWizardNotifier([DiceRoller? diceRoller])
-      : _diceRoller = diceRoller ?? DiceRoller();
+    : _diceRoller = diceRoller ?? DiceRoller();
 
   @override
   WizardDraft build() => const WizardDraft();
@@ -74,19 +74,54 @@ class CharacterWizardNotifier extends Notifier<WizardDraft> {
       case 'fighter':
       case 'barbarian':
       case 'paladin':
-        assigned = {'STR': 15, 'CON': 14, 'DEX': 13, 'WIS': 12, 'CHA': 10, 'INT': 8};
+        assigned = {
+          'STR': 15,
+          'CON': 14,
+          'DEX': 13,
+          'WIS': 12,
+          'CHA': 10,
+          'INT': 8,
+        };
         break;
       case 'rogue':
-        assigned = {'DEX': 15, 'CON': 14, 'INT': 13, 'WIS': 12, 'CHA': 10, 'STR': 8};
+        assigned = {
+          'DEX': 15,
+          'CON': 14,
+          'INT': 13,
+          'WIS': 12,
+          'CHA': 10,
+          'STR': 8,
+        };
         break;
       case 'wizard':
-        assigned = {'INT': 15, 'CON': 14, 'DEX': 13, 'WIS': 12, 'CHA': 10, 'STR': 8};
+        assigned = {
+          'INT': 15,
+          'CON': 14,
+          'DEX': 13,
+          'WIS': 12,
+          'CHA': 10,
+          'STR': 8,
+        };
         break;
       case 'cleric':
-        assigned = {'WIS': 15, 'CON': 14, 'STR': 13, 'DEX': 12, 'CHA': 10, 'INT': 8};
+        assigned = {
+          'WIS': 15,
+          'CON': 14,
+          'STR': 13,
+          'DEX': 12,
+          'CHA': 10,
+          'INT': 8,
+        };
         break;
       default:
-        assigned = {'STR': 15, 'CON': 14, 'DEX': 13, 'WIS': 12, 'CHA': 10, 'INT': 8};
+        assigned = {
+          'STR': 15,
+          'CON': 14,
+          'DEX': 13,
+          'WIS': 12,
+          'CHA': 10,
+          'INT': 8,
+        };
     }
 
     state = state.copyWith(baseAbilities: assigned);
@@ -113,10 +148,7 @@ class CharacterWizardNotifier extends Notifier<WizardDraft> {
       abilities[stats[i]] = rolled[i];
     }
 
-    state = state.copyWith(
-      rolledPool: rolled,
-      baseAbilities: abilities,
-    );
+    state = state.copyWith(rolledPool: rolled, baseAbilities: abilities);
   }
 
   void setBackground(BackgroundDefinition background) {
@@ -189,5 +221,5 @@ class CharacterWizardNotifier extends Notifier<WizardDraft> {
 
 final characterWizardProvider =
     NotifierProvider<CharacterWizardNotifier, WizardDraft>(
-  CharacterWizardNotifier.new,
-);
+      CharacterWizardNotifier.new,
+    );

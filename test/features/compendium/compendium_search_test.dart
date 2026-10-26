@@ -36,14 +36,14 @@ void main() {
     expect(features.any((f) => f.name == 'Action Surge'), isTrue);
   });
 
-  testWidgets('CompendiumSearchDialog allows search and category filtering', (tester) async {
+  testWidgets('CompendiumSearchDialog allows search and category filtering', (
+    tester,
+  ) async {
     CompendiumEntry? addedEntry;
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          databaseProvider.overrideWithValue(db),
-        ],
+        overrides: [databaseProvider.overrideWithValue(db)],
         child: MaterialApp(
           home: Scaffold(
             body: CompendiumSearchDialog(

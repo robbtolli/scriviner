@@ -1,10 +1,6 @@
 import '../../../core/dice/dice_ast.dart';
 
-enum RollType {
-  normal,
-  advantage,
-  disadvantage,
-}
+enum RollType { normal, advantage, disadvantage }
 
 /// Represents an individual resolved roll saved in the session history log.
 class DiceRollRecord {
@@ -36,12 +32,14 @@ class DiceRollRecord {
   String get formattedBreakdown {
     final parts = <String>[];
     for (final group in groups) {
-      final diceStrs = group.dice.map((d) {
-        if (d.isDropped) {
-          return '(${d.value} dropped)';
-        }
-        return '${d.value}';
-      }).join(', ');
+      final diceStrs = group.dice
+          .map((d) {
+            if (d.isDropped) {
+              return '(${d.value} dropped)';
+            }
+            return '${d.value}';
+          })
+          .join(', ');
       parts.add('[$diceStrs]');
     }
 

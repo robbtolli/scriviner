@@ -50,58 +50,66 @@ void main() {
       expect(system.calculateAbilityModifier(20), equals(5));
     });
 
-    test('resolveCharacterProperties calculates derived stats and formulas', () {
-      final rawProps = {
-        'level': 3,
-        'abilities': {
-          'str': {'score': 16}, // mod +3
-          'dex': {'score': 14}, // mod +2
-          'con': {'score': 14}, // mod +2
-          'int': {'score': 10}, // mod 0
-          'wis': {'score': 12}, // mod +1
-          'cha': {'score': 8},  // mod -1
-        },
-      };
+    test(
+      'resolveCharacterProperties calculates derived stats and formulas',
+      () {
+        final rawProps = {
+          'level': 3,
+          'abilities': {
+            'str': {'score': 16}, // mod +3
+            'dex': {'score': 14}, // mod +2
+            'con': {'score': 14}, // mod +2
+            'int': {'score': 10}, // mod 0
+            'wis': {'score': 12}, // mod +1
+            'cha': {'score': 8}, // mod -1
+          },
+        };
 
-      final resolved = system.resolveCharacterProperties(
-        rawProperties: rawProps,
-        activeModifiers: [],
-      );
+        final resolved = system.resolveCharacterProperties(
+          rawProperties: rawProps,
+          activeModifiers: [],
+        );
 
-      expect(resolved.getInt('attributes.proficiency_bonus'), equals(2));
-      expect(resolved.getInt('abilities.str.mod'), equals(3));
-      expect(resolved.getInt('abilities.dex.mod'), equals(2));
-      expect(resolved.getInt('abilities.wis.mod'), equals(1));
-      expect(resolved.getInt('abilities.cha.mod'), equals(-1));
+        expect(resolved.getInt('attributes.proficiency_bonus'), equals(2));
+        expect(resolved.getInt('abilities.str.mod'), equals(3));
+        expect(resolved.getInt('abilities.dex.mod'), equals(2));
+        expect(resolved.getInt('abilities.wis.mod'), equals(1));
+        expect(resolved.getInt('abilities.cha.mod'), equals(-1));
 
-      // AC: 10 + DEX mod (2) = 12
-      expect(resolved.getInt('attributes.ac'), equals(12));
+        // AC: 10 + DEX mod (2) = 12
+        expect(resolved.getInt('attributes.ac'), equals(12));
 
-      // Initiative: DEX mod (2)
-      expect(resolved.getInt('attributes.initiative'), equals(2));
+        // Initiative: DEX mod (2)
+        expect(resolved.getInt('attributes.initiative'), equals(2));
 
-      // Passive Perception: 10 + WIS mod (1) = 11
-      expect(resolved.getInt('attributes.passive_perception'), equals(11));
-    });
+        // Passive Perception: 10 + WIS mod (1) = 11
+        expect(resolved.getInt('attributes.passive_perception'), equals(11));
+      },
+    );
 
-    test('active conditions supply situational bonuses to PropertyPipeline', () {
-      final rawProps = {
-        'level': 1,
-        'abilities': {
-          'str': {'score': 14},
-          'dex': {'score': 10},
-        },
-      };
+    test(
+      'active conditions supply situational bonuses to PropertyPipeline',
+      () {
+        final rawProps = {
+          'level': 1,
+          'abilities': {
+            'str': {'score': 14},
+            'dex': {'score': 10},
+          },
+        };
 
-      final blessCondition = Dnd5eCondition.all.firstWhere((c) => c.id == 'bless');
+        final blessCondition = Dnd5eCondition.all.firstWhere(
+          (c) => c.id == 'bless',
+        );
 
-      final resolved = system.resolveCharacterProperties(
-        rawProperties: rawProps,
-        activeModifiers: blessCondition.modifiers,
-      );
+        final resolved = system.resolveCharacterProperties(
+          rawProperties: rawProps,
+          activeModifiers: blessCondition.modifiers,
+        );
 
-      final diceBonuses = resolved.getSituationalDice('attacks.melee.bonus');
-      expect(diceBonuses, contains('1d4'));
-    });
+        final diceBonuses = resolved.getSituationalDice('attacks.melee.bonus');
+        expect(diceBonuses, contains('1d4'));
+      },
+    );
   });
 }

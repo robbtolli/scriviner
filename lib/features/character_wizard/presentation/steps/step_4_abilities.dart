@@ -24,9 +24,9 @@ class Step4Abilities extends ConsumerWidget {
           Text(
             'Step 4: Ability Scores',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryGold,
-                ),
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryGold,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
@@ -75,29 +75,43 @@ class Step4Abilities extends ConsumerWidget {
                 builder: (context, bannerConstraints) {
                   final infoText = Row(
                     children: [
-                      const Icon(Icons.lightbulb_outline, color: AppTheme.primaryGold, size: 20),
+                      const Icon(
+                        Icons.lightbulb_outline,
+                        color: AppTheme.primaryGold,
+                        size: 20,
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           'Standard Array distributes [15, 14, 13, 12, 10, 8].',
-                          style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(200)),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.white.withAlpha(200),
+                          ),
                         ),
                       ),
                     ],
                   );
 
-                  if (bannerConstraints.maxWidth < 450 && draft.charClass != null) {
+                  if (bannerConstraints.maxWidth < 450 &&
+                      draft.charClass != null) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         infoText,
                         const SizedBox(height: 10),
                         ElevatedButton.icon(
-                          onPressed: () => notifier.autoAssignStandardArrayForClass(draft.charClass!),
+                          onPressed: () =>
+                              notifier.autoAssignStandardArrayForClass(
+                                draft.charClass!,
+                              ),
                           icon: const Icon(Icons.auto_fix_high, size: 16),
                           label: Text('Auto-Assign (${draft.charClass!.name})'),
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
                           ),
                         ),
                       ],
@@ -110,11 +124,17 @@ class Step4Abilities extends ConsumerWidget {
                       if (draft.charClass != null) ...[
                         const SizedBox(width: 10),
                         ElevatedButton.icon(
-                          onPressed: () => notifier.autoAssignStandardArrayForClass(draft.charClass!),
+                          onPressed: () =>
+                              notifier.autoAssignStandardArrayForClass(
+                                draft.charClass!,
+                              ),
                           icon: const Icon(Icons.auto_fix_high, size: 16),
                           label: Text('Auto-Assign (${draft.charClass!.name})'),
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
                           ),
                         ),
                       ],
@@ -130,14 +150,20 @@ class Step4Abilities extends ConsumerWidget {
                 color: AppTheme.surfaceDark,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: draft.remainingPointBuyPoints < 0 ? Colors.redAccent : AppTheme.primaryGold,
+                  color: draft.remainingPointBuyPoints < 0
+                      ? Colors.redAccent
+                      : AppTheme.primaryGold,
                 ),
               ),
               child: Row(
                 children: [
                   Icon(
-                    draft.remainingPointBuyPoints < 0 ? Icons.error_outline : Icons.shopping_bag_outlined,
-                    color: draft.remainingPointBuyPoints < 0 ? Colors.redAccent : AppTheme.primaryGold,
+                    draft.remainingPointBuyPoints < 0
+                        ? Icons.error_outline
+                        : Icons.shopping_bag_outlined,
+                    color: draft.remainingPointBuyPoints < 0
+                        ? Colors.redAccent
+                        : AppTheme.primaryGold,
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -149,7 +175,9 @@ class Step4Abilities extends ConsumerWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
-                      color: draft.remainingPointBuyPoints < 0 ? Colors.redAccent : AppTheme.primaryGold,
+                      color: draft.remainingPointBuyPoints < 0
+                          ? Colors.redAccent
+                          : AppTheme.primaryGold,
                     ),
                   ),
                 ],
@@ -187,11 +215,17 @@ class Step4Abilities extends ConsumerWidget {
                       children: [
                         Text(
                           stat,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                         Text(
                           _getStatName(stat),
-                          style: TextStyle(fontSize: 10, color: Colors.white.withAlpha(140)),
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.white.withAlpha(140),
+                          ),
                         ),
                       ],
                     ),
@@ -202,19 +236,34 @@ class Step4Abilities extends ConsumerWidget {
                       icon: const Icon(Icons.remove_circle_outline),
                       visualDensity: VisualDensity.compact,
                       padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                      onPressed: base > 8 ? () => notifier.setAbilityScore(stat, base - 1) : null,
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
+                      onPressed: base > 8
+                          ? () => notifier.setAbilityScore(stat, base - 1)
+                          : null,
                     ),
                     Text(
                       '$base',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     IconButton(
                       icon: const Icon(Icons.add_circle_outline),
                       visualDensity: VisualDensity.compact,
                       padding: const EdgeInsets.all(4),
-                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                      onPressed: base < 15 && draft.remainingPointBuyPoints >= WizardDraft.getPointBuyCost(base + 1) - WizardDraft.getPointBuyCost(base)
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
+                      onPressed:
+                          base < 15 &&
+                              draft.remainingPointBuyPoints >=
+                                  WizardDraft.getPointBuyCost(base + 1) -
+                                      WizardDraft.getPointBuyCost(base)
                           ? () => notifier.setAbilityScore(stat, base + 1)
                           : null,
                     ),
@@ -222,19 +271,29 @@ class Step4Abilities extends ConsumerWidget {
                     DropdownButton<int>(
                       value: base,
                       dropdownColor: AppTheme.surfaceDark,
-                      items: (draft.abilityMethod == AbilityGenMethod.standardArray
-                              ? [15, 14, 13, 12, 10, 8]
-                              : draft.rolledPool.isNotEmpty
+                      items:
+                          (draft.abilityMethod == AbilityGenMethod.standardArray
+                                  ? [15, 14, 13, 12, 10, 8]
+                                  : draft.rolledPool.isNotEmpty
                                   ? draft.rolledPool
                                   : [18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8])
-                          .toSet()
-                          .map((val) => DropdownMenuItem(
-                                value: val,
-                                child: Text('$val', style: const TextStyle(fontWeight: FontWeight.bold)),
-                              ))
-                          .toList(),
+                              .toSet()
+                              .map(
+                                (val) => DropdownMenuItem(
+                                  value: val,
+                                  child: Text(
+                                    '$val',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
                       onChanged: (newVal) {
-                        if (newVal != null) notifier.setAbilityScore(stat, newVal);
+                        if (newVal != null) {
+                          notifier.setAbilityScore(stat, newVal);
+                        }
                       },
                     ),
                   ],
@@ -242,7 +301,11 @@ class Step4Abilities extends ConsumerWidget {
                   if (bonus > 0) ...[
                     Text(
                       '+$bonus',
-                      style: const TextStyle(fontSize: 11, color: Colors.greenAccent, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Colors.greenAccent,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(width: 8),
                   ],
@@ -280,7 +343,11 @@ class Step4Abilities extends ConsumerWidget {
     return ExpansionTile(
       title: const Text(
         'What does each ability score do?',
-        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.primaryGold),
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+          color: AppTheme.primaryGold,
+        ),
       ),
       children: const [
         Padding(
@@ -288,17 +355,29 @@ class Step4Abilities extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('• STR (Strength): Melee weapon damage, athletics, jump distance, encumbrance.'),
+              Text(
+                '• STR (Strength): Melee weapon damage, athletics, jump distance, encumbrance.',
+              ),
               SizedBox(height: 4),
-              Text('• DEX (Dexterity): Armor class (evasion), initiative, ranged attacks, stealth.'),
+              Text(
+                '• DEX (Dexterity): Armor class (evasion), initiative, ranged attacks, stealth.',
+              ),
               SizedBox(height: 4),
-              Text('• CON (Constitution): Maximum health points, surviving poison, concentration.'),
+              Text(
+                '• CON (Constitution): Maximum health points, surviving poison, concentration.',
+              ),
               SizedBox(height: 4),
-              Text('• INT (Intelligence): Wizard magic, knowledge (arcana, history), investigation.'),
+              Text(
+                '• INT (Intelligence): Wizard magic, knowledge (arcana, history), investigation.',
+              ),
               SizedBox(height: 4),
-              Text('• WIS (Wisdom): Cleric/Druid magic, noticing hidden traps (perception), insight.'),
+              Text(
+                '• WIS (Wisdom): Cleric/Druid magic, noticing hidden traps (perception), insight.',
+              ),
               SizedBox(height: 4),
-              Text('• CHA (Charisma): Bard/Sorcerer/Warlock magic, persuasion, deception, intimidation.'),
+              Text(
+                '• CHA (Charisma): Bard/Sorcerer/Warlock magic, persuasion, deception, intimidation.',
+              ),
             ],
           ),
         ),

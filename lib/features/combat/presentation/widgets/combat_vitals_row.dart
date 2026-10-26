@@ -6,10 +6,7 @@ import '../../providers/combat_session_provider.dart';
 class CombatVitalsRow extends StatelessWidget {
   final CombatSessionState state;
 
-  const CombatVitalsRow({
-    super.key,
-    required this.state,
-  });
+  const CombatVitalsRow({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +69,9 @@ class CombatVitalsRow extends StatelessWidget {
     required String subtitle,
   }) {
     final theme = Theme.of(context);
-    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+    final tokens =
+        theme.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.ancientTomeTokens;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
@@ -114,10 +113,7 @@ class CombatVitalsRow extends StatelessWidget {
           ),
           Text(
             subtitle,
-            style: TextStyle(
-              fontSize: 10,
-              color: theme.colorScheme.primary,
-            ),
+            style: TextStyle(fontSize: 10, color: theme.colorScheme.primary),
           ),
         ],
       ),

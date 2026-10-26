@@ -42,7 +42,8 @@ class PluginsDialog extends ConsumerWidget {
                 controller: controller,
                 maxLines: 10,
                 decoration: const InputDecoration(
-                  hintText: '{\n  "id": "my-homebrew",\n  "name": "My Custom Pack",\n  "version": "1.0.0",\n  "targetSystem": "dnd5e",\n  "entities": { ... }\n}',
+                  hintText:
+                      '{\n  "id": "my-homebrew",\n  "name": "My Custom Pack",\n  "version": "1.0.0",\n  "targetSystem": "dnd5e",\n  "entities": { ... }\n}',
                   border: OutlineInputBorder(),
                 ),
                 style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
@@ -60,7 +61,9 @@ class PluginsDialog extends ConsumerWidget {
               final text = controller.text.trim();
               if (text.isEmpty) return;
 
-              final success = await ref.read(pluginProvider.notifier).installFromJson(text);
+              final success = await ref
+                  .read(pluginProvider.notifier)
+                  .installFromJson(text);
               if (ctx.mounted) {
                 Navigator.of(ctx).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -68,9 +71,12 @@ class PluginsDialog extends ConsumerWidget {
                     content: Text(
                       success
                           ? 'Plugin installed successfully!'
-                          : (ref.read(pluginProvider).errorMessage ?? 'Failed to install plugin'),
+                          : (ref.read(pluginProvider).errorMessage ??
+                                'Failed to install plugin'),
                     ),
-                    backgroundColor: success ? Colors.green.shade800 : Colors.red.shade800,
+                    backgroundColor: success
+                        ? Colors.green.shade800
+                        : Colors.red.shade800,
                   ),
                 );
               }
@@ -86,7 +92,9 @@ class PluginsDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(pluginProvider);
     final theme = Theme.of(context);
-    final isEloriaInstalled = ref.read(pluginProvider.notifier).isInstalled('eloria-homebrew-compendium');
+    final isEloriaInstalled = ref
+        .read(pluginProvider.notifier)
+        .isInstalled('eloria-homebrew-compendium');
 
     return AlertDialog(
       title: Row(
@@ -96,12 +104,17 @@ class PluginsDialog extends ConsumerWidget {
           const Expanded(
             child: Text(
               'PLUGINS & CUSTOM CONTENT',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
           Tooltip(
-            message: "In tabletop gaming, 'Homebrew' refers to custom, user-created game rules, spells, and items—not the command-line package manager.",
+            message:
+                "In tabletop gaming, 'Homebrew' refers to custom, user-created game rules, spells, and items—not the command-line package manager.",
             child: Icon(
               Icons.info_outline,
               size: 20,
@@ -121,7 +134,10 @@ class PluginsDialog extends ConsumerWidget {
                 children: [
                   Text(
                     'Custom player & DM-created spells, items, and rules (TTRPG Homebrew).',
-                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(160)),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: theme.colorScheme.onSurface.withAlpha(160),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Expanded(
@@ -130,7 +146,13 @@ class PluginsDialog extends ConsumerWidget {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.inventory_2_outlined, size: 48, color: theme.colorScheme.primary.withAlpha(120)),
+                                Icon(
+                                  Icons.inventory_2_outlined,
+                                  size: 48,
+                                  color: theme.colorScheme.primary.withAlpha(
+                                    120,
+                                  ),
+                                ),
                                 const SizedBox(height: 12),
                                 const Text(
                                   'No custom plugins installed',
@@ -140,42 +162,72 @@ class PluginsDialog extends ConsumerWidget {
                                 Text(
                                   'Import custom JSON plugins or try the official sample pack below.',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(160)),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: theme.colorScheme.onSurface
+                                        .withAlpha(160),
+                                  ),
                                 ),
                               ],
                             ),
                           )
                         : ListView.separated(
                             itemCount: state.installedPlugins.length,
-                            separatorBuilder: (context, index) => const SizedBox(height: 8),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 8),
                             itemBuilder: (context, index) {
                               final plugin = state.installedPlugins[index];
-                              final spellsCount = (plugin.entities['spells'] as List?)?.length ?? 0;
-                              final itemsCount = ((plugin.entities['items'] ?? plugin.entities['equipment']) as List?)?.length ?? 0;
-                              final featuresCount = (plugin.entities['features'] as List?)?.length ?? 0;
+                              final spellsCount =
+                                  (plugin.entities['spells'] as List?)
+                                      ?.length ??
+                                  0;
+                              final itemsCount =
+                                  ((plugin.entities['items'] ??
+                                              plugin.entities['equipment'])
+                                          as List?)
+                                      ?.length ??
+                                  0;
+                              final featuresCount =
+                                  (plugin.entities['features'] as List?)
+                                      ?.length ??
+                                  0;
 
                               return Card(
                                 child: Padding(
                                   padding: const EdgeInsets.all(12),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
-                                          Icon(Icons.auto_awesome, size: 18, color: theme.colorScheme.primary),
+                                          Icon(
+                                            Icons.auto_awesome,
+                                            size: 18,
+                                            color: theme.colorScheme.primary,
+                                          ),
                                           const SizedBox(width: 8),
                                           Expanded(
                                             child: Text(
                                               plugin.name,
-                                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                              ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                           IconButton(
-                                            icon: const Icon(Icons.delete_outline, size: 20, color: Colors.redAccent),
+                                            icon: const Icon(
+                                              Icons.delete_outline,
+                                              size: 20,
+                                              color: Colors.redAccent,
+                                            ),
                                             tooltip: 'Uninstall Plugin',
                                             onPressed: () async {
-                                              await ref.read(pluginProvider.notifier).uninstall(plugin.id);
+                                              await ref
+                                                  .read(pluginProvider.notifier)
+                                                  .uninstall(plugin.id);
                                             },
                                           ),
                                         ],
@@ -183,13 +235,21 @@ class PluginsDialog extends ConsumerWidget {
                                       const SizedBox(height: 4),
                                       Text(
                                         'v${plugin.version} by ${plugin.author} • ${plugin.targetSystem}',
-                                        style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withAlpha(140)),
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: theme.colorScheme.onSurface
+                                              .withAlpha(140),
+                                        ),
                                       ),
                                       if (plugin.description.isNotEmpty) ...[
                                         const SizedBox(height: 6),
                                         Text(
                                           plugin.description,
-                                          style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(200)),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: theme.colorScheme.onSurface
+                                                .withAlpha(200),
+                                          ),
                                         ),
                                       ],
                                       const SizedBox(height: 8),
@@ -199,20 +259,38 @@ class PluginsDialog extends ConsumerWidget {
                                         children: [
                                           if (spellsCount > 0)
                                             Chip(
-                                              label: Text('$spellsCount Spells', style: const TextStyle(fontSize: 10)),
-                                              visualDensity: VisualDensity.compact,
+                                              label: Text(
+                                                '$spellsCount Spells',
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                              visualDensity:
+                                                  VisualDensity.compact,
                                               padding: EdgeInsets.zero,
                                             ),
                                           if (itemsCount > 0)
                                             Chip(
-                                              label: Text('$itemsCount Items', style: const TextStyle(fontSize: 10)),
-                                              visualDensity: VisualDensity.compact,
+                                              label: Text(
+                                                '$itemsCount Items',
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                              visualDensity:
+                                                  VisualDensity.compact,
                                               padding: EdgeInsets.zero,
                                             ),
                                           if (featuresCount > 0)
                                             Chip(
-                                              label: Text('$featuresCount Features', style: const TextStyle(fontSize: 10)),
-                                              visualDensity: VisualDensity.compact,
+                                              label: Text(
+                                                '$featuresCount Features',
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                ),
+                                              ),
+                                              visualDensity:
+                                                  VisualDensity.compact,
                                               padding: EdgeInsets.zero,
                                             ),
                                         ],

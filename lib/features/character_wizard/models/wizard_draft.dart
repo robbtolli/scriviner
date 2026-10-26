@@ -6,9 +6,15 @@ import '../../../core/database/app_database.dart';
 import 'srd_starter_data.dart';
 
 enum AbilityGenMethod {
-  standardArray('Standard Array', 'Balanced and beginner-friendly: 15, 14, 13, 12, 10, 8.'),
+  standardArray(
+    'Standard Array',
+    'Balanced and beginner-friendly: 15, 14, 13, 12, 10, 8.',
+  ),
   pointBuy('Point Buy', 'Spend 27 points to customize your ability scores.'),
-  rolled('Roll Stats (4d6kh3)', 'Roll 4d6 and keep the highest 3 dice for each stat.');
+  rolled(
+    'Roll Stats (4d6kh3)',
+    'Roll 4d6 and keep the highest 3 dice for each stat.',
+  );
 
   final String title;
   final String description;
@@ -162,7 +168,9 @@ class WizardDraft {
   (bool, String?) validateStep(int step) {
     switch (step) {
       case 0:
-        if (name.trim().isEmpty) return (false, 'Please give your character a name.');
+        if (name.trim().isEmpty) {
+          return (false, 'Please give your character a name.');
+        }
         return (true, null);
       case 1:
         if (race == null) return (false, 'Please choose a race.');
@@ -171,7 +179,8 @@ class WizardDraft {
         if (charClass == null) return (false, 'Please choose a class.');
         return (true, null);
       case 3:
-        if (abilityMethod == AbilityGenMethod.pointBuy && remainingPointBuyPoints < 0) {
+        if (abilityMethod == AbilityGenMethod.pointBuy &&
+            remainingPointBuyPoints < 0) {
           return (false, 'You have exceeded the 27 point buy limit.');
         }
         return (true, null);
@@ -179,7 +188,10 @@ class WizardDraft {
         if (background == null) return (false, 'Please choose a background.');
         final requiredSkillCount = charClass?.skillCount ?? 2;
         if (selectedSkills.length < requiredSkillCount) {
-          return (false, 'Please select $requiredSkillCount class skills (selected ${selectedSkills.length}).');
+          return (
+            false,
+            'Please select $requiredSkillCount class skills (selected ${selectedSkills.length}).',
+          );
         }
         return (true, null);
       case 5:
@@ -209,31 +221,31 @@ class WizardDraft {
       'race': race?.name ?? 'Human',
       'raceId': race?.id ?? 'human',
       'background': background?.name ?? 'Folk Hero',
-      'hp': {
-        'current': maxHp,
-        'max': maxHp,
-        'temp': 0,
-      },
+      'hp': {'current': maxHp, 'max': maxHp, 'temp': 0},
       'armorClass': armorClass,
       'speed': speed,
       'proficiencyBonus': proficiencyBonus,
-      'abilities': finalAbilities.map((stat, score) => MapEntry(
-            stat.toLowerCase(),
-            {
-              'score': score,
-              'mod': abilityModifiers[stat] ?? 0,
-            },
-          )),
-      'savingThrows': (charClass?.savingThrows ?? []).map((e) => e.toLowerCase()).toList(),
+      'abilities': finalAbilities.map(
+        (stat, score) => MapEntry(stat.toLowerCase(), {
+          'score': score,
+          'mod': abilityModifiers[stat] ?? 0,
+        }),
+      ),
+      'savingThrows': (charClass?.savingThrows ?? [])
+          .map((e) => e.toLowerCase())
+          .toList(),
       'skills': allProficientSkills.toList(),
       'skillProficiencies': {for (final s in allProficientSkills) s: 1},
       'spells': selectedSpells.map((spellName) {
         final found = SrdStarterData.spells.cast<SpellDefinition?>().firstWhere(
-          (s) => s?.name.toLowerCase() == spellName.toLowerCase() || s?.id.toLowerCase() == spellName.toLowerCase(),
+          (s) =>
+              s?.name.toLowerCase() == spellName.toLowerCase() ||
+              s?.id.toLowerCase() == spellName.toLowerCase(),
           orElse: () => null,
         );
         return {
-          'id': 'spell_${(found?.id ?? spellName).toLowerCase().replaceAll(' ', '_')}',
+          'id':
+              'spell_${(found?.id ?? spellName).toLowerCase().replaceAll(' ', '_')}',
           'name': found?.name ?? spellName,
           'level': found?.level ?? 0,
           'school': found?.school ?? 'Evocation',
@@ -257,14 +269,10 @@ class WizardDraft {
           'description': '$featName granted by ${charClass?.name}',
         };
       }).toList(),
-      'hitDice': {
-        'total': 1,
-        'spent': 0,
-        'die': '1d${charClass?.hitDie ?? 8}',
-      },
+      'hitDice': {'total': 1, 'spent': 0, 'die': '1d${charClass?.hitDie ?? 8}'},
       'spellSlots': charClass?.isSpellcaster == true
           ? {
-              '1': {'total': 2, 'spent': 0}
+              '1': {'total': 2, 'spent': 0},
             }
           : {},
       'equipment': [equipmentPackage],

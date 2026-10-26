@@ -7,10 +7,7 @@ import '../../providers/wizard_provider.dart';
 class Step7Review extends ConsumerWidget {
   final VoidCallback onComplete;
 
-  const Step7Review({
-    super.key,
-    required this.onComplete,
-  });
+  const Step7Review({super.key, required this.onComplete});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,17 +16,35 @@ class Step7Review extends ConsumerWidget {
     final checks = [
       ('Character Name', draft.name.trim().isNotEmpty, draft.name),
       ('Race & Heritage', draft.race != null, draft.race?.name ?? 'Not chosen'),
-      ('Heroic Class', draft.charClass != null, draft.charClass?.name ?? 'Not chosen'),
+      (
+        'Heroic Class',
+        draft.charClass != null,
+        draft.charClass?.name ?? 'Not chosen',
+      ),
       (
         'Ability Scores',
         true,
-        draft.finalAbilities.entries.map((e) => '${e.key}: ${e.value}').join(', ')
+        draft.finalAbilities.entries
+            .map((e) => '${e.key}: ${e.value}')
+            .join(', '),
       ),
-      ('Background & Origin', draft.background != null, draft.background?.name ?? 'Not chosen'),
-      ('Skill Proficiencies', draft.allProficientSkills.isNotEmpty, draft.allProficientSkills.join(', ')),
+      (
+        'Background & Origin',
+        draft.background != null,
+        draft.background?.name ?? 'Not chosen',
+      ),
+      (
+        'Skill Proficiencies',
+        draft.allProficientSkills.isNotEmpty,
+        draft.allProficientSkills.join(', '),
+      ),
       ('Starting Equipment', true, draft.equipmentPackage),
       if (draft.charClass?.isSpellcaster == true)
-        ('Prepared Spells', draft.selectedSpells.isNotEmpty, '${draft.selectedSpells.length} spells chosen'),
+        (
+          'Prepared Spells',
+          draft.selectedSpells.isNotEmpty,
+          '${draft.selectedSpells.length} spells chosen',
+        ),
     ];
 
     final isAllValid = checks.every((c) => c.$2);
@@ -42,9 +57,9 @@ class Step7Review extends ConsumerWidget {
           Text(
             'Step 7: Review & Embark',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryGold,
-                ),
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryGold,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
@@ -64,7 +79,9 @@ class Step7Review extends ConsumerWidget {
                 color: AppTheme.cardDark,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: isOk ? Colors.white.withAlpha(20) : Colors.redAccent.withAlpha(120),
+                  color: isOk
+                      ? Colors.white.withAlpha(20)
+                      : Colors.redAccent.withAlpha(120),
                 ),
               ),
               child: Row(
@@ -81,11 +98,17 @@ class Step7Review extends ConsumerWidget {
                       children: [
                         Text(
                           label,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
                         ),
                         Text(
                           detail,
-                          style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(160)),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withAlpha(160),
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

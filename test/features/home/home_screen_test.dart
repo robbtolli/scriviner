@@ -22,16 +22,14 @@ void main() {
 
   Widget buildTestApp() {
     return ProviderScope(
-      overrides: [
-        databaseProvider.overrideWithValue(db),
-      ],
-      child: const MaterialApp(
-        home: HomeScreen(),
-      ),
+      overrides: [databaseProvider.overrideWithValue(db)],
+      child: const MaterialApp(home: HomeScreen()),
     );
   }
 
-  testWidgets('renders EmptyHomeState when no characters exist', (tester) async {
+  testWidgets('renders EmptyHomeState when no characters exist', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildTestApp());
     await tester.pumpAndSettle();
 
@@ -47,14 +45,17 @@ void main() {
 
   testWidgets('renders ResumeHeroCard when characters exist', (tester) async {
     final now = DateTime.now();
-    await db.upsertCharacter(CharactersTableCompanion.insert(
-      id: 'char-thorin',
-      name: 'Thorin Ironforge',
-      systemId: const Value('dnd5e'),
-      createdAt: now,
-      lastPlayedAt: now,
-      rawPropertiesJson: '{"level": 1, "class": "Fighter", "race": "Dwarf", "hp": {"current": 13, "max": 13}, "armorClass": 18}',
-    ));
+    await db.upsertCharacter(
+      CharactersTableCompanion.insert(
+        id: 'char-thorin',
+        name: 'Thorin Ironforge',
+        systemId: const Value('dnd5e'),
+        createdAt: now,
+        lastPlayedAt: now,
+        rawPropertiesJson:
+            '{"level": 1, "class": "Fighter", "race": "Dwarf", "hp": {"current": 13, "max": 13}, "armorClass": 18}',
+      ),
+    );
 
     await tester.pumpWidget(buildTestApp());
     await tester.pumpAndSettle();
@@ -68,7 +69,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   });
 
-  testWidgets('loading sample heroes populates characters into view', (tester) async {
+  testWidgets('loading sample heroes populates characters into view', (
+    tester,
+  ) async {
     await tester.pumpWidget(buildTestApp());
     await tester.pumpAndSettle();
 

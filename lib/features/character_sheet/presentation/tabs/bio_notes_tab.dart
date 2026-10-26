@@ -8,11 +8,7 @@ class BioNotesTab extends StatefulWidget {
   final CharacterSheetState state;
   final CharacterSheetNotifier notifier;
 
-  const BioNotesTab({
-    super.key,
-    required this.state,
-    required this.notifier,
-  });
+  const BioNotesTab({super.key, required this.state, required this.notifier});
 
   @override
   State<BioNotesTab> createState() => _BioNotesTabState();
@@ -71,7 +67,9 @@ class _BioNotesTabState extends State<BioNotesTab> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+    final tokens =
+        theme.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.ancientTomeTokens;
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -81,7 +79,11 @@ class _BioNotesTabState extends State<BioNotesTab> {
           children: [
             Row(
               children: [
-                Icon(tokens.iconography.bio, color: theme.colorScheme.primary, size: 16),
+                Icon(
+                  tokens.iconography.bio,
+                  color: theme.colorScheme.primary,
+                  size: 16,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   'ROLEPLAYING TRAITS & NOTES',
@@ -101,7 +103,10 @@ class _BioNotesTabState extends State<BioNotesTab> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: theme.colorScheme.onPrimary,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 visualDensity: VisualDensity.compact,
               ),
             ),
@@ -113,35 +118,70 @@ class _BioNotesTabState extends State<BioNotesTab> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: _buildBioField(context, 'Personality Traits', _traitsCtrl, maxLines: 3)),
+            Expanded(
+              child: _buildBioField(
+                context,
+                'Personality Traits',
+                _traitsCtrl,
+                maxLines: 3,
+              ),
+            ),
             const SizedBox(width: 10),
-            Expanded(child: _buildBioField(context, 'Ideals', _idealsCtrl, maxLines: 3)),
+            Expanded(
+              child: _buildBioField(
+                context,
+                'Ideals',
+                _idealsCtrl,
+                maxLines: 3,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 10),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: _buildBioField(context, 'Bonds', _bondsCtrl, maxLines: 3)),
+            Expanded(
+              child: _buildBioField(context, 'Bonds', _bondsCtrl, maxLines: 3),
+            ),
             const SizedBox(width: 10),
-            Expanded(child: _buildBioField(context, 'Flaws', _flawsCtrl, maxLines: 3)),
+            Expanded(
+              child: _buildBioField(context, 'Flaws', _flawsCtrl, maxLines: 3),
+            ),
           ],
         ),
         const SizedBox(height: 14),
 
         // Backstory
-        _buildBioField(context, 'Character Backstory', _backstoryCtrl, maxLines: 5),
+        _buildBioField(
+          context,
+          'Character Backstory',
+          _backstoryCtrl,
+          maxLines: 5,
+        ),
         const SizedBox(height: 14),
 
         // Campaign / Session Notes
-        _buildBioField(context, 'Campaign & Session Notes (Markdown)', _notesCtrl, maxLines: 8),
+        _buildBioField(
+          context,
+          'Campaign & Session Notes (Markdown)',
+          _notesCtrl,
+          maxLines: 8,
+        ),
       ],
     );
   }
 
-  Widget _buildBioField(BuildContext context, String label, TextEditingController controller, {int maxLines = 3}) {
+  Widget _buildBioField(
+    BuildContext context,
+    String label,
+    TextEditingController controller, {
+    int maxLines = 3,
+  }) {
     final theme = Theme.of(context);
-    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+    final tokens =
+        theme.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.ancientTomeTokens;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -165,12 +205,18 @@ class _BioNotesTabState extends State<BioNotesTab> {
           TextField(
             controller: controller,
             maxLines: maxLines,
-            style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface, height: 1.4),
+            style: TextStyle(
+              fontSize: 13,
+              color: theme.colorScheme.onSurface,
+              height: 1.4,
+            ),
             decoration: InputDecoration(
               isDense: true,
               border: InputBorder.none,
               hintText: 'Enter $label...',
-              hintStyle: TextStyle(color: theme.colorScheme.onSurface.withAlpha(70)),
+              hintStyle: TextStyle(
+                color: theme.colorScheme.onSurface.withAlpha(70),
+              ),
             ),
           ),
         ],

@@ -162,9 +162,7 @@ class AppTheme {
           backgroundColor: primaryGold,
           foregroundColor: Colors.black,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           textStyle: const TextStyle(
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -176,9 +174,7 @@ class AppTheme {
           foregroundColor: primaryGold,
           side: const BorderSide(color: primaryGold, width: 1.5),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -243,11 +239,12 @@ class AppTheme {
       brightness: Brightness.light,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: paperLight,
-      textTheme: GoogleFonts.ebGaramondTextTheme(ThemeData.light().textTheme).apply(
-        fontFamilyFallback: const ['serif'],
-        bodyColor: inkDark,
-        displayColor: inkDark,
-      ),
+      textTheme: GoogleFonts.ebGaramondTextTheme(ThemeData.light().textTheme)
+          .apply(
+            fontFamilyFallback: const ['serif'],
+            bodyColor: inkDark,
+            displayColor: inkDark,
+          ),
       extensions: const [tokens],
       cardTheme: CardThemeData(
         color: cardLight,
@@ -268,9 +265,7 @@ class AppTheme {
           backgroundColor: warmBronze,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           textStyle: const TextStyle(
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -282,9 +277,7 @@ class AppTheme {
           foregroundColor: warmBronze,
           side: const BorderSide(color: warmBronze, width: 1.5),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -350,11 +343,12 @@ class AppTheme {
       brightness: Brightness.dark,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: spaceNavy,
-      textTheme: GoogleFonts.rajdhaniTextTheme(ThemeData.dark().textTheme).apply(
-        fontFamilyFallback: const ['sans-serif'],
-        bodyColor: textColor,
-        displayColor: arcaneCyan,
-      ),
+      textTheme: GoogleFonts.rajdhaniTextTheme(ThemeData.dark().textTheme)
+          .apply(
+            fontFamilyFallback: const ['sans-serif'],
+            bodyColor: textColor,
+            displayColor: arcaneCyan,
+          ),
       extensions: const [tokens],
       cardTheme: CardThemeData(
         color: cardNavy,
@@ -375,9 +369,7 @@ class AppTheme {
           backgroundColor: arcaneCyan,
           foregroundColor: Colors.black,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           textStyle: const TextStyle(
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -389,9 +381,7 @@ class AppTheme {
           foregroundColor: arcaneCyan,
           side: const BorderSide(color: arcaneCyan, width: 1.5),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -481,9 +471,7 @@ class AppTheme {
           backgroundColor: dungeonGold,
           foregroundColor: Colors.black,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           textStyle: const TextStyle(
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -495,9 +483,7 @@ class AppTheme {
           foregroundColor: dungeonGold,
           side: const BorderSide(color: dungeonGold, width: 2),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -563,11 +549,14 @@ class AppTheme {
       brightness: Brightness.dark,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: forestBg,
-      textTheme: GoogleFonts.cormorantGaramondTextTheme(ThemeData.dark().textTheme).apply(
-        fontFamilyFallback: const ['serif'],
-        bodyColor: textColor,
-        displayColor: jadeGlow,
-      ),
+      textTheme:
+          GoogleFonts.cormorantGaramondTextTheme(
+            ThemeData.dark().textTheme,
+          ).apply(
+            fontFamilyFallback: const ['serif'],
+            bodyColor: textColor,
+            displayColor: jadeGlow,
+          ),
       extensions: const [tokens],
       cardTheme: CardThemeData(
         color: cardMoss,
@@ -588,9 +577,7 @@ class AppTheme {
           backgroundColor: jadeGlow,
           foregroundColor: Colors.black,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           textStyle: const TextStyle(
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -602,9 +589,7 @@ class AppTheme {
           foregroundColor: jadeGlow,
           side: const BorderSide(color: jadeGlow, width: 1.5),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -670,11 +655,12 @@ class AppTheme {
       brightness: Brightness.dark,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: ashBg,
-      textTheme: GoogleFonts.pirataOneTextTheme(ThemeData.dark().textTheme).apply(
-        fontFamilyFallback: const ['serif'],
-        bodyColor: textColor,
-        displayColor: hellfireOrange,
-      ),
+      textTheme: GoogleFonts.pirataOneTextTheme(ThemeData.dark().textTheme)
+          .apply(
+            fontFamilyFallback: const ['serif'],
+            bodyColor: textColor,
+            displayColor: hellfireOrange,
+          ),
       extensions: const [tokens],
       cardTheme: CardThemeData(
         color: cardAsh,
@@ -695,9 +681,7 @@ class AppTheme {
           backgroundColor: hellfireOrange,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
           textStyle: const TextStyle(
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -709,9 +693,7 @@ class AppTheme {
           foregroundColor: hellfireOrange,
           side: const BorderSide(color: hellfireOrange, width: 1.5),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

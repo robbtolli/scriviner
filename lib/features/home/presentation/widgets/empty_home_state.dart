@@ -25,7 +25,10 @@ class EmptyHomeState extends StatelessWidget {
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface,
                 shape: BoxShape.circle,
-                border: Border.all(color: theme.colorScheme.primary.withAlpha(120), width: 2),
+                border: Border.all(
+                  color: theme.colorScheme.primary.withAlpha(120),
+                  width: 2,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: theme.colorScheme.primary.withAlpha(40),
@@ -44,9 +47,9 @@ class EmptyHomeState extends StatelessWidget {
             Text(
               'Your Chronicle Begins Here',
               style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
@@ -75,7 +78,10 @@ class EmptyHomeState extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: theme.colorScheme.onPrimary,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 14,
+                    ),
                   ),
                 ),
                 OutlinedButton.icon(
@@ -85,7 +91,10 @@ class EmptyHomeState extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: theme.colorScheme.primary,
                     side: BorderSide(color: theme.colorScheme.primary),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
+                    ),
                   ),
                 ),
               ],

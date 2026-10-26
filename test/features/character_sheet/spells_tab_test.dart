@@ -71,17 +71,19 @@ void main() {
 
   Widget createWidgetUnderTest() {
     return ProviderScope(
-      overrides: [
-        databaseProvider.overrideWithValue(db),
-      ],
+      overrides: [databaseProvider.overrideWithValue(db)],
       child: MaterialApp(
         home: Consumer(
           builder: (context, ref, _) {
             final state = ref.watch(characterSheetProvider('char_wizard'));
-            final notifier = ref.read(characterSheetProvider('char_wizard').notifier);
+            final notifier = ref.read(
+              characterSheetProvider('char_wizard').notifier,
+            );
 
             if (state == null) {
-              return const Scaffold(body: Center(child: CircularProgressIndicator()));
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
             }
 
             return Scaffold(
@@ -93,7 +95,9 @@ void main() {
     );
   }
 
-  testWidgets('renders spellcasting stats, cantrips, and leveled spells', (tester) async {
+  testWidgets('renders spellcasting stats, cantrips, and leveled spells', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1000, 1400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -119,58 +123,68 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   });
 
-  testWidgets('casting a 1st level spell deducts a spell slot from combat provider', (tester) async {
-    tester.view.physicalSize = const Size(1000, 1400);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
+  testWidgets(
+    'casting a 1st level spell deducts a spell slot from combat provider',
+    (tester) async {
+      tester.view.physicalSize = const Size(1000, 1400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
 
-    await seedWizardCharacter();
+      await seedWizardCharacter();
 
-    final container = ProviderContainer(
-      overrides: [databaseProvider.overrideWithValue(db)],
-    );
-    addTearDown(container.dispose);
+      final container = ProviderContainer(
+        overrides: [databaseProvider.overrideWithValue(db)],
+      );
+      addTearDown(container.dispose);
 
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: MaterialApp(
-          home: Consumer(
-            builder: (context, ref, _) {
-              final state = ref.watch(characterSheetProvider('char_wizard'));
-              final notifier = ref.read(characterSheetProvider('char_wizard').notifier);
-              ref.watch(combatSessionProvider('char_wizard'));
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            home: Consumer(
+              builder: (context, ref, _) {
+                final state = ref.watch(characterSheetProvider('char_wizard'));
+                final notifier = ref.read(
+                  characterSheetProvider('char_wizard').notifier,
+                );
+                ref.watch(combatSessionProvider('char_wizard'));
 
-              if (state == null) {
-                return const Scaffold(body: Center(child: CircularProgressIndicator()));
-              }
+                if (state == null) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
 
-              return Scaffold(
-                body: SpellsTab(state: state, notifier: notifier),
-              );
-            },
+                return Scaffold(
+                  body: SpellsTab(state: state, notifier: notifier),
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    // Verify 1st level slot in combat state starts with 0 spent
-    var combatState = container.read(combatSessionProvider('char_wizard'));
-    expect(combatState?.spellSlots['1']?.spent, equals(0));
+      // Verify 1st level slot in combat state starts with 0 spent
+      var combatState = container.read(combatSessionProvider('char_wizard'));
+      expect(combatState?.spellSlots['1']?.spent, equals(0));
 
-    // Tap CAST on Magic Missile
-    final castButtons = find.widgetWithText(ElevatedButton, 'CAST');
-    expect(castButtons, findsNWidgets(2)); // One for Fire Bolt, one for Magic Missile
-    await tester.tap(castButtons.at(1));
-    await tester.pumpAndSettle();
+      // Tap CAST on Magic Missile
+      final castButtons = find.widgetWithText(ElevatedButton, 'CAST');
+      expect(
+        castButtons,
+        findsNWidgets(2),
+      ); // One for Fire Bolt, one for Magic Missile
+      await tester.tap(castButtons.at(1));
+      await tester.pumpAndSettle();
 
-    // Slot should now have 1 spent!
-    combatState = container.read(combatSessionProvider('char_wizard'));
-    expect(combatState?.spellSlots['1']?.spent, equals(1));
+      // Slot should now have 1 spent!
+      combatState = container.read(combatSessionProvider('char_wizard'));
+      expect(combatState?.spellSlots['1']?.spent, equals(1));
 
-    // Clean teardown
-    await tester.pumpWidget(const SizedBox());
-    await tester.pump(const Duration(milliseconds: 50));
-  });
+      // Clean teardown
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 50));
+    },
+  );
 }

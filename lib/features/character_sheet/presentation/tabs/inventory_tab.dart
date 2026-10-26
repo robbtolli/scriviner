@@ -13,11 +13,7 @@ class InventoryTab extends StatelessWidget {
   final CharacterSheetState state;
   final CharacterSheetNotifier notifier;
 
-  const InventoryTab({
-    super.key,
-    required this.state,
-    required this.notifier,
-  });
+  const InventoryTab({super.key, required this.state, required this.notifier});
 
   void _openAddItemDialog(BuildContext context) {
     showDialog(
@@ -56,7 +52,10 @@ class InventoryTab extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(color: theme.colorScheme.primary),
         ),
-        title: Text('Edit Currency', style: TextStyle(color: theme.colorScheme.primary)),
+        title: Text(
+          'Edit Currency',
+          style: TextStyle(color: theme.colorScheme.primary),
+        ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -111,7 +110,9 @@ class InventoryTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+    final tokens =
+        theme.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.ancientTomeTokens;
     final encumbered = state.isEncumbered;
 
     return ListView(
@@ -145,9 +146,19 @@ class InventoryTab extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.edit, size: 13, color: theme.colorScheme.primary),
+                        Icon(
+                          Icons.edit,
+                          size: 13,
+                          color: theme.colorScheme.primary,
+                        ),
                         const SizedBox(width: 4),
-                        Text('Edit', style: TextStyle(fontSize: 11, color: theme.colorScheme.primary)),
+                        Text(
+                          'Edit',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -156,11 +167,31 @@ class InventoryTab extends StatelessWidget {
               const SizedBox(height: 10),
               Row(
                 children: [
-                  _buildCoinBox(context, 'GP', state.currency.gp, Colors.amberAccent),
+                  _buildCoinBox(
+                    context,
+                    'GP',
+                    state.currency.gp,
+                    Colors.amberAccent,
+                  ),
                   _buildCoinBox(context, 'SP', state.currency.sp, Colors.grey),
-                  _buildCoinBox(context, 'CP', state.currency.cp, Colors.brown.shade300),
-                  _buildCoinBox(context, 'EP', state.currency.ep, Colors.blueGrey),
-                  _buildCoinBox(context, 'PP', state.currency.pp, Colors.cyanAccent),
+                  _buildCoinBox(
+                    context,
+                    'CP',
+                    state.currency.cp,
+                    Colors.brown.shade300,
+                  ),
+                  _buildCoinBox(
+                    context,
+                    'EP',
+                    state.currency.ep,
+                    Colors.blueGrey,
+                  ),
+                  _buildCoinBox(
+                    context,
+                    'PP',
+                    state.currency.pp,
+                    Colors.cyanAccent,
+                  ),
                 ],
               ),
             ],
@@ -190,7 +221,9 @@ class InventoryTab extends StatelessWidget {
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
-                      color: encumbered ? Colors.redAccent : theme.colorScheme.primary,
+                      color: encumbered
+                          ? Colors.redAccent
+                          : theme.colorScheme.primary,
                     ),
                   ),
                   Text(
@@ -198,7 +231,9 @@ class InventoryTab extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: encumbered ? Colors.redAccent : theme.colorScheme.onSurface,
+                      color: encumbered
+                          ? Colors.redAccent
+                          : theme.colorScheme.onSurface,
                     ),
                   ),
                 ],
@@ -233,7 +268,11 @@ class InventoryTab extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(tokens.iconography.inventory, color: theme.colorScheme.primary, size: 16),
+                Icon(
+                  tokens.iconography.inventory,
+                  color: theme.colorScheme.primary,
+                  size: 16,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   'INVENTORY (${state.inventoryItems.length} ITEMS)',
@@ -253,7 +292,10 @@ class InventoryTab extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: theme.colorScheme.onPrimary,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 visualDensity: VisualDensity.compact,
               ),
             ),
@@ -267,7 +309,11 @@ class InventoryTab extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 40),
               child: Column(
                 children: [
-                  Icon(tokens.iconography.inventory, size: 48, color: theme.colorScheme.onSurface.withAlpha(50)),
+                  Icon(
+                    tokens.iconography.inventory,
+                    size: 48,
+                    color: theme.colorScheme.onSurface.withAlpha(50),
+                  ),
                   const SizedBox(height: 12),
                   const Text(
                     'Inventory is empty',
@@ -284,12 +330,19 @@ class InventoryTab extends StatelessWidget {
             ),
           )
         else
-          ...state.inventoryItems.map((item) => _buildInventoryCard(context, item)),
+          ...state.inventoryItems.map(
+            (item) => _buildInventoryCard(context, item),
+          ),
       ],
     );
   }
 
-  Widget _buildCoinBox(BuildContext context, String unit, int amount, Color color) {
+  Widget _buildCoinBox(
+    BuildContext context,
+    String unit,
+    int amount,
+    Color color,
+  ) {
     final theme = Theme.of(context);
     return Expanded(
       child: Container(
@@ -304,11 +357,19 @@ class InventoryTab extends StatelessWidget {
           children: [
             Text(
               '$amount',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
             ),
             Text(
               unit,
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
           ],
         ),
@@ -318,7 +379,9 @@ class InventoryTab extends StatelessWidget {
 
   Widget _buildInventoryCard(BuildContext context, InventoryTableData item) {
     final theme = Theme.of(context);
-    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+    final tokens =
+        theme.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.ancientTomeTokens;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -327,7 +390,9 @@ class InventoryTab extends StatelessWidget {
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(tokens.cardRadius * 0.8),
         border: Border.all(
-          color: item.isEquipped ? theme.colorScheme.primary : theme.dividerColor,
+          color: item.isEquipped
+              ? theme.colorScheme.primary
+              : theme.dividerColor,
           width: item.isEquipped ? 1.5 : 1,
         ),
       ),
@@ -356,13 +421,18 @@ class InventoryTab extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
-                    color: item.isEquipped ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                    color: item.isEquipped
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   '${item.weight} lbs each • ${item.isEquipped ? 'Equipped' : 'In Backpack'}',
-                  style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withAlpha(140)),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: theme.colorScheme.onSurface.withAlpha(140),
+                  ),
                 ),
               ],
             ),
@@ -376,7 +446,11 @@ class InventoryTab extends StatelessWidget {
           ),
           Text(
             '${item.quantity}',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.onSurface,
+            ),
           ),
           IconButton(
             icon: const Icon(Icons.add, size: 16),
@@ -386,7 +460,11 @@ class InventoryTab extends StatelessWidget {
 
           // Delete
           IconButton(
-            icon: const Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
+            icon: const Icon(
+              Icons.delete_outline,
+              size: 18,
+              color: Colors.redAccent,
+            ),
             visualDensity: VisualDensity.compact,
             onPressed: () => notifier.deleteInventoryItem(item.id),
           ),

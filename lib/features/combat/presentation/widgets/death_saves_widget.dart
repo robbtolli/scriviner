@@ -23,7 +23,9 @@ class DeathSavesWidget extends StatelessWidget {
       notifier.recordDeathSave(isSuccess: true, isCritSuccess: true);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Natural 20! You regain 1 Hit Point and consciousness!'),
+          content: Text(
+            'Natural 20! You regain 1 Hit Point and consciousness!',
+          ),
           backgroundColor: Colors.green,
         ),
       );
@@ -65,10 +67,7 @@ class DeathSavesWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.redAccent, width: 1.5),
         boxShadow: [
-          BoxShadow(
-            color: Colors.redAccent.withAlpha(40),
-            blurRadius: 10,
-          ),
+          BoxShadow(color: Colors.redAccent.withAlpha(40), blurRadius: 10),
         ],
       ),
       child: Column(
@@ -76,7 +75,11 @@ class DeathSavesWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.warning_amber_rounded, color: Colors.redAccent, size: 22),
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.redAccent,
+                size: 22,
+              ),
               const SizedBox(width: 8),
               Text(
                 'DEATH SAVING THROWS',
@@ -91,7 +94,10 @@ class DeathSavesWidget extends StatelessWidget {
               if (state.deathSaveSuccesses > 0 || state.deathSaveFailures > 0)
                 TextButton(
                   onPressed: () => notifier.resetDeathSaves(),
-                  child: const Text('Reset', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  child: const Text(
+                    'Reset',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
                 ),
             ],
           ),
@@ -101,14 +107,19 @@ class DeathSavesWidget extends StatelessWidget {
             children: [
               const SizedBox(
                 width: 80,
-                child: Text('Successes', style: TextStyle(fontSize: 13, color: Colors.greenAccent)),
+                child: Text(
+                  'Successes',
+                  style: TextStyle(fontSize: 13, color: Colors.greenAccent),
+                ),
               ),
               ...List.generate(3, (i) {
                 final isFilled = i < state.deathSaveSuccesses;
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6),
                   child: Icon(
-                    isFilled ? Icons.check_circle : Icons.radio_button_unchecked,
+                    isFilled
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked,
                     color: isFilled ? Colors.greenAccent : Colors.grey,
                     size: 24,
                   ),
@@ -122,7 +133,10 @@ class DeathSavesWidget extends StatelessWidget {
             children: [
               const SizedBox(
                 width: 80,
-                child: Text('Failures', style: TextStyle(fontSize: 13, color: Colors.redAccent)),
+                child: Text(
+                  'Failures',
+                  style: TextStyle(fontSize: 13, color: Colors.redAccent),
+                ),
               ),
               ...List.generate(3, (i) {
                 final isFilled = i < state.deathSaveFailures;
@@ -148,7 +162,10 @@ class DeathSavesWidget extends StatelessWidget {
               alignment: Alignment.center,
               child: const Text(
                 '☠️ HERO HAS FALLEN (Dead)',
-                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.redAccent,
+                ),
               ),
             ),
           ] else if (state.isStabilized) ...[
@@ -161,7 +178,10 @@ class DeathSavesWidget extends StatelessWidget {
               alignment: Alignment.center,
               child: const Text(
                 '🛡️ HERO STABILIZED (Unconscious at 0 HP)',
-                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.greenAccent),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.greenAccent,
+                ),
               ),
             ),
           ] else ...[

@@ -47,7 +47,9 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
   int _resolveClassHitDie(String className) {
     final cls = className.toLowerCase();
     if (cls.contains('barbarian')) return 12;
-    if (cls.contains('fighter') || cls.contains('paladin') || cls.contains('ranger')) {
+    if (cls.contains('fighter') ||
+        cls.contains('paladin') ||
+        cls.contains('ranger')) {
       return 10;
     }
     if (cls.contains('sorcerer') || cls.contains('wizard')) return 6;
@@ -225,8 +227,8 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                   color: isCurrent
                       ? _colors.primary
                       : isPast
-                          ? Colors.green
-                          : _theme.cardColor,
+                      ? Colors.green
+                      : _theme.cardColor,
                   border: Border.all(
                     color: isCurrent || isPast
                         ? Colors.transparent
@@ -253,8 +255,8 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                   color: isCurrent
                       ? _colors.primary
                       : isPast
-                          ? _colors.onSurface
-                          : Colors.grey,
+                      ? _colors.onSurface
+                      : Colors.grey,
                 ),
               ),
               if (idx < steps.length - 1) ...[
@@ -314,13 +316,19 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                     ),
                     Text(
                       'Constitution Modifier: ${_conMod >= 0 ? '+$_conMod' : '$_conMod'}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade400,
+                      ),
                     ),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: _theme.cardColor,
                   borderRadius: BorderRadius.circular(6),
@@ -370,7 +378,9 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
             child: Row(
               children: [
                 Icon(
-                  !_useRoll ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                  !_useRoll
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_unchecked,
                   color: !_useRoll ? _colors.primary : Colors.grey,
                   size: 20,
                 ),
@@ -389,7 +399,10 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                       ),
                       Text(
                         '$_hitDieAvg (half die + 1) + CON (${_conMod >= 0 ? '+$_conMod' : '$_conMod'}) = ${_hitDieAvg + _conMod} HP',
-                        style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
+                        style: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontSize: 11,
+                        ),
                       ),
                     ],
                   ),
@@ -418,9 +431,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
           child: Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: _useRoll
-                  ? _colors.primary.withAlpha(25)
-                  : _colors.surface,
+              color: _useRoll ? _colors.primary.withAlpha(25) : _colors.surface,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: _useRoll ? _colors.primary : const Color(0xFF4A4037),
@@ -454,7 +465,10 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                           ),
                           Text(
                             'Risk & reward: roll 1d$_hitDie + CON modifier',
-                            style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                              fontSize: 11,
+                            ),
                           ),
                         ],
                       ),
@@ -478,13 +492,18 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                       ElevatedButton.icon(
                         onPressed: _rollHitDie,
                         icon: const Icon(Icons.casino_outlined, size: 16),
-                        label: Text(_rolledValue == null
-                            ? 'ROLL 1d$_hitDie'
-                            : 'RE-ROLL (Rolled $_rolledValue)'),
+                        label: Text(
+                          _rolledValue == null
+                              ? 'ROLL 1d$_hitDie'
+                              : 'RE-ROLL (Rolled $_rolledValue)',
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: _colors.primary,
                           foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                         ),
                       ),
                     ],
@@ -616,7 +635,10 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                       value: k,
                       child: Text(
                         '${abilityLabels[k]} ($cur ➔ ${cur + 2})',
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        ),
                       ),
                     );
                   }).toList(),
@@ -656,7 +678,10 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                             value: k,
                             child: Text(
                               '${abilityLabels[k]} ($cur ➔ ${cur + 1})',
-                              style: const TextStyle(color: Colors.white, fontSize: 12),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
                             ),
                           );
                         }).toList(),
@@ -687,7 +712,10 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                             value: k,
                             child: Text(
                               '${abilityLabels[k]} ($cur ➔ ${cur + 1})',
-                              style: const TextStyle(color: Colors.white, fontSize: 12),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
                             ),
                           );
                         }).toList(),
@@ -756,13 +784,23 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
               ),
               const SizedBox(height: 8),
               Text(
-                _resolveMilestoneDescription(_targetLevel, widget.state.className),
-                style: TextStyle(color: Colors.grey.shade300, fontSize: 12, height: 1.4),
+                _resolveMilestoneDescription(
+                  _targetLevel,
+                  widget.state.className,
+                ),
+                style: TextStyle(
+                  color: Colors.grey.shade300,
+                  fontSize: 12,
+                  height: 1.4,
+                ),
               ),
               if (_newProficiencyBonus > widget.state.proficiencyBonus) ...[
                 const SizedBox(height: 10),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.green.shade900.withAlpha(50),
                     borderRadius: BorderRadius.circular(6),
@@ -788,11 +826,21 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
   String _resolveMilestoneDescription(int lvl, String className) {
     final cls = className.toLowerCase();
     if (lvl == 2) {
-      if (cls.contains('fighter')) return 'Action Surge (1/Short Rest): Take one additional action on your turn.';
-      if (cls.contains('paladin')) return 'Divine Smite & Fighting Style: Channel spell slots for radiant damage.';
-      if (cls.contains('wizard')) return 'Arcane Tradition: Choose your school of magic specialization.';
-      if (cls.contains('rogue')) return 'Cunning Action: Dash, Disengage, or Hide as a Bonus Action.';
-      if (cls.contains('cleric')) return 'Channel Divinity (1/Rest) & Subclass Feature.';
+      if (cls.contains('fighter')) {
+        return 'Action Surge (1/Short Rest): Take one additional action on your turn.';
+      }
+      if (cls.contains('paladin')) {
+        return 'Divine Smite & Fighting Style: Channel spell slots for radiant damage.';
+      }
+      if (cls.contains('wizard')) {
+        return 'Arcane Tradition: Choose your school of magic specialization.';
+      }
+      if (cls.contains('rogue')) {
+        return 'Cunning Action: Dash, Disengage, or Hide as a Bonus Action.';
+      }
+      if (cls.contains('cleric')) {
+        return 'Channel Divinity (1/Rest) & Subclass Feature.';
+      }
       return 'Core class archetype mechanics and expanded resources unlocked.';
     }
     if (lvl == 3) {
@@ -875,7 +923,9 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
                 _buildSummaryRow(
                   'Ability Increases',
                   'Base Scores',
-                  increases.entries.map((e) => '+${e.value} ${e.key.toUpperCase()}').join(', '),
+                  increases.entries
+                      .map((e) => '+${e.value} ${e.key.toUpperCase()}')
+                      .join(', '),
                   Icons.fitness_center,
                   highlightColor: _colors.primary,
                 ),
@@ -898,10 +948,7 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
       children: [
         Icon(icon, size: 16, color: highlightColor ?? Colors.grey),
         const SizedBox(width: 8),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 13, color: Colors.grey),
-        ),
+        Text(label, style: const TextStyle(fontSize: 13, color: Colors.grey)),
         const Spacer(),
         Text(
           to,
@@ -942,7 +989,10 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: _colors.primary,
                 foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
               ),
               child: const Text('NEXT'),
             )
@@ -957,7 +1007,10 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: _colors.primary,
                 foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
               ),
             ),
         ],

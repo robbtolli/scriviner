@@ -8,33 +8,32 @@ import 'tables/inventory_table.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [
-  CharactersTable,
-  ConditionsTable,
-  InventoryTable,
-  CompendiumTable,
-])
+@DriftDatabase(
+  tables: [CharactersTable, ConditionsTable, InventoryTable, CompendiumTable],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? e])
-      : super(e ??
+    : super(
+        e ??
             driftDatabase(
               name: 'scrivener_db',
               web: DriftWebOptions(
                 sqlite3Wasm: Uri.parse('sqlite3.wasm'),
                 driftWorker: Uri.parse('drift_worker.js'),
               ),
-            ));
+            ),
+      );
 
   @override
   int get schemaVersion => 1;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        beforeOpen: (details) async {
-          // Enable foreign keys in SQLite
-          await customStatement('PRAGMA foreign_keys = ON');
-        },
-      );
+    beforeOpen: (details) async {
+      // Enable foreign keys in SQLite
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+  );
 
   // --- Character Queries ---
 
@@ -42,7 +41,8 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<CharactersTableData>> watchRecentCharacters({int limit = 10}) {
     final query = select(charactersTable)
       ..orderBy([
-        (t) => OrderingTerm(expression: t.lastPlayedAt, mode: OrderingMode.desc)
+        (t) =>
+            OrderingTerm(expression: t.lastPlayedAt, mode: OrderingMode.desc),
       ])
       ..limit(limit);
     return query.watch();
@@ -52,7 +52,8 @@ class AppDatabase extends _$AppDatabase {
   Future<List<CharactersTableData>> getRecentCharacters({int limit = 10}) {
     final query = select(charactersTable)
       ..orderBy([
-        (t) => OrderingTerm(expression: t.lastPlayedAt, mode: OrderingMode.desc)
+        (t) =>
+            OrderingTerm(expression: t.lastPlayedAt, mode: OrderingMode.desc),
       ])
       ..limit(limit);
     return query.get();
@@ -60,14 +61,16 @@ class AppDatabase extends _$AppDatabase {
 
   /// Watches a single character by ID.
   Stream<CharactersTableData?> watchCharacter(String id) {
-    return (select(charactersTable)..where((t) => t.id.equals(id)))
-        .watchSingleOrNull();
+    return (select(
+      charactersTable,
+    )..where((t) => t.id.equals(id))).watchSingleOrNull();
   }
 
   /// Retrieves a single character by ID.
   Future<CharactersTableData?> getCharacter(String id) {
-    return (select(charactersTable)..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      charactersTable,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   /// Inserts or updates a character.
@@ -78,9 +81,7 @@ class AppDatabase extends _$AppDatabase {
   /// Updates last played timestamp to now.
   Future<void> touchCharacterLastPlayed(String id) {
     return (update(charactersTable)..where((t) => t.id.equals(id))).write(
-      CharactersTableCompanion(
-        lastPlayedAt: Value(DateTime.now()),
-      ),
+      CharactersTableCompanion(lastPlayedAt: Value(DateTime.now())),
     );
   }
 
@@ -92,17 +93,19 @@ class AppDatabase extends _$AppDatabase {
   // --- Active Conditions Queries ---
 
   Stream<List<ConditionsTableData>> watchConditionsForCharacter(
-      String characterId) {
-    return (select(conditionsTable)
-          ..where((t) => t.characterId.equals(characterId)))
-        .watch();
+    String characterId,
+  ) {
+    return (select(
+      conditionsTable,
+    )..where((t) => t.characterId.equals(characterId))).watch();
   }
 
   Future<List<ConditionsTableData>> getConditionsForCharacter(
-      String characterId) {
-    return (select(conditionsTable)
-          ..where((t) => t.characterId.equals(characterId)))
-        .get();
+    String characterId,
+  ) {
+    return (select(
+      conditionsTable,
+    )..where((t) => t.characterId.equals(characterId))).get();
   }
 
   Future<void> addCondition(ConditionsTableCompanion condition) {
@@ -116,17 +119,19 @@ class AppDatabase extends _$AppDatabase {
   // --- Inventory Queries ---
 
   Stream<List<InventoryTableData>> watchInventoryForCharacter(
-      String characterId) {
-    return (select(inventoryTable)
-          ..where((t) => t.characterId.equals(characterId)))
-        .watch();
+    String characterId,
+  ) {
+    return (select(
+      inventoryTable,
+    )..where((t) => t.characterId.equals(characterId))).watch();
   }
 
   Future<List<InventoryTableData>> getInventoryForCharacter(
-      String characterId) {
-    return (select(inventoryTable)
-          ..where((t) => t.characterId.equals(characterId)))
-        .get();
+    String characterId,
+  ) {
+    return (select(
+      inventoryTable,
+    )..where((t) => t.characterId.equals(characterId))).get();
   }
 
   Future<void> upsertInventoryItem(InventoryTableCompanion item) {
@@ -159,7 +164,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> insertCompendiumEntries(
-      List<CompendiumTableCompanion> entries) async {
+    List<CompendiumTableCompanion> entries,
+  ) async {
     await batch((b) {
       b.insertAllOnConflictUpdate(compendiumTable, entries);
     });
@@ -167,6 +173,8 @@ class AppDatabase extends _$AppDatabase {
 
   /// Removes compendium entries matching a given ID prefix (e.g. for plugin uninstall).
   Future<int> deleteCompendiumEntriesByPrefix(String idPrefix) {
-    return (delete(compendiumTable)..where((t) => t.id.like('$idPrefix%'))).go();
+    return (delete(
+      compendiumTable,
+    )..where((t) => t.id.like('$idPrefix%'))).go();
   }
 }

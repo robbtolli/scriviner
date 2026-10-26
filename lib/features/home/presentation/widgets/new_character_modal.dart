@@ -46,15 +46,19 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
             children: [
               Row(
                 children: [
-                  Icon(tokens.iconography.tabCombat, color: theme.colorScheme.primary, size: 28),
+                  Icon(
+                    tokens.iconography.tabCombat,
+                    color: theme.colorScheme.primary,
+                    size: 28,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'Create New Character',
                       style: theme.textTheme.titleLarge?.copyWith(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -101,7 +105,8 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                 context,
                 mode: CreationMode.guidedWizard,
                 title: 'Guided Step-by-Step Wizard',
-                subtitle: 'Recommended for new & leveling players. Educational tips, auto-assigned stats, and live sheet preview.',
+                subtitle:
+                    'Recommended for new & leveling players. Educational tips, auto-assigned stats, and live sheet preview.',
                 badge: 'RECOMMENDED',
               ),
               const SizedBox(height: 8),
@@ -109,7 +114,8 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                 context,
                 mode: CreationMode.freeformSheet,
                 title: 'Freeform / Smart Paper Sheet',
-                subtitle: 'Direct blank sheet for veteran players with total manual control and custom house rules.',
+                subtitle:
+                    'Direct blank sheet for veteran players with total manual control and custom house rules.',
               ),
               const SizedBox(height: 24),
               LayoutBuilder(
@@ -120,8 +126,14 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                             Navigator.of(context).pop();
                             widget.onImportCharacter!();
                           },
-                          icon: const Icon(Icons.file_upload_outlined, size: 16),
-                          label: const Text('IMPORT JSON', style: TextStyle(fontSize: 12)),
+                          icon: const Icon(
+                            Icons.file_upload_outlined,
+                            size: 16,
+                          ),
+                          label: const Text(
+                            'IMPORT JSON',
+                            style: TextStyle(fontSize: 12),
+                          ),
                         )
                       : null;
 
@@ -138,7 +150,10 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                       ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          widget.onStartCreation(_selectedSystem, _selectedMode);
+                          widget.onStartCreation(
+                            _selectedSystem,
+                            _selectedMode,
+                          );
                         },
                         child: const Text('START CREATING'),
                       ),
@@ -197,16 +212,23 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primary.withAlpha(25) : theme.cardColor,
+          color: isSelected
+              ? theme.colorScheme.primary.withAlpha(25)
+              : theme.cardColor,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withAlpha(60),
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.dividerColor.withAlpha(60),
             width: isSelected ? 1.5 : 1,
           ),
         ),
         child: Row(
           children: [
-            Icon(icon, color: isComingSoon ? Colors.grey : theme.colorScheme.primary),
+            Icon(
+              icon,
+              color: isComingSoon ? Colors.grey : theme.colorScheme.primary,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -221,19 +243,28 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                         title,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: isComingSoon ? Colors.grey : theme.colorScheme.onSurface,
+                          color: isComingSoon
+                              ? Colors.grey
+                              : theme.colorScheme.onSurface,
                         ),
                       ),
                       if (isComingSoon)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.onSurface.withAlpha(20),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Text(
                             'PLANNED',
-                            style: TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 9,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                     ],
@@ -241,7 +272,10 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(150)),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: theme.colorScheme.onSurface.withAlpha(150),
+                    ),
                   ),
                 ],
               ),
@@ -268,10 +302,14 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primary.withAlpha(25) : theme.cardColor,
+          color: isSelected
+              ? theme.colorScheme.primary.withAlpha(25)
+              : theme.cardColor,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withAlpha(60),
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.dividerColor.withAlpha(60),
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -279,8 +317,12 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withAlpha(120),
+              isSelected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurface.withAlpha(120),
               size: 20,
             ),
             const SizedBox(width: 10),
@@ -295,11 +337,17 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                     children: [
                       Text(
                         title,
-                        style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onSurface,
+                        ),
                       ),
                       if (badge != null)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.primary,
                             borderRadius: BorderRadius.circular(4),
@@ -318,7 +366,10 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(150)),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: theme.colorScheme.onSurface.withAlpha(150),
+                    ),
                   ),
                 ],
               ),

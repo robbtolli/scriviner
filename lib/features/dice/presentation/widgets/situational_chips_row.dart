@@ -34,7 +34,9 @@ class SituationalChipsRow extends StatelessWidget {
               labelStyle: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withAlpha(180),
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface.withAlpha(180),
               ),
               side: BorderSide(
                 color: isSelected

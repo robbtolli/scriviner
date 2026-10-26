@@ -24,9 +24,9 @@ class Step3Class extends ConsumerWidget {
           Text(
             'Step 3: Choose Class',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryGold,
-                ),
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryGold,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
@@ -36,7 +36,8 @@ class Step3Class extends ConsumerWidget {
           const SizedBox(height: 20),
           ...classes.map((cls) {
             final isSelected = draft.charClass?.id == cls.id;
-            final matchesArchetype = draft.archetype == null || draft.archetype == cls.archetype;
+            final matchesArchetype =
+                draft.archetype == null || draft.archetype == cls.archetype;
 
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -48,10 +49,14 @@ class Step3Class extends ConsumerWidget {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppTheme.primaryGold.withAlpha(25) : AppTheme.cardDark,
+                      color: isSelected
+                          ? AppTheme.primaryGold.withAlpha(25)
+                          : AppTheme.cardDark,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isSelected ? AppTheme.primaryGold : Colors.white.withAlpha(20),
+                        color: isSelected
+                            ? AppTheme.primaryGold
+                            : Colors.white.withAlpha(20),
                         width: isSelected ? 1.5 : 1,
                       ),
                     ),
@@ -65,12 +70,17 @@ class Step3Class extends ConsumerWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: isSelected ? AppTheme.primaryGold : Colors.white,
+                                color: isSelected
+                                    ? AppTheme.primaryGold
+                                    : Colors.white,
                               ),
                             ),
                             const Spacer(),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppTheme.surfaceDark,
                                 borderRadius: BorderRadius.circular(6),
@@ -86,38 +96,60 @@ class Step3Class extends ConsumerWidget {
                             ),
                             const SizedBox(width: 8),
                             if (isSelected)
-                              const Icon(Icons.check_circle, color: AppTheme.primaryGold, size: 20),
+                              const Icon(
+                                Icons.check_circle,
+                                color: AppTheme.primaryGold,
+                                size: 20,
+                              ),
                           ],
                         ),
                         const SizedBox(height: 6),
                         Text(
                           cls.description,
-                          style: TextStyle(fontSize: 13, color: Colors.white.withAlpha(190), height: 1.3),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.white.withAlpha(190),
+                            height: 1.3,
+                          ),
                         ),
                         const SizedBox(height: 10),
                         Row(
                           children: [
                             Text(
                               'Primary: ${cls.primaryAbility}',
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.amberAccent),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.amberAccent,
+                              ),
                             ),
                             const SizedBox(width: 14),
                             Text(
                               'Saves: ${cls.savingThrows.join(", ")}',
-                              style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(160)),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white.withAlpha(160),
+                              ),
                             ),
                             const Spacer(),
                             if (cls.isSpellcaster)
                               const Text(
                                 '✨ Spellcaster',
-                                style: TextStyle(fontSize: 12, color: Colors.cyanAccent, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.cyanAccent,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                           ],
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Level 1 Features: ${cls.startingFeatures.join(" • ")}',
-                          style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(140)),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.white.withAlpha(140),
+                          ),
                         ),
                       ],
                     ),

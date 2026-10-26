@@ -41,8 +41,9 @@ class DiceParser {
       final flatValStr = match.group(6);
 
       if (sidesStr != null) {
-        final count =
-            (countStr == null || countStr.isEmpty) ? 1 : int.parse(countStr);
+        final count = (countStr == null || countStr.isEmpty)
+            ? 1
+            : int.parse(countStr);
         final sides = int.parse(sidesStr);
         int? keepHighest;
         int? keepLowest;
@@ -60,13 +61,15 @@ class DiceParser {
           }
         }
 
-        diceTerms.add(DiceTerm(
-          count: count,
-          sides: sides,
-          keepHighest: keepHighest,
-          keepLowest: keepLowest,
-          isNegative: sign < 0,
-        ));
+        diceTerms.add(
+          DiceTerm(
+            count: count,
+            sides: sides,
+            keepHighest: keepHighest,
+            keepLowest: keepLowest,
+            isNegative: sign < 0,
+          ),
+        );
       } else if (flatValStr != null) {
         final val = int.parse(flatValStr) * sign;
         flatTerms.add(FlatModifierTerm(val));

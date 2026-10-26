@@ -51,39 +51,44 @@ void main() {
       expect(updated['hitDice']['spent'], equals(1));
     });
 
-    test('applyLongRest restores full HP, resets temp HP, recovers half hit dice, and resets all spell slots', () {
-      final initialProps = {
-        'hp': {'current': 4, 'max': 28, 'temp': 5},
-        'hitDice': {'total': 4, 'spent': 3, 'die': '1d10'},
-        'deathSaves': {'successes': 2, 'failures': 1},
-        'features': {'secondWind': false},
-        'spellSlots': {
-          '1': {'total': 4, 'spent': 4},
-          '2': {'total': 2, 'spent': 2},
-        },
-      };
+    test(
+      'applyLongRest restores full HP, resets temp HP, recovers half hit dice, and resets all spell slots',
+      () {
+        final initialProps = {
+          'hp': {'current': 4, 'max': 28, 'temp': 5},
+          'hitDice': {'total': 4, 'spent': 3, 'die': '1d10'},
+          'deathSaves': {'successes': 2, 'failures': 1},
+          'features': {'secondWind': false},
+          'spellSlots': {
+            '1': {'total': 4, 'spent': 4},
+            '2': {'total': 2, 'spent': 2},
+          },
+        };
 
-      final updated = Dnd5eRestManager.applyLongRest(properties: initialProps);
+        final updated = Dnd5eRestManager.applyLongRest(
+          properties: initialProps,
+        );
 
-      // HP is fully restored to max
-      expect(updated['hp']['current'], equals(28));
-      // Temp HP is cleared
-      expect(updated['hp']['temp'], equals(0));
+        // HP is fully restored to max
+        expect(updated['hp']['current'], equals(28));
+        // Temp HP is cleared
+        expect(updated['hp']['temp'], equals(0));
 
-      // Hit dice recovered: total = 4 -> half = 2 recovered. Spent 3 - 2 = 1 spent remaining.
-      expect(updated['hitDice']['spent'], equals(1));
+        // Hit dice recovered: total = 4 -> half = 2 recovered. Spent 3 - 2 = 1 spent remaining.
+        expect(updated['hitDice']['spent'], equals(1));
 
-      // Death saves reset
-      expect(updated['deathSaves']['successes'], equals(0));
-      expect(updated['deathSaves']['failures'], equals(0));
+        // Death saves reset
+        expect(updated['deathSaves']['successes'], equals(0));
+        expect(updated['deathSaves']['failures'], equals(0));
 
-      // Features recharged
-      expect(updated['features']['secondWind'], isTrue);
+        // Features recharged
+        expect(updated['features']['secondWind'], isTrue);
 
-      // All spell slots restored (spent = 0)
-      expect(updated['spellSlots']['1']['spent'], equals(0));
-      expect(updated['spellSlots']['2']['spent'], equals(0));
-    });
+        // All spell slots restored (spent = 0)
+        expect(updated['spellSlots']['1']['spent'], equals(0));
+        expect(updated['spellSlots']['2']['spent'], equals(0));
+      },
+    );
 
     test('applyLongRest recovers at least 1 hit die even at level 1', () {
       final initialProps = {

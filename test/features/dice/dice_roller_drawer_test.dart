@@ -46,37 +46,42 @@ void main() {
     expect(find.text('+1d6 Inspiration'), findsOneWidget);
   });
 
-  testWidgets('tapping polyhedral dice and modifiers updates formula dynamically', (tester) async {
-    tester.view.physicalSize = const Size(800, 1200);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
+  testWidgets(
+    'tapping polyhedral dice and modifiers updates formula dynamically',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pumpAndSettle();
 
-    // Tap d6 button
-    await tester.tap(find.text('d6'));
-    await tester.pumpAndSettle();
+      // Tap d6 button
+      await tester.tap(find.text('d6'));
+      await tester.pumpAndSettle();
 
-    // Formula should now be "1d20 + 1d6"
-    expect(find.text('1d20 + 1d6'), findsOneWidget);
+      // Formula should now be "1d20 + 1d6"
+      expect(find.text('1d20 + 1d6'), findsOneWidget);
 
-    // Tap Advantage
-    await tester.tap(find.text('Advantage'));
-    await tester.pumpAndSettle();
+      // Tap Advantage
+      await tester.tap(find.text('Advantage'));
+      await tester.pumpAndSettle();
 
-    // Formula should now be "2d20kh1 + 1d6"
-    expect(find.text('2d20kh1 + 1d6'), findsOneWidget);
+      // Formula should now be "2d20kh1 + 1d6"
+      expect(find.text('2d20kh1 + 1d6'), findsOneWidget);
 
-    // Tap +1d4 Bless
-    await tester.tap(find.text('+1d4 Bless'));
-    await tester.pumpAndSettle();
+      // Tap +1d4 Bless
+      await tester.tap(find.text('+1d4 Bless'));
+      await tester.pumpAndSettle();
 
-    // Formula should now be "2d20kh1 + 1d6 + 1d4"
-    expect(find.text('2d20kh1 + 1d6 + 1d4'), findsOneWidget);
-  });
+      // Formula should now be "2d20kh1 + 1d6 + 1d4"
+      expect(find.text('2d20kh1 + 1d6 + 1d4'), findsOneWidget);
+    },
+  );
 
-  testWidgets('ROLL DICE button executes roll and records to history', (tester) async {
+  testWidgets('ROLL DICE button executes roll and records to history', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(800, 1200);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -100,7 +105,9 @@ void main() {
     expect(find.text('No rolls yet this session'), findsOneWidget);
   });
 
-  testWidgets('FloatingDiceFab opens dice roller bottom sheet on tap', (tester) async {
+  testWidgets('FloatingDiceFab opens dice roller bottom sheet on tap', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(500, 800);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -110,11 +117,7 @@ void main() {
         child: const Stack(
           children: [
             Center(child: Text('Main Screen Content')),
-            Positioned(
-              bottom: 16,
-              right: 16,
-              child: FloatingDiceFab(),
-            ),
+            Positioned(bottom: 16, right: 16, child: FloatingDiceFab()),
           ],
         ),
       ),

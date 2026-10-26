@@ -37,7 +37,8 @@ class Dnd5eSystem implements GameSystem {
     base['attributes.proficiency_bonus'] = calculateProficiencyBonus(level);
 
     // Extract raw abilities
-    final rawAbilities = rawProperties['abilities'] as Map<String, dynamic>? ?? {};
+    final rawAbilities =
+        rawProperties['abilities'] as Map<String, dynamic>? ?? {};
     final stats = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
     for (final stat in stats) {

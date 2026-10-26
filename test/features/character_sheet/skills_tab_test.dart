@@ -36,9 +36,9 @@ void main() {
         'cha': {'score': 10, 'mod': 0},
       },
       'skillProficiencies': {
-        'Stealth': 2,      // Expertise: +3 (DEX) + 2 * 2 (Prof) = +7
-        'Acrobatics': 1,   // Proficient: +3 (DEX) + 2 (Prof) = +5
-        'Athletics': 0,    // Normal: +0 (STR)
+        'Stealth': 2, // Expertise: +3 (DEX) + 2 * 2 (Prof) = +7
+        'Acrobatics': 1, // Proficient: +3 (DEX) + 2 (Prof) = +5
+        'Athletics': 0, // Normal: +0 (STR)
       },
     };
 
@@ -56,16 +56,16 @@ void main() {
 
   Widget createWidgetUnderTest(WidgetRef? Function(WidgetRef)? onRef) {
     return ProviderScope(
-      overrides: [
-        databaseProvider.overrideWithValue(db),
-      ],
+      overrides: [databaseProvider.overrideWithValue(db)],
       child: MaterialApp(
         home: Scaffold(
           body: Consumer(
             builder: (context, ref, _) {
               if (onRef != null) onRef(ref);
               final sheet = ref.watch(characterSheetProvider('char_rogue'));
-              final notifier = ref.read(characterSheetProvider('char_rogue').notifier);
+              final notifier = ref.read(
+                characterSheetProvider('char_rogue').notifier,
+              );
               if (sheet == null) return const CircularProgressIndicator();
               return SkillsTab(state: sheet, notifier: notifier);
             },
@@ -75,7 +75,9 @@ void main() {
     );
   }
 
-  testWidgets('renders skills with accurate bonuses and expertise', (tester) async {
+  testWidgets('renders skills with accurate bonuses and expertise', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -137,7 +139,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   });
 
-  testWidgets('cycling proficiency toggles None -> Proficient -> Expertise', (tester) async {
+  testWidgets('cycling proficiency toggles None -> Proficient -> Expertise', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -145,10 +149,12 @@ void main() {
     await seedCharacter();
     WidgetRef? capturedRef;
 
-    await tester.pumpWidget(createWidgetUnderTest((ref) {
-      capturedRef = ref;
-      return ref;
-    }));
+    await tester.pumpWidget(
+      createWidgetUnderTest((ref) {
+        capturedRef = ref;
+        return ref;
+      }),
+    );
     await tester.pumpAndSettle();
 
     // Athletics starts at 0
@@ -156,10 +162,9 @@ void main() {
     expect(charBefore.skillProficiencies['Athletics'] ?? 0, 0);
 
     // Find cycle button next to Athletics
-    final athleticsRow = find.ancestor(
-      of: find.text('Athletics'),
-      matching: find.byType(Container),
-    ).first;
+    final athleticsRow = find
+        .ancestor(of: find.text('Athletics'), matching: find.byType(Container))
+        .first;
 
     final cycleButton = find.descendant(
       of: athleticsRow,
@@ -170,21 +175,27 @@ void main() {
     await tester.tap(cycleButton);
     await tester.pumpAndSettle();
 
-    final charAfterProf = capturedRef!.read(characterSheetProvider('char_rogue'))!;
+    final charAfterProf = capturedRef!.read(
+      characterSheetProvider('char_rogue'),
+    )!;
     expect(charAfterProf.skillProficiencies['Athletics'], 1);
 
     // Tap to cycle to Expertise (2)
     await tester.tap(cycleButton);
     await tester.pumpAndSettle();
 
-    final charAfterExp = capturedRef!.read(characterSheetProvider('char_rogue'))!;
+    final charAfterExp = capturedRef!.read(
+      characterSheetProvider('char_rogue'),
+    )!;
     expect(charAfterExp.skillProficiencies['Athletics'], 2);
 
     // Tap to cycle back to None (0)
     await tester.tap(cycleButton);
     await tester.pumpAndSettle();
 
-    final charAfterReset = capturedRef!.read(characterSheetProvider('char_rogue'))!;
+    final charAfterReset = capturedRef!.read(
+      characterSheetProvider('char_rogue'),
+    )!;
     expect(charAfterReset.skillProficiencies['Athletics'] ?? 0, 0);
 
     // Clean teardown
@@ -192,7 +203,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   });
 
-  testWidgets('tapping roll skill check configures dice drawer', (tester) async {
+  testWidgets('tapping roll skill check configures dice drawer', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -200,17 +213,18 @@ void main() {
     await seedCharacter();
     WidgetRef? capturedRef;
 
-    await tester.pumpWidget(createWidgetUnderTest((ref) {
-      capturedRef = ref;
-      return ref;
-    }));
+    await tester.pumpWidget(
+      createWidgetUnderTest((ref) {
+        capturedRef = ref;
+        return ref;
+      }),
+    );
     await tester.pumpAndSettle();
 
     // Find Stealth row and tap its ROLL button
-    final stealthRow = find.ancestor(
-      of: find.text('Stealth'),
-      matching: find.byType(Container),
-    ).first;
+    final stealthRow = find
+        .ancestor(of: find.text('Stealth'), matching: find.byType(Container))
+        .first;
 
     final rollButton = find.descendant(
       of: stealthRow,

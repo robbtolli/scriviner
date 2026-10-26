@@ -85,19 +85,26 @@ void main() {
 
       expect(result.groups.first.dice.length, equals(4));
       final kept = result.groups.first.dice.where((d) => !d.isDropped).toList();
-      final dropped = result.groups.first.dice.where((d) => d.isDropped).toList();
+      final dropped = result.groups.first.dice
+          .where((d) => d.isDropped)
+          .toList();
 
       expect(kept.length, equals(3));
       expect(dropped.length, equals(1));
       for (final k in kept) {
         expect(k.value, greaterThanOrEqualTo(dropped.first.value));
       }
-      expect(result.total, equals(kept.fold<int>(0, (sum, d) => sum + d.value)));
+      expect(
+        result.total,
+        equals(kept.fold<int>(0, (sum, d) => sum + d.value)),
+      );
     });
 
     test('detects critical hit and critical miss on d20', () {
       // Mock deterministic random for 20
-      final rollerMockCrit = DiceRoller(_MockRandom([19])); // 0-indexed + 1 = 20
+      final rollerMockCrit = DiceRoller(
+        _MockRandom([19]),
+      ); // 0-indexed + 1 = 20
       final critResult = rollerMockCrit.rollFormula('1d20');
       expect(critResult.isCriticalHit, isTrue);
       expect(critResult.isCriticalMiss, isFalse);

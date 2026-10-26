@@ -70,16 +70,16 @@ void main() {
 
   Widget createWidgetUnderTest() {
     return ProviderScope(
-      overrides: [
-        databaseProvider.overrideWithValue(db),
-      ],
+      overrides: [databaseProvider.overrideWithValue(db)],
       child: const MaterialApp(
         home: CharacterSheetScreen(characterId: 'char_paladin'),
       ),
     );
   }
 
-  testWidgets('renders all 7 tabs and allows switching between them', (tester) async {
+  testWidgets('renders all 7 tabs and allows switching between them', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -154,68 +154,79 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   });
 
-  testWidgets('allows editing character name inline with check and cancel buttons', (tester) async {
-    tester.view.physicalSize = const Size(1200, 1600);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
+  testWidgets(
+    'allows editing character name inline with check and cancel buttons',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
 
-    await seedFullCharacter();
-    await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pumpAndSettle();
+      await seedFullCharacter();
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pumpAndSettle();
 
-    // Verify initial character name and pencil edit icon
-    expect(find.text('Sir Gareth'), findsOneWidget);
-    final editNameBtn = find.byTooltip('Edit character name');
-    expect(editNameBtn, findsOneWidget);
+      // Verify initial character name and pencil edit icon
+      expect(find.text('Sir Gareth'), findsOneWidget);
+      final editNameBtn = find.byTooltip('Edit character name');
+      expect(editNameBtn, findsOneWidget);
 
-    // 1. Tap pencil edit button to enter edit mode
-    await tester.tap(editNameBtn);
-    await tester.pumpAndSettle();
+      // 1. Tap pencil edit button to enter edit mode
+      await tester.tap(editNameBtn);
+      await tester.pumpAndSettle();
 
-    // Verify pencil button is hidden and check / cancel buttons appear
-    expect(find.byTooltip('Edit character name'), findsNothing);
-    expect(find.byTooltip('Confirm new name'), findsOneWidget);
-    expect(find.byTooltip('Cancel edit'), findsOneWidget);
+      // Verify pencil button is hidden and check / cancel buttons appear
+      expect(find.byTooltip('Edit character name'), findsNothing);
+      expect(find.byTooltip('Confirm new name'), findsOneWidget);
+      expect(find.byTooltip('Cancel edit'), findsOneWidget);
 
-    // Verify TextField has current name
-    final nameField = find.byType(TextField);
-    expect(nameField, findsOneWidget);
-    expect(tester.widget<TextField>(nameField).controller?.text, 'Sir Gareth');
+      // Verify TextField has current name
+      final nameField = find.byType(TextField);
+      expect(nameField, findsOneWidget);
+      expect(
+        tester.widget<TextField>(nameField).controller?.text,
+        'Sir Gareth',
+      );
 
-    // 2. Test Cancel button
-    await tester.enterText(nameField, 'Sir Lancelot');
-    await tester.pumpAndSettle();
+      // 2. Test Cancel button
+      await tester.enterText(nameField, 'Sir Lancelot');
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Cancel edit'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Cancel edit'));
+      await tester.pumpAndSettle();
 
-    // Verify canceled: original name preserved and pencil button restored
-    expect(find.text('Sir Gareth'), findsOneWidget);
-    expect(find.text('Sir Lancelot'), findsNothing);
-    expect(find.byTooltip('Edit character name'), findsOneWidget);
-    expect(find.byTooltip('Confirm new name'), findsNothing);
+      // Verify canceled: original name preserved and pencil button restored
+      expect(find.text('Sir Gareth'), findsOneWidget);
+      expect(find.text('Sir Lancelot'), findsNothing);
+      expect(find.byTooltip('Edit character name'), findsOneWidget);
+      expect(find.byTooltip('Confirm new name'), findsNothing);
 
-    // 3. Test Confirm button
-    await tester.tap(find.byTooltip('Edit character name'));
-    await tester.pumpAndSettle();
+      // 3. Test Confirm button
+      await tester.tap(find.byTooltip('Edit character name'));
+      await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextField), 'Sir Gareth the Brave');
-    await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'Sir Gareth the Brave');
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.byTooltip('Confirm new name'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Confirm new name'));
+      await tester.pumpAndSettle();
 
-    // Verify confirmed: new name is displayed and SnackBar appeared
-    expect(find.text('Sir Gareth the Brave'), findsOneWidget);
-    expect(find.byTooltip('Edit character name'), findsOneWidget);
-    expect(find.textContaining('Character name updated to "Sir Gareth the Brave"!'), findsOneWidget);
+      // Verify confirmed: new name is displayed and SnackBar appeared
+      expect(find.text('Sir Gareth the Brave'), findsOneWidget);
+      expect(find.byTooltip('Edit character name'), findsOneWidget);
+      expect(
+        find.textContaining(
+          'Character name updated to "Sir Gareth the Brave"!',
+        ),
+        findsOneWidget,
+      );
 
-    // Verify updated in SQLite database
-    final dbChar = await db.getCharacter('char_paladin');
-    expect(dbChar?.name, 'Sir Gareth the Brave');
+      // Verify updated in SQLite database
+      final dbChar = await db.getCharacter('char_paladin');
+      expect(dbChar?.name, 'Sir Gareth the Brave');
 
-    // Clean teardown
-    await tester.pumpWidget(const SizedBox());
-    await tester.pump(const Duration(milliseconds: 50));
-  });
+      // Clean teardown
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 50));
+    },
+  );
 }

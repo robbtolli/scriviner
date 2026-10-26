@@ -39,7 +39,9 @@ class CombatDashboardScreen extends ConsumerWidget {
         child: Scaffold(
           appBar: AppBar(title: const Text('Combat Session')),
           body: Center(
-            child: CircularProgressIndicator(color: themeData.colorScheme.primary),
+            child: CircularProgressIndicator(
+              color: themeData.colorScheme.primary,
+            ),
           ),
         ),
       );
@@ -92,7 +94,10 @@ class CombatDashboardScreen extends ConsumerWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: themeData.colorScheme.surface,
                   foregroundColor: themeData.colorScheme.primary,
-                  side: BorderSide(color: themeData.colorScheme.primary, width: 1),
+                  side: BorderSide(
+                    color: themeData.colorScheme.primary,
+                    width: 1,
+                  ),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
               ),
@@ -122,7 +127,8 @@ class CombatDashboardView extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<CombatDashboardView> createState() => _CombatDashboardViewState();
+  ConsumerState<CombatDashboardView> createState() =>
+      _CombatDashboardViewState();
 }
 
 class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
@@ -135,11 +141,13 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
   }
 
   void _rollWeaponAttack(WeaponAttackInfo weapon, CombatSessionState state) {
-    ref.read(diceDrawerProvider.notifier).setContext(
-      title: '${state.name}: ${weapon.name} Attack',
-      diceCounts: {20: 1},
-      flatModifier: weapon.toHit,
-    );
+    ref
+        .read(diceDrawerProvider.notifier)
+        .setContext(
+          title: '${state.name}: ${weapon.name} Attack',
+          diceCounts: {20: 1},
+          flatModifier: weapon.toHit,
+        );
     final record = ref.read(diceDrawerProvider.notifier).roll();
 
     String message = '${weapon.name} Attack: rolled ${record.total} to hit!';
@@ -156,8 +164,8 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
         backgroundColor: record.isCriticalHit
             ? Colors.green
             : record.isCriticalMiss
-                ? Colors.redAccent
-                : theme.cardColor,
+            ? Colors.redAccent
+            : theme.cardColor,
         duration: const Duration(seconds: 2),
       ),
     );
@@ -178,7 +186,10 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
     );
   }
 
-  void _useSecondWind(CombatSessionState state, CombatSessionNotifier notifier) {
+  void _useSecondWind(
+    CombatSessionState state,
+    CombatSessionNotifier notifier,
+  ) {
     final roll = _diceRoller.rollFormula('1d10 + ${state.level}');
     notifier.applyHealing(roll.total);
     notifier.useSecondWind();
@@ -195,7 +206,9 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final state = ref.watch(combatSessionProvider(widget.characterId));
-    final notifier = ref.read(combatSessionProvider(widget.characterId).notifier);
+    final notifier = ref.read(
+      combatSessionProvider(widget.characterId).notifier,
+    );
 
     if (state == null) {
       return Center(
@@ -248,9 +261,15 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
     );
   }
 
-  Widget _buildActionsSection(BuildContext context, CombatSessionState state, CombatSessionNotifier notifier) {
+  Widget _buildActionsSection(
+    BuildContext context,
+    CombatSessionState state,
+    CombatSessionNotifier notifier,
+  ) {
     final theme = Theme.of(context);
-    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+    final tokens =
+        theme.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.ancientTomeTokens;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -264,7 +283,11 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
         children: [
           Row(
             children: [
-              Icon(tokens.iconography.combat, color: theme.colorScheme.primary, size: 18),
+              Icon(
+                tokens.iconography.combat,
+                color: theme.colorScheme.primary,
+                size: 18,
+              ),
               const SizedBox(width: 8),
               Text(
                 'ATTACKS & ACTIONS',
@@ -297,12 +320,18 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
                       children: [
                         Text(
                           w.name,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           '${w.type} • $toHitSign${w.toHit} to hit • ${w.damageFormula}',
-                          style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(160)),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: theme.colorScheme.onSurface.withAlpha(160),
+                          ),
                         ),
                       ],
                     ),
@@ -312,7 +341,10 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: theme.colorScheme.primary,
                       side: BorderSide(color: theme.colorScheme.primary),
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
                       visualDensity: VisualDensity.compact,
                     ),
                     child: Text('$toHitSign${w.toHit} Hit'),
@@ -323,7 +355,10 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primary,
                       foregroundColor: theme.colorScheme.onPrimary,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
                       visualDensity: VisualDensity.compact,
                     ),
                     child: const Text('Dmg'),
@@ -349,12 +384,18 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
                     children: [
                       const Text(
                         'Second Wind (Bonus Action)',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Regain 1d10 + ${state.level} HP (1/Short Rest)',
-                        style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(160)),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: theme.colorScheme.onSurface.withAlpha(160),
+                        ),
                       ),
                     ],
                   ),
@@ -364,9 +405,14 @@ class _CombatDashboardViewState extends ConsumerState<CombatDashboardView> {
                       ? () => _useSecondWind(state, notifier)
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: state.hasSecondWind ? Colors.green : Colors.grey,
+                    backgroundColor: state.hasSecondWind
+                        ? Colors.green
+                        : Colors.grey,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     visualDensity: VisualDensity.compact,
                   ),
                   child: Text(state.hasSecondWind ? 'USE' : 'SPENT'),

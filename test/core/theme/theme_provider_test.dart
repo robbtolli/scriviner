@@ -13,19 +13,27 @@ void main() {
 
       expect(container.read(themeProvider), AppThemeMode.ancientTome);
 
-      container.read(themeProvider.notifier).setTheme(AppThemeMode.scholarsDesk);
+      container
+          .read(themeProvider.notifier)
+          .setTheme(AppThemeMode.scholarsDesk);
       expect(container.read(themeProvider), AppThemeMode.scholarsDesk);
 
-      container.read(themeProvider.notifier).setTheme(AppThemeMode.midnightArcana);
+      container
+          .read(themeProvider.notifier)
+          .setTheme(AppThemeMode.midnightArcana);
       expect(container.read(themeProvider), AppThemeMode.midnightArcana);
 
       container.read(themeProvider.notifier).setTheme(AppThemeMode.dungeonOled);
       expect(container.read(themeProvider), AppThemeMode.dungeonOled);
 
-      container.read(themeProvider.notifier).setTheme(AppThemeMode.emeraldEnclave);
+      container
+          .read(themeProvider.notifier)
+          .setTheme(AppThemeMode.emeraldEnclave);
       expect(container.read(themeProvider), AppThemeMode.emeraldEnclave);
 
-      container.read(themeProvider.notifier).setTheme(AppThemeMode.infernalBrimstone);
+      container
+          .read(themeProvider.notifier)
+          .setTheme(AppThemeMode.infernalBrimstone);
       expect(container.read(themeProvider), AppThemeMode.infernalBrimstone);
     });
 
@@ -57,7 +65,9 @@ void main() {
       expect(brimstone.colorScheme.primary, const Color(0xFFFF4500));
     });
 
-    testWidgets('ThemeSelectorDialog displays all themes and selects one', (tester) async {
+    testWidgets('ThemeSelectorDialog displays all themes and selects one', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
           child: MaterialApp(

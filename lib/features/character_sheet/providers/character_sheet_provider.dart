@@ -66,7 +66,8 @@ class CharacterSheetState {
   int get spellAttackBonus => proficiencyBonus + spellcastingMod;
 
   int getAbilityScore(String key) => abilityScores[key.toLowerCase()] ?? 10;
-  int getAbilityModifier(String key) => ((getAbilityScore(key) - 10) / 2).floor();
+  int getAbilityModifier(String key) =>
+      ((getAbilityScore(key) - 10) / 2).floor();
 
   int getSavingThrowBonus(String key) {
     final mod = getAbilityModifier(key);
@@ -94,8 +95,9 @@ class CharacterSheetState {
 
   double get carryingCapacity => (strengthScore * 15.0);
   bool get isEncumbered => carriedWeight > carryingCapacity;
-  double get encumbrancePercent =>
-      carryingCapacity > 0 ? (carriedWeight / carryingCapacity).clamp(0.0, 1.0) : 0.0;
+  double get encumbrancePercent => carryingCapacity > 0
+      ? (carriedWeight / carryingCapacity).clamp(0.0, 1.0)
+      : 0.0;
 
   CharacterSheetState copyWith({
     String? name,
@@ -235,27 +237,33 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
         spells.add(CharacterSpellItem.fromJson(Map<String, dynamic>.from(s)));
       } else if (s is String) {
         final found = SrdStarterData.spells.cast<SpellDefinition?>().firstWhere(
-          (def) => def?.name.toLowerCase() == s.toLowerCase() || def?.id.toLowerCase() == s.toLowerCase(),
+          (def) =>
+              def?.name.toLowerCase() == s.toLowerCase() ||
+              def?.id.toLowerCase() == s.toLowerCase(),
           orElse: () => null,
         );
         if (found != null) {
-          spells.add(CharacterSpellItem(
-            id: 'spell_${found.id}',
-            name: found.name,
-            level: found.level,
-            school: found.school,
-            castingTime: found.castingTime,
-            range: found.range,
-            description: found.description,
-            isPrepared: true,
-          ));
+          spells.add(
+            CharacterSpellItem(
+              id: 'spell_${found.id}',
+              name: found.name,
+              level: found.level,
+              school: found.school,
+              castingTime: found.castingTime,
+              range: found.range,
+              description: found.description,
+              isPrepared: true,
+            ),
+          );
         } else {
-          spells.add(CharacterSpellItem(
-            id: 'spell_${s.toLowerCase().replaceAll(' ', '_')}',
-            name: s,
-            level: 0,
-            isPrepared: true,
-          ));
+          spells.add(
+            CharacterSpellItem(
+              id: 'spell_${s.toLowerCase().replaceAll(' ', '_')}',
+              name: s,
+              level: 0,
+              isPrepared: true,
+            ),
+          );
         }
       }
     }
@@ -268,40 +276,50 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
         if (f is Map<String, dynamic>) {
           features.add(CharacterFeatureItem.fromJson(f));
         } else if (f is Map) {
-          features.add(CharacterFeatureItem.fromJson(Map<String, dynamic>.from(f)));
+          features.add(
+            CharacterFeatureItem.fromJson(Map<String, dynamic>.from(f)),
+          );
         } else if (f is String) {
-          features.add(CharacterFeatureItem(
-            id: 'feat_${f.toLowerCase().replaceAll(' ', '_')}',
-            name: f,
-            source: className,
-            description: '$f granted by $className',
-          ));
+          features.add(
+            CharacterFeatureItem(
+              id: 'feat_${f.toLowerCase().replaceAll(' ', '_')}',
+              name: f,
+              source: className,
+              description: '$f granted by $className',
+            ),
+          );
         }
       }
     } else if (rawFeatures is Map) {
       rawFeatures.forEach((key, val) {
         final featName = key.toString();
-        features.add(CharacterFeatureItem(
-          id: 'feat_${featName.toLowerCase().replaceAll(' ', '_')}',
-          name: featName,
-          source: className,
-          description: '$featName granted by $className',
-        ));
+        features.add(
+          CharacterFeatureItem(
+            id: 'feat_${featName.toLowerCase().replaceAll(' ', '_')}',
+            name: featName,
+            source: className,
+            description: '$featName granted by $className',
+          ),
+        );
       });
     }
 
     // Load Currency
     final rawCurrency = raw['currency'] as Map? ?? {};
-    final currency = CharacterCurrency.fromJson(Map<String, dynamic>.from(rawCurrency));
+    final currency = CharacterCurrency.fromJson(
+      Map<String, dynamic>.from(rawCurrency),
+    );
 
     // Load Bio & Notes
     final rawBio = raw['bio'] as Map? ?? {};
-    final bioNotes = CharacterBioNotes.fromJson(Map<String, dynamic>.from(rawBio));
+    final bioNotes = CharacterBioNotes.fromJson(
+      Map<String, dynamic>.from(rawBio),
+    );
 
     // Load Inventory from SQLite inventory table
-    final inventoryItems = await (db.select(db.inventoryTable)
-          ..where((t) => t.characterId.equals(characterId)))
-        .get();
+    final inventoryItems = await (db.select(
+      db.inventoryTable,
+    )..where((t) => t.characterId.equals(characterId))).get();
 
     final ac = (raw['armorClass'] as num?)?.toInt() ?? 10;
 
@@ -370,10 +388,12 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
       raw['name'] = trimmed;
 
       await db.upsertCharacter(
-        char.toCompanion(true).copyWith(
-          name: Value(trimmed),
-          rawPropertiesJson: Value(jsonEncode(raw)),
-        ),
+        char
+            .toCompanion(true)
+            .copyWith(
+              name: Value(trimmed),
+              rawPropertiesJson: Value(jsonEncode(raw)),
+            ),
       );
     }
     ref.invalidate(combatSessionProvider(characterId));
@@ -415,7 +435,9 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     state = state!.copyWith(
       abilityScores: updatedAbilities,
       strengthScore: key == 'str' ? newScore : state!.strengthScore,
-      dexterityMod: key == 'dex' ? ((newScore - 10) / 2).floor() : state!.dexterityMod,
+      dexterityMod: key == 'dex'
+          ? ((newScore - 10) / 2).floor()
+          : state!.dexterityMod,
     );
     _persistRawJson();
   }
@@ -425,10 +447,7 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     final clamped = newLevel.clamp(1, 20);
     final newProf = 2 + ((clamped - 1) / 4).floor();
 
-    state = state!.copyWith(
-      level: clamped,
-      proficiencyBonus: newProf,
-    );
+    state = state!.copyWith(level: clamped, proficiencyBonus: newProf);
 
     final db = ref.read(databaseProvider);
     final char = await db.getCharacter(characterId);
@@ -445,9 +464,9 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
       raw['hitDice'] = hd;
 
       await db.upsertCharacter(
-        char.toCompanion(true).copyWith(
-          rawPropertiesJson: Value(jsonEncode(raw)),
-        ),
+        char
+            .toCompanion(true)
+            .copyWith(rawPropertiesJson: Value(jsonEncode(raw))),
       );
     }
 
@@ -509,9 +528,9 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
       raw['proficiencyBonus'] = newProf;
 
       await db.upsertCharacter(
-        char.toCompanion(true).copyWith(
-          rawPropertiesJson: Value(jsonEncode(raw)),
-        ),
+        char
+            .toCompanion(true)
+            .copyWith(rawPropertiesJson: Value(jsonEncode(raw))),
       );
     }
 
@@ -576,7 +595,9 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     }
 
     final combatState = ref.read(combatSessionProvider(characterId));
-    final combatNotifier = ref.read(combatSessionProvider(characterId).notifier);
+    final combatNotifier = ref.read(
+      combatSessionProvider(characterId).notifier,
+    );
 
     final slotKey = '${spell.level}';
     final slot = combatState?.spellSlots[slotKey];
@@ -584,7 +605,9 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     if (slot == null || slot.available <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('No Level ${spell.level} spell slots available to cast ${spell.name}!'),
+          content: Text(
+            'No Level ${spell.level} spell slots available to cast ${spell.name}!',
+          ),
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -596,7 +619,9 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Cast ${spell.name}! Level ${spell.level} slot expended (${slot.available - 1} remaining).'),
+        content: Text(
+          'Cast ${spell.name}! Level ${spell.level} slot expended (${slot.available - 1} remaining).',
+        ),
         backgroundColor: Colors.green,
         duration: const Duration(seconds: 2),
       ),
@@ -624,9 +649,9 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
         .write(InventoryTableCompanion(isEquipped: Value(isEquipped)));
 
     // Refresh inventory
-    final items = await (db.select(db.inventoryTable)
-          ..where((t) => t.characterId.equals(characterId)))
-        .get();
+    final items = await (db.select(
+      db.inventoryTable,
+    )..where((t) => t.characterId.equals(characterId))).get();
 
     // Recalculate Armor Class based on equipped armor & shields
     int baseAc = 10 + state!.dexterityMod;
@@ -654,10 +679,7 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
 
     final newAc = baseAc + shieldBonus;
 
-    state = state!.copyWith(
-      inventoryItems: items,
-      armorClass: newAc,
-    );
+    state = state!.copyWith(inventoryItems: items, armorClass: newAc);
 
     // Save AC to character
     final char = await db.getCharacter(characterId);
@@ -668,9 +690,9 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
       } catch (_) {}
       raw['armorClass'] = newAc;
       await db.upsertCharacter(
-        char.toCompanion(true).copyWith(
-          rawPropertiesJson: Value(jsonEncode(raw)),
-        ),
+        char
+            .toCompanion(true)
+            .copyWith(rawPropertiesJson: Value(jsonEncode(raw))),
       );
     }
   }
@@ -679,23 +701,25 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     if (state == null) return;
     final db = ref.read(databaseProvider);
 
-    final item = await (db.select(db.inventoryTable)
-          ..where((t) => t.id.equals(itemId)))
-        .getSingleOrNull();
+    final item = await (db.select(
+      db.inventoryTable,
+    )..where((t) => t.id.equals(itemId))).getSingleOrNull();
 
     if (item == null) return;
 
     final newQty = item.quantity + delta;
     if (newQty <= 0) {
-      await (db.delete(db.inventoryTable)..where((t) => t.id.equals(itemId))).go();
+      await (db.delete(
+        db.inventoryTable,
+      )..where((t) => t.id.equals(itemId))).go();
     } else {
       await (db.update(db.inventoryTable)..where((t) => t.id.equals(itemId)))
           .write(InventoryTableCompanion(quantity: Value(newQty)));
     }
 
-    final items = await (db.select(db.inventoryTable)
-          ..where((t) => t.characterId.equals(characterId)))
-        .get();
+    final items = await (db.select(
+      db.inventoryTable,
+    )..where((t) => t.characterId.equals(characterId))).get();
 
     state = state!.copyWith(inventoryItems: items);
   }
@@ -704,9 +728,9 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     final db = ref.read(databaseProvider);
     await db.upsertInventoryItem(item);
 
-    final items = await (db.select(db.inventoryTable)
-          ..where((t) => t.characterId.equals(characterId)))
-        .get();
+    final items = await (db.select(
+      db.inventoryTable,
+    )..where((t) => t.characterId.equals(characterId))).get();
 
     state = state!.copyWith(inventoryItems: items);
   }
@@ -715,9 +739,9 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     final db = ref.read(databaseProvider);
     await db.removeInventoryItem(itemId);
 
-    final items = await (db.select(db.inventoryTable)
-          ..where((t) => t.characterId.equals(characterId)))
-        .get();
+    final items = await (db.select(
+      db.inventoryTable,
+    )..where((t) => t.characterId.equals(characterId))).get();
 
     state = state!.copyWith(inventoryItems: items);
   }
@@ -756,22 +780,21 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     final updatedAbilities = Map<String, dynamic>.from(existingAbilities);
     for (final entry in state!.abilityScores.entries) {
       final mod = ((entry.value - 10) / 2).floor();
-      updatedAbilities[entry.key] = {
-        'score': entry.value,
-        'mod': mod,
-      };
+      updatedAbilities[entry.key] = {'score': entry.value, 'mod': mod};
     }
     raw['abilities'] = updatedAbilities;
 
     await db.upsertCharacter(
-      char.toCompanion(true).copyWith(
-        rawPropertiesJson: Value(jsonEncode(raw)),
-      ),
+      char
+          .toCompanion(true)
+          .copyWith(rawPropertiesJson: Value(jsonEncode(raw))),
     );
   }
 }
 
 final characterSheetProvider =
-    NotifierProvider.family<CharacterSheetNotifier, CharacterSheetState?, String>(
-  CharacterSheetNotifier.new,
-);
+    NotifierProvider.family<
+      CharacterSheetNotifier,
+      CharacterSheetState?,
+      String
+    >(CharacterSheetNotifier.new);

@@ -31,7 +31,8 @@ class ExportCharacterDialog extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<ExportCharacterDialog> createState() => _ExportCharacterDialogState();
+  ConsumerState<ExportCharacterDialog> createState() =>
+      _ExportCharacterDialogState();
 }
 
 class _ExportCharacterDialogState extends ConsumerState<ExportCharacterDialog> {
@@ -71,7 +72,9 @@ class _ExportCharacterDialogState extends ConsumerState<ExportCharacterDialog> {
     Clipboard.setData(ClipboardData(text: _jsonPayload!));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Backup JSON for "${widget.characterName}" copied to clipboard!'),
+        content: Text(
+          'Backup JSON for "${widget.characterName}" copied to clipboard!',
+        ),
         backgroundColor: Colors.green.shade800,
         duration: const Duration(seconds: 2),
       ),
@@ -90,7 +93,11 @@ class _ExportCharacterDialogState extends ConsumerState<ExportCharacterDialog> {
           Expanded(
             child: Text(
               'EXPORT: ${widget.characterName.toUpperCase()}',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -103,42 +110,47 @@ class _ExportCharacterDialogState extends ConsumerState<ExportCharacterDialog> {
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _errorMessage != null
-                ? Center(
-                    child: Text(
-                      'Failed to export character: $_errorMessage',
-                      style: TextStyle(color: theme.colorScheme.error),
+            ? Center(
+                child: Text(
+                  'Failed to export character: $_errorMessage',
+                  style: TextStyle(color: theme.colorScheme.error),
+                ),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Portable character backup including stats, conditions, spells, and equipment.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: theme.colorScheme.onSurface.withAlpha(160),
                     ),
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Portable character backup including stats, conditions, spells, and equipment.',
-                        style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(160)),
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: theme.dividerColor.withAlpha(80),
+                        ),
                       ),
-                      const SizedBox(height: 10),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surface,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: theme.dividerColor.withAlpha(80)),
-                          ),
-                          child: SingleChildScrollView(
-                            child: SelectableText(
-                              _jsonPayload ?? '',
-                              style: const TextStyle(
-                                fontFamily: 'monospace',
-                                fontSize: 11,
-                                height: 1.4,
-                              ),
-                            ),
+                      child: SingleChildScrollView(
+                        child: SelectableText(
+                          _jsonPayload ?? '',
+                          style: const TextStyle(
+                            fontFamily: 'monospace',
+                            fontSize: 11,
+                            height: 1.4,
                           ),
                         ),
                       ),
-                    ],
+                    ),
                   ),
+                ],
+              ),
       ),
       actions: [
         if (_jsonPayload != null)

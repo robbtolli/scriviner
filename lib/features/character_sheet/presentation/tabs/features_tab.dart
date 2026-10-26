@@ -9,11 +9,7 @@ class FeaturesTab extends StatelessWidget {
   final CharacterSheetState state;
   final CharacterSheetNotifier notifier;
 
-  const FeaturesTab({
-    super.key,
-    required this.state,
-    required this.notifier,
-  });
+  const FeaturesTab({super.key, required this.state, required this.notifier});
 
   void _openAddFeatureDialog(BuildContext context) {
     showDialog(
@@ -48,18 +44,22 @@ class FeaturesTab extends StatelessWidget {
               source: state.className,
               recharge: 'Short Rest',
               usesMax: 1,
-              description: 'You have a limited well of stamina that you can draw on to protect yourself from harm. Regain 1d10 + Level HP as a bonus action.',
+              description:
+                  'You have a limited well of stamina that you can draw on to protect yourself from harm. Regain 1d10 + Level HP as a bonus action.',
             ),
             CharacterFeatureItem(
               id: 'feat_racial_traits',
               name: '${state.raceName} Lineage Traits',
               source: 'Racial Trait',
-              description: 'Special biological and cultural traits granted by your heritage, including natural senses and resistances.',
+              description:
+                  'Special biological and cultural traits granted by your heritage, including natural senses and resistances.',
             ),
           ];
 
     final theme = Theme.of(context);
-    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+    final tokens =
+        theme.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.ancientTomeTokens;
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -69,7 +69,11 @@ class FeaturesTab extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(tokens.iconography.features, color: theme.colorScheme.primary, size: 16),
+                Icon(
+                  tokens.iconography.features,
+                  color: theme.colorScheme.primary,
+                  size: 16,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   'CLASS FEATURES & RACIAL TRAITS',
@@ -89,7 +93,10 @@ class FeaturesTab extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: theme.colorScheme.onPrimary,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 visualDensity: VisualDensity.compact,
               ),
             ),
@@ -103,7 +110,9 @@ class FeaturesTab extends StatelessWidget {
 
   Widget _buildFeatureCard(BuildContext context, CharacterFeatureItem feat) {
     final theme = Theme.of(context);
-    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+    final tokens =
+        theme.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.ancientTomeTokens;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -116,11 +125,18 @@ class FeaturesTab extends StatelessWidget {
       child: ExpansionTile(
         title: Text(
           feat.name,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: theme.colorScheme.onSurface),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: theme.colorScheme.onSurface,
+          ),
         ),
         subtitle: Text(
           '${feat.source} • ${feat.recharge}',
-          style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withAlpha(150)),
+          style: TextStyle(
+            fontSize: 12,
+            color: theme.colorScheme.onSurface.withAlpha(150),
+          ),
         ),
         trailing: feat.usesMax > 0
             ? Container(
@@ -128,7 +144,9 @@ class FeaturesTab extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary.withAlpha(30),
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: theme.colorScheme.primary.withAlpha(80)),
+                  border: Border.all(
+                    color: theme.colorScheme.primary.withAlpha(80),
+                  ),
                 ),
                 child: Text(
                   '${feat.availableUses} / ${feat.usesMax} uses',
@@ -145,7 +163,11 @@ class FeaturesTab extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
             child: Text(
               feat.description,
-              style: TextStyle(fontSize: 13, height: 1.4, color: theme.colorScheme.onSurface.withAlpha(200)),
+              style: TextStyle(
+                fontSize: 13,
+                height: 1.4,
+                color: theme.colorScheme.onSurface.withAlpha(200),
+              ),
             ),
           ),
         ],

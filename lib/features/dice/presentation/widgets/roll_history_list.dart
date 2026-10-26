@@ -32,7 +32,11 @@ class RollHistoryList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: Column(
             children: [
-              Icon(Icons.history, size: 36, color: theme.colorScheme.onSurface.withAlpha(60)),
+              Icon(
+                Icons.history,
+                size: 36,
+                color: theme.colorScheme.onSurface.withAlpha(60),
+              ),
               const SizedBox(height: 8),
               Text(
                 'No rolls yet this session',
@@ -90,8 +94,8 @@ class RollHistoryList extends StatelessWidget {
     final cardBorderColor = record.isCriticalHit
         ? Colors.greenAccent
         : record.isCriticalMiss
-            ? Colors.redAccent
-            : theme.dividerColor;
+        ? Colors.redAccent
+        : theme.dividerColor;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -161,7 +165,10 @@ class RollHistoryList extends StatelessWidget {
               ),
               Text(
                 _formatTime(record.timestamp),
-                style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withAlpha(120)),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: theme.colorScheme.onSurface.withAlpha(120),
+                ),
               ),
             ],
           ),
@@ -180,8 +187,8 @@ class RollHistoryList extends StatelessWidget {
                   color: record.isCriticalHit
                       ? Colors.greenAccent
                       : record.isCriticalMiss
-                          ? Colors.redAccent
-                          : theme.colorScheme.primary,
+                      ? Colors.redAccent
+                      : theme.colorScheme.primary,
                 ),
               ),
               const SizedBox(width: 10),

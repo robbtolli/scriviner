@@ -19,7 +19,10 @@ void main() {
     await db.close();
   });
 
-  Future<void> seedCharacter({required String id, required String themeName}) async {
+  Future<void> seedCharacter({
+    required String id,
+    required String themeName,
+  }) async {
     final now = DateTime.now();
     final props = {
       'class': 'Fighter',
@@ -52,93 +55,103 @@ void main() {
   }
 
   group('Character Sheet Navigation Layout Tests', () {
-    testWidgets('Horizontal Tabs Mode (Ancient Tome) renders TabBar with icons and text', (tester) async {
-      await seedCharacter(id: 'char_tome', themeName: 'ancientTome');
+    testWidgets(
+      'Horizontal Tabs Mode (Ancient Tome) renders TabBar with icons and text',
+      (tester) async {
+        await seedCharacter(id: 'char_tome', themeName: 'ancientTome');
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            databaseProvider.overrideWithValue(db),
-          ],
-          child: const MaterialApp(
-            home: CharacterSheetScreen(characterId: 'char_tome'),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [databaseProvider.overrideWithValue(db)],
+            child: const MaterialApp(
+              home: CharacterSheetScreen(characterId: 'char_tome'),
+            ),
           ),
-        ),
-      );
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      // TabBar is present
-      expect(find.byType(TabBar), findsOneWidget);
-      expect(find.byType(DropdownButton<int>), findsNothing);
+        // TabBar is present
+        expect(find.byType(TabBar), findsOneWidget);
+        expect(find.byType(DropdownButton<int>), findsNothing);
 
-      // Tab titles are visible
-      expect(find.text('Stats'), findsWidgets);
-      expect(find.text('Skills'), findsWidgets);
-      expect(find.text('Combat'), findsWidgets);
-    });
+        // Tab titles are visible
+        expect(find.text('Stats'), findsWidgets);
+        expect(find.text('Skills'), findsWidgets);
+        expect(find.text('Combat'), findsWidgets);
+      },
+    );
 
-    testWidgets('Horizontal Tabs Text-Only Mode (Scholar\'s Desk) renders tabs without icons', (tester) async {
-      await seedCharacter(id: 'char_scholar', themeName: 'scholarsDesk');
+    testWidgets(
+      'Horizontal Tabs Text-Only Mode (Scholar\'s Desk) renders tabs without icons',
+      (tester) async {
+        await seedCharacter(id: 'char_scholar', themeName: 'scholarsDesk');
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            databaseProvider.overrideWithValue(db),
-          ],
-          child: const MaterialApp(
-            home: CharacterSheetScreen(characterId: 'char_scholar'),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [databaseProvider.overrideWithValue(db)],
+            child: const MaterialApp(
+              home: CharacterSheetScreen(characterId: 'char_scholar'),
+            ),
           ),
-        ),
-      );
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      // TabBar is present
-      expect(find.byType(TabBar), findsOneWidget);
-      expect(find.byType(DropdownButton<int>), findsNothing);
+        // TabBar is present
+        expect(find.byType(TabBar), findsOneWidget);
+        expect(find.byType(DropdownButton<int>), findsNothing);
 
-      // Verify Tab items do not contain an icon widget
-      final tabWidgets = tester.widgetList<Tab>(find.byType(Tab));
-      for (final tab in tabWidgets) {
-        expect(tab.icon, isNull, reason: 'Scholar desk should have text-only tabs');
-        expect(tab.text, isNotNull);
-      }
-    });
+        // Verify Tab items do not contain an icon widget
+        final tabWidgets = tester.widgetList<Tab>(find.byType(Tab));
+        for (final tab in tabWidgets) {
+          expect(
+            tab.icon,
+            isNull,
+            reason: 'Scholar desk should have text-only tabs',
+          );
+          expect(tab.text, isNotNull);
+        }
+      },
+    );
 
-    testWidgets('Header Dropdown Mode (Infernal Brimstone) renders dropdown subheader and navigates pages', (tester) async {
-      await seedCharacter(id: 'char_brimstone', themeName: 'infernalBrimstone');
+    testWidgets(
+      'Header Dropdown Mode (Infernal Brimstone) renders dropdown subheader and navigates pages',
+      (tester) async {
+        await seedCharacter(
+          id: 'char_brimstone',
+          themeName: 'infernalBrimstone',
+        );
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            databaseProvider.overrideWithValue(db),
-          ],
-          child: const MaterialApp(
-            home: CharacterSheetScreen(characterId: 'char_brimstone'),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [databaseProvider.overrideWithValue(db)],
+            child: const MaterialApp(
+              home: CharacterSheetScreen(characterId: 'char_brimstone'),
+            ),
           ),
-        ),
-      );
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      // TabBar is NOT present in headerDropdown mode
-      expect(find.byType(TabBar), findsNothing);
+        // TabBar is NOT present in headerDropdown mode
+        expect(find.byType(TabBar), findsNothing);
 
-      // DropdownButton is present
-      expect(find.byType(DropdownButton<int>), findsOneWidget);
-      expect(find.text('Page 1 of 7'), findsOneWidget);
+        // DropdownButton is present
+        expect(find.byType(DropdownButton<int>), findsOneWidget);
+        expect(find.text('Page 1 of 7'), findsOneWidget);
 
-      // Tap dropdown to select a different page (e.g. Combat / page 2)
-      await tester.tap(find.byType(DropdownButton<int>));
-      await tester.pumpAndSettle();
+        // Tap dropdown to select a different page (e.g. Combat / page 2)
+        await tester.tap(find.byType(DropdownButton<int>));
+        await tester.pumpAndSettle();
 
-      // Tap 'Skills' in the dropdown menu
-      await tester.tap(find.text('Skills').last);
-      await tester.pumpAndSettle();
+        // Tap 'Skills' in the dropdown menu
+        await tester.tap(find.text('Skills').last);
+        await tester.pumpAndSettle();
 
-      // Active page is now updated to Page 2
-      expect(find.text('Page 2 of 7'), findsOneWidget);
-    });
+        // Active page is now updated to Page 2
+        expect(find.text('Page 2 of 7'), findsOneWidget);
+      },
+    );
   });
 }

@@ -53,9 +53,7 @@ class CharacterSpellItem {
     this.description = '',
   });
 
-  CharacterSpellItem copyWith({
-    bool? isPrepared,
-  }) {
+  CharacterSpellItem copyWith({bool? isPrepared}) {
     return CharacterSpellItem(
       id: id,
       name: name,
@@ -72,18 +70,18 @@ class CharacterSpellItem {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'level': level,
-        'school': school,
-        'castingTime': castingTime,
-        'range': range,
-        'components': components,
-        'duration': duration,
-        'isPrepared': isPrepared,
-        'isRitual': isRitual,
-        'description': description,
-      };
+    'id': id,
+    'name': name,
+    'level': level,
+    'school': school,
+    'castingTime': castingTime,
+    'range': range,
+    'components': components,
+    'duration': duration,
+    'isPrepared': isPrepared,
+    'isRitual': isRitual,
+    'description': description,
+  };
 
   factory CharacterSpellItem.fromJson(Map<String, dynamic> json) {
     return CharacterSpellItem(
@@ -136,14 +134,14 @@ class CharacterFeatureItem {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'source': source,
-        'recharge': recharge,
-        'usesMax': usesMax,
-        'usesSpent': usesSpent,
-        'description': description,
-      };
+    'id': id,
+    'name': name,
+    'source': source,
+    'recharge': recharge,
+    'usesMax': usesMax,
+    'usesSpent': usesSpent,
+    'description': description,
+  };
 
   factory CharacterFeatureItem.fromJson(Map<String, dynamic> json) {
     return CharacterFeatureItem(
@@ -176,13 +174,7 @@ class CharacterCurrency {
   double get totalInGp =>
       gp + (pp * 10) + (ep * 0.5) + (sp * 0.1) + (cp * 0.01);
 
-  CharacterCurrency copyWith({
-    int? cp,
-    int? sp,
-    int? ep,
-    int? gp,
-    int? pp,
-  }) {
+  CharacterCurrency copyWith({int? cp, int? sp, int? ep, int? gp, int? pp}) {
     return CharacterCurrency(
       cp: cp ?? this.cp,
       sp: sp ?? this.sp,
@@ -193,12 +185,12 @@ class CharacterCurrency {
   }
 
   Map<String, dynamic> toJson() => {
-        'cp': cp,
-        'sp': sp,
-        'ep': ep,
-        'gp': gp,
-        'pp': pp,
-      };
+    'cp': cp,
+    'sp': sp,
+    'ep': ep,
+    'gp': gp,
+    'pp': pp,
+  };
 
   factory CharacterCurrency.fromJson(Map<String, dynamic> json) {
     return CharacterCurrency(
@@ -247,13 +239,13 @@ class CharacterBioNotes {
   }
 
   Map<String, dynamic> toJson() => {
-        'backstory': backstory,
-        'traits': traits,
-        'ideals': ideals,
-        'bonds': bonds,
-        'flaws': flaws,
-        'sessionNotes': sessionNotes,
-      };
+    'backstory': backstory,
+    'traits': traits,
+    'ideals': ideals,
+    'bonds': bonds,
+    'flaws': flaws,
+    'sessionNotes': sessionNotes,
+  };
 
   factory CharacterBioNotes.fromJson(Map<String, dynamic> json) {
     return CharacterBioNotes(
@@ -271,5 +263,6 @@ class CharacterBioNotes {
 class UniqueKey {
   static int _id = 0;
   @override
-  String toString() => 'spell_${DateTime.now().millisecondsSinceEpoch}_${_id++}';
+  String toString() =>
+      'spell_${DateTime.now().millisecondsSinceEpoch}_${_id++}';
 }

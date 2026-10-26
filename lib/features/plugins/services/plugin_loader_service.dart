@@ -9,9 +9,11 @@ import '../models/plugin_manifest.dart';
 class PluginLoaderService {
   final Map<String, PluginManifest> _installedPlugins = {};
 
-  List<PluginManifest> get installedPlugins => _installedPlugins.values.toList();
+  List<PluginManifest> get installedPlugins =>
+      _installedPlugins.values.toList();
 
-  bool isPluginInstalled(String pluginId) => _installedPlugins.containsKey(pluginId);
+  bool isPluginInstalled(String pluginId) =>
+      _installedPlugins.containsKey(pluginId);
 
   PluginManifest? getPlugin(String pluginId) => _installedPlugins[pluginId];
 
@@ -28,7 +30,8 @@ class PluginLoaderService {
         if (raw is Map<String, dynamic>) {
           final spellName = raw['name'] as String? ?? 'Unnamed Spell';
           final entityId = raw['id'] as String? ?? _slugify(spellName);
-          final summary = raw['description'] as String? ?? raw['summary'] as String? ?? '';
+          final summary =
+              raw['description'] as String? ?? raw['summary'] as String? ?? '';
 
           entries.add(
             CompendiumTableCompanion.insert(
@@ -51,7 +54,8 @@ class PluginLoaderService {
         if (raw is Map<String, dynamic>) {
           final itemName = raw['name'] as String? ?? 'Unnamed Item';
           final entityId = raw['id'] as String? ?? _slugify(itemName);
-          final summary = raw['description'] as String? ?? raw['summary'] as String? ?? '';
+          final summary =
+              raw['description'] as String? ?? raw['summary'] as String? ?? '';
 
           entries.add(
             CompendiumTableCompanion.insert(
@@ -74,7 +78,8 @@ class PluginLoaderService {
         if (raw is Map<String, dynamic>) {
           final featureName = raw['name'] as String? ?? 'Unnamed Feature';
           final entityId = raw['id'] as String? ?? _slugify(featureName);
-          final summary = raw['description'] as String? ?? raw['summary'] as String? ?? '';
+          final summary =
+              raw['description'] as String? ?? raw['summary'] as String? ?? '';
 
           entries.add(
             CompendiumTableCompanion.insert(
@@ -114,7 +119,8 @@ class PluginLoaderService {
       author: 'Tabletop Guild',
       targetSystem: 'dnd5e',
       type: 'compendium',
-      description: 'Adds 3 legendary relics, 3 mystic spells, and 1 unique feature from the Eloria campaign.',
+      description:
+          'Adds 3 legendary relics, 3 mystic spells, and 1 unique feature from the Eloria campaign.',
       entities: {
         'spells': [
           {
@@ -123,7 +129,8 @@ class PluginLoaderService {
             'school': 'Evocation',
             'castingTime': '1 action',
             'range': '60 feet',
-            'description': 'Bathes targets in silver moonlight dealing 3d6 radiant damage and revealing invisible creatures.',
+            'description':
+                'Bathes targets in silver moonlight dealing 3d6 radiant damage and revealing invisible creatures.',
           },
           {
             'name': 'Aegis of the Astral',
@@ -131,7 +138,8 @@ class PluginLoaderService {
             'school': 'Abjuration',
             'castingTime': '1 reaction',
             'range': 'Self',
-            'description': 'Forms a shimmering crystalline barrier absorbing up to 25 force or radiant damage.',
+            'description':
+                'Forms a shimmering crystalline barrier absorbing up to 25 force or radiant damage.',
           },
           {
             'name': 'Verdant Bloom',
@@ -139,7 +147,8 @@ class PluginLoaderService {
             'school': 'Transmutation',
             'castingTime': '1 action',
             'range': '30 feet',
-            'description': 'Causes vibrant healing flora to blossom, restoring 1d8 + 3 HP to up to two creatures.',
+            'description':
+                'Causes vibrant healing flora to blossom, restoring 1d8 + 3 HP to up to two creatures.',
           },
         ],
         'items': [
@@ -149,28 +158,32 @@ class PluginLoaderService {
             'weight': 3.0,
             'cost': '1,500 gp',
             'damage': '1d8 Slashing + 1d4 Radiant',
-            'description': 'A mastercrafted radiant scimitar forged inside the heart of an ancient solar forge.',
+            'description':
+                'A mastercrafted radiant scimitar forged inside the heart of an ancient solar forge.',
           },
           {
             'name': 'Cloak of Whispers',
             'category': 'Wondrous Item',
             'weight': 1.0,
             'cost': '800 gp',
-            'description': 'Woven from shadowsilk. Grants advantage on Stealth checks and 1/day invisibility.',
+            'description':
+                'Woven from shadowsilk. Grants advantage on Stealth checks and 1/day invisibility.',
           },
           {
             'name': 'Ring of the Archmagus',
             'category': 'Ring',
             'weight': 0.1,
             'cost': '2,500 gp',
-            'description': 'Attuned ring granting +1 to spell attack rolls and spell save DC.',
+            'description':
+                'Attuned ring granting +1 to spell attack rolls and spell save DC.',
           },
         ],
         'features': [
           {
             'name': 'Moonlight Blessing',
             'source': 'Eloria Cleric Domain',
-            'description': 'Once per long rest, call upon astral moonlight to grant yourself advantage on all saving throws for 1 round.',
+            'description':
+                'Once per long rest, call upon astral moonlight to grant yourself advantage on all saving throws for 1 round.',
           },
         ],
       },
@@ -178,6 +191,9 @@ class PluginLoaderService {
   }
 
   String _slugify(String text) {
-    return text.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_').replaceAll(RegExp(r'^_+|_+$'), '');
+    return text
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
+        .replaceAll(RegExp(r'^_+|_+$'), '');
   }
 }

@@ -138,10 +138,15 @@ class PropertyPipeline {
           final deps = FormulaEvaluator.extractDependencies(formula);
 
           // Check if all dependencies are currently available in workingValues
-          final canResolve = deps.every((dep) => workingValues.containsKey(dep));
+          final canResolve = deps.every(
+            (dep) => workingValues.containsKey(dep),
+          );
           if (canResolve || maxIterations == 0) {
             try {
-              final computedValue = FormulaEvaluator.evaluate(formula, workingValues);
+              final computedValue = FormulaEvaluator.evaluate(
+                formula,
+                workingValues,
+              );
               workingValues[targetKey] = computedValue;
 
               // Also apply any modifiers targeting this formula property

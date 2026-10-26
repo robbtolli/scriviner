@@ -43,7 +43,10 @@ class AbilityScoreRoller extends StatelessWidget {
                 icon: const Icon(Icons.refresh, size: 16),
                 label: const Text('ROLL STATS'),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                 ),
               ),
             ],
@@ -57,7 +60,12 @@ class AbilityScoreRoller extends StatelessWidget {
           if (rolledScores.isNotEmpty) ...[
             const Text(
               'ROLLED POOL (Sorted High to Low):',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+                color: Colors.grey,
+              ),
             ),
             const SizedBox(height: 8),
             Wrap(
@@ -65,7 +73,10 @@ class AbilityScoreRoller extends StatelessWidget {
               runSpacing: 8,
               children: rolledScores.map((score) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: AppTheme.cardDark,
                     borderRadius: BorderRadius.circular(8),

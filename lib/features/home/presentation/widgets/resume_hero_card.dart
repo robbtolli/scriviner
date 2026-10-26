@@ -62,16 +62,20 @@ class ResumeHeroCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(tokens.iconography.diceAction, color: theme.colorScheme.primary, size: 20),
+                    Icon(
+                      tokens.iconography.diceAction,
+                      color: theme.colorScheme.primary,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Flexible(
                       child: Text(
                         'RESUME SESSION',
                         style: theme.textTheme.labelLarge?.copyWith(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.1,
-                            ),
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.1,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -161,7 +165,10 @@ class ResumeHeroCard extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: theme.colorScheme.primary,
                         foregroundColor: theme.colorScheme.onPrimary,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
                       ),
                     ),
                   ],

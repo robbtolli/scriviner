@@ -246,10 +246,13 @@ class ScrivenerThemeTokens extends ThemeExtension<ScrivenerThemeTokens> {
   ) {
     if (other is! ScrivenerThemeTokens) return this;
     return ScrivenerThemeTokens(
-      cardGradient: LinearGradient.lerp(cardGradient, other.cardGradient, t) ?? cardGradient,
+      cardGradient:
+          LinearGradient.lerp(cardGradient, other.cardGradient, t) ??
+          cardGradient,
       cardBorder: BorderSide.lerp(cardBorder, other.cardBorder, t),
       cardRadius: cardRadius + (other.cardRadius - cardRadius) * t,
-      cardPadding: EdgeInsets.lerp(cardPadding, other.cardPadding, t) ?? cardPadding,
+      cardPadding:
+          EdgeInsets.lerp(cardPadding, other.cardPadding, t) ?? cardPadding,
       cardElevation: cardElevation + (other.cardElevation - cardElevation) * t,
       navigationStyle: t < 0.5 ? navigationStyle : other.navigationStyle,
       tabContentStyle: t < 0.5 ? tabContentStyle : other.tabContentStyle,
@@ -257,7 +260,8 @@ class ScrivenerThemeTokens extends ThemeExtension<ScrivenerThemeTokens> {
       fontFamily: t < 0.5 ? fontFamily : other.fontFamily,
       accentColor: Color.lerp(accentColor, other.accentColor, t) ?? accentColor,
       badgeColor: Color.lerp(badgeColor, other.badgeColor, t) ?? badgeColor,
-      badgeTextColor: Color.lerp(badgeTextColor, other.badgeTextColor, t) ?? badgeTextColor,
+      badgeTextColor:
+          Color.lerp(badgeTextColor, other.badgeTextColor, t) ?? badgeTextColor,
     );
   }
 }
@@ -267,6 +271,7 @@ extension BuildContextThemeX on BuildContext {
   ThemeData get theme => Theme.of(this);
   ColorScheme get colorScheme => Theme.of(this).colorScheme;
   ScrivenerThemeTokens get tokens =>
-      Theme.of(this).extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.defaultTokens;
+      Theme.of(this).extension<ScrivenerThemeTokens>() ??
+      ScrivenerThemeTokens.defaultTokens;
   ScrivenerIconography get icons => tokens.iconography;
 }

@@ -9,11 +9,7 @@ class SpellsTab extends StatelessWidget {
   final CharacterSheetState state;
   final CharacterSheetNotifier notifier;
 
-  const SpellsTab({
-    super.key,
-    required this.state,
-    required this.notifier,
-  });
+  const SpellsTab({super.key, required this.state, required this.notifier});
 
   void _openAddSpellDialog(BuildContext context) {
     showDialog(
@@ -43,7 +39,9 @@ class SpellsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+    final tokens =
+        theme.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.ancientTomeTokens;
 
     // Group spells by level (0 = Cantrips, 1 = 1st Level, etc.)
     final groupedSpells = <int, List<CharacterSpellItem>>{};
@@ -93,7 +91,11 @@ class SpellsTab extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(tokens.iconography.spells, color: theme.colorScheme.primary, size: 16),
+                Icon(
+                  tokens.iconography.spells,
+                  color: theme.colorScheme.primary,
+                  size: 16,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   'KNOWN & PREPARED SPELLS',
@@ -113,7 +115,10 @@ class SpellsTab extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: theme.colorScheme.onPrimary,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 visualDensity: VisualDensity.compact,
               ),
             ),
@@ -127,7 +132,11 @@ class SpellsTab extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 40),
               child: Column(
                 children: [
-                  Icon(tokens.iconography.spells, size: 48, color: theme.colorScheme.onSurface.withAlpha(50)),
+                  Icon(
+                    tokens.iconography.spells,
+                    size: 48,
+                    color: theme.colorScheme.onSurface.withAlpha(50),
+                  ),
                   const SizedBox(height: 12),
                   const Text(
                     'No spells in spellbook yet',
@@ -146,7 +155,9 @@ class SpellsTab extends StatelessWidget {
         else
           ...sortedLevels.map((lvl) {
             final spellsAtLevel = groupedSpells[lvl]!;
-            final levelTitle = lvl == 0 ? 'Cantrips (At-Will)' : 'Level $lvl Spells';
+            final levelTitle = lvl == 0
+                ? 'Cantrips (At-Will)'
+                : 'Level $lvl Spells';
 
             return Card(
               margin: const EdgeInsets.only(bottom: 16),
@@ -161,10 +172,15 @@ class SpellsTab extends StatelessWidget {
                 children: [
                   // Section Header
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surface,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(tokens.cardRadius)),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(tokens.cardRadius),
+                      ),
                     ),
                     child: Text(
                       levelTitle,
@@ -175,7 +191,9 @@ class SpellsTab extends StatelessWidget {
                       ),
                     ),
                   ),
-                  ...spellsAtLevel.map((spell) => _buildSpellTile(context, spell)),
+                  ...spellsAtLevel.map(
+                    (spell) => _buildSpellTile(context, spell),
+                  ),
                 ],
               ),
             );
@@ -184,7 +202,12 @@ class SpellsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildStatTile(BuildContext context, String label, String value, String subtitle) {
+  Widget _buildStatTile(
+    BuildContext context,
+    String label,
+    String value,
+    String subtitle,
+  ) {
     final theme = Theme.of(context);
     return Column(
       children: [
@@ -224,7 +247,9 @@ class SpellsTab extends StatelessWidget {
           ? IconButton(
               icon: Icon(
                 spell.isPrepared ? Icons.star : Icons.star_border,
-                color: spell.isPrepared ? theme.colorScheme.primary : Colors.grey,
+                color: spell.isPrepared
+                    ? theme.colorScheme.primary
+                    : Colors.grey,
                 size: 22,
               ),
               tooltip: spell.isPrepared ? 'Prepared' : 'Unprepared',
@@ -253,13 +278,23 @@ class SpellsTab extends StatelessWidget {
                 color: Colors.purple.withAlpha(40),
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: const Text('R', style: TextStyle(fontSize: 10, color: Colors.purpleAccent, fontWeight: FontWeight.bold)),
+              child: const Text(
+                'R',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.purpleAccent,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
         ],
       ),
       subtitle: Text(
         '${spell.school} • ${spell.castingTime} • ${spell.range}',
-        style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withAlpha(140)),
+        style: TextStyle(
+          fontSize: 11,
+          color: theme.colorScheme.onSurface.withAlpha(140),
+        ),
       ),
       trailing: ElevatedButton(
         onPressed: () => notifier.castSpell(spell, context),
@@ -269,7 +304,10 @@ class SpellsTab extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           visualDensity: VisualDensity.compact,
         ),
-        child: const Text('CAST', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+        child: const Text(
+          'CAST',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+        ),
       ),
       children: [
         Padding(
@@ -279,20 +317,34 @@ class SpellsTab extends StatelessWidget {
             children: [
               Text(
                 'Components: ${spell.components} • Duration: ${spell.duration}',
-                style: TextStyle(fontSize: 11, color: theme.colorScheme.primary),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: theme.colorScheme.primary,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
                 spell.description,
-                style: TextStyle(fontSize: 12, height: 1.3, color: theme.colorScheme.onSurface.withAlpha(180)),
+                style: TextStyle(
+                  fontSize: 12,
+                  height: 1.3,
+                  color: theme.colorScheme.onSurface.withAlpha(180),
+                ),
               ),
               const SizedBox(height: 6),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton.icon(
                   onPressed: () => notifier.removeSpell(spell.id),
-                  icon: const Icon(Icons.delete_outline, size: 14, color: Colors.redAccent),
-                  label: const Text('Remove from book', style: TextStyle(color: Colors.redAccent, fontSize: 11)),
+                  icon: const Icon(
+                    Icons.delete_outline,
+                    size: 14,
+                    color: Colors.redAccent,
+                  ),
+                  label: const Text(
+                    'Remove from book',
+                    style: TextStyle(color: Colors.redAccent, fontSize: 11),
+                  ),
                 ),
               ),
             ],

@@ -20,51 +20,50 @@ void main() {
       await db.close();
     });
 
-    testWidgets('Selecting Freeform mode immediately creates blank character and opens sheet', (tester) async {
-      tester.view.physicalSize = const Size(1000, 900);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
+    testWidgets(
+      'Selecting Freeform mode immediately creates blank character and opens sheet',
+      (tester) async {
+        tester.view.physicalSize = const Size(1000, 900);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            databaseProvider.overrideWithValue(db),
-          ],
-          child: const MaterialApp(
-            home: HomeScreen(),
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [databaseProvider.overrideWithValue(db)],
+            child: const MaterialApp(home: HomeScreen()),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      // Tap FAB to open NewCharacterModal
-      expect(find.byType(FloatingActionButton), findsOneWidget);
-      await tester.tap(find.byType(FloatingActionButton));
-      await tester.pumpAndSettle();
-      expect(find.byType(NewCharacterModal), findsOneWidget);
+        // Tap FAB to open NewCharacterModal
+        expect(find.byType(FloatingActionButton), findsOneWidget);
+        await tester.tap(find.byType(FloatingActionButton));
+        await tester.pumpAndSettle();
+        expect(find.byType(NewCharacterModal), findsOneWidget);
 
-      // Tap Freeform / Smart Paper Sheet option
-      expect(find.text('Freeform / Smart Paper Sheet'), findsOneWidget);
-      await tester.tap(find.text('Freeform / Smart Paper Sheet'));
-      await tester.pumpAndSettle();
+        // Tap Freeform / Smart Paper Sheet option
+        expect(find.text('Freeform / Smart Paper Sheet'), findsOneWidget);
+        await tester.tap(find.text('Freeform / Smart Paper Sheet'));
+        await tester.pumpAndSettle();
 
-      // Tap START CREATING
-      await tester.tap(find.text('START CREATING'));
-      await tester.pumpAndSettle();
+        // Tap START CREATING
+        await tester.tap(find.text('START CREATING'));
+        await tester.pumpAndSettle();
 
-      // Verify that character sheet is opened with 'New Adventurer'
-      expect(find.byType(CharacterSheetScreen), findsOneWidget);
-      expect(find.text('New Adventurer'), findsWidgets);
+        // Verify that character sheet is opened with 'New Adventurer'
+        expect(find.byType(CharacterSheetScreen), findsOneWidget);
+        expect(find.text('New Adventurer'), findsWidgets);
 
-      // Verify character was saved into Drift SQLite
-      final allChars = await db.getRecentCharacters();
-      expect(allChars.length, equals(1));
-      expect(allChars.first.name, equals('New Adventurer'));
+        // Verify character was saved into Drift SQLite
+        final allChars = await db.getRecentCharacters();
+        expect(allChars.length, equals(1));
+        expect(allChars.first.name, equals('New Adventurer'));
 
-      // Cleanly unmount and drain StreamQueryStore timers
-      await tester.pumpWidget(const SizedBox());
-      await tester.pump(const Duration(milliseconds: 50));
-    });
+        // Cleanly unmount and drain StreamQueryStore timers
+        await tester.pumpWidget(const SizedBox());
+        await tester.pump(const Duration(milliseconds: 50));
+      },
+    );
   });
 }

@@ -10,10 +10,7 @@ import 'widgets/situational_chips_row.dart';
 class DiceRollerDrawer extends ConsumerWidget {
   final bool isBottomSheet;
 
-  const DiceRollerDrawer({
-    super.key,
-    this.isBottomSheet = false,
-  });
+  const DiceRollerDrawer({super.key, this.isBottomSheet = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,7 +29,11 @@ class DiceRollerDrawer extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.casino, color: theme.colorScheme.primary, size: 22),
+                  Icon(
+                    Icons.casino,
+                    color: theme.colorScheme.primary,
+                    size: 22,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'DICE ROLLER',
@@ -74,12 +75,18 @@ class DiceRollerDrawer extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withAlpha(25),
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: theme.colorScheme.primary.withAlpha(80)),
+                border: Border.all(
+                  color: theme.colorScheme.primary.withAlpha(80),
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.bookmark_outline, size: 12, color: theme.colorScheme.primary),
+                  Icon(
+                    Icons.bookmark_outline,
+                    size: 12,
+                    color: theme.colorScheme.primary,
+                  ),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
@@ -141,7 +148,10 @@ class DiceRollerDrawer extends ConsumerWidget {
                 ),
                 if (state.rollType != RollType.normal)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: state.rollType == RollType.advantage
                           ? Colors.green.withAlpha(40)
@@ -182,7 +192,12 @@ class DiceRollerDrawer extends ConsumerWidget {
           // Advantage / Disadvantage Segments
           const Text(
             'ROLL TYPE',
-            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+              color: Colors.grey,
+            ),
           ),
           const SizedBox(height: 6),
           SegmentedButton<RollType>(
@@ -223,7 +238,12 @@ class DiceRollerDrawer extends ConsumerWidget {
           // Situational Modifiers
           const Text(
             'SITUATIONAL MODIFIERS',
-            style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.grey),
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+              color: Colors.grey,
+            ),
           ),
           const SizedBox(height: 6),
           SituationalChipsRow(
@@ -245,8 +265,8 @@ class DiceRollerDrawer extends ConsumerWidget {
                   backgroundColor: record.isCriticalHit
                       ? Colors.green
                       : record.isCriticalMiss
-                          ? Colors.redAccent
-                          : theme.cardColor,
+                      ? Colors.redAccent
+                      : theme.cardColor,
                   duration: const Duration(seconds: 2),
                 ),
               );
@@ -260,7 +280,9 @@ class DiceRollerDrawer extends ConsumerWidget {
               backgroundColor: theme.colorScheme.primary,
               foregroundColor: theme.colorScheme.onPrimary,
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
           const SizedBox(height: 16),

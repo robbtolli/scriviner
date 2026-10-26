@@ -26,7 +26,8 @@ const List<AbilityMeta> standardAbilities = [
     key: 'str',
     name: 'Strength',
     abbr: 'STR',
-    description: 'Natural athleticism, brute power, lifting, and melee attack damage.',
+    description:
+        'Natural athleticism, brute power, lifting, and melee attack damage.',
   ),
   AbilityMeta(
     key: 'dex',
@@ -38,13 +39,15 @@ const List<AbilityMeta> standardAbilities = [
     key: 'con',
     name: 'Constitution',
     abbr: 'CON',
-    description: 'Health, stamina, maximum hit points, and concentration saves.',
+    description:
+        'Health, stamina, maximum hit points, and concentration saves.',
   ),
   AbilityMeta(
     key: 'int',
     name: 'Intelligence',
     abbr: 'INT',
-    description: 'Mental acuity, knowledge recall, spellcasting for wizards, and investigation.',
+    description:
+        'Mental acuity, knowledge recall, spellcasting for wizards, and investigation.',
   ),
   AbilityMeta(
     key: 'wis',
@@ -56,7 +59,8 @@ const List<AbilityMeta> standardAbilities = [
     key: 'cha',
     name: 'Charisma',
     abbr: 'CHA',
-    description: 'Force of personality, persuasion, leadership, and deceptive magnetism.',
+    description:
+        'Force of personality, persuasion, leadership, and deceptive magnetism.',
   ),
 ];
 
@@ -64,11 +68,7 @@ class StatsTab extends ConsumerWidget {
   final CharacterSheetState state;
   final CharacterSheetNotifier notifier;
 
-  const StatsTab({
-    super.key,
-    required this.state,
-    required this.notifier,
-  });
+  const StatsTab({super.key, required this.state, required this.notifier});
 
   String _formatModifier(int mod) {
     if (mod >= 0) {
@@ -158,7 +158,9 @@ class StatsTab extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton.filledTonal(
-                        onPressed: score > 1 ? () => setState(() => score--) : null,
+                        onPressed: score > 1
+                            ? () => setState(() => score--)
+                            : null,
                         icon: const Icon(Icons.remove),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.colorScheme.surface,
@@ -167,7 +169,9 @@ class StatsTab extends ConsumerWidget {
                       ),
                       const SizedBox(width: 24),
                       IconButton.filledTonal(
-                        onPressed: score < 30 ? () => setState(() => score++) : null,
+                        onPressed: score < 30
+                            ? () => setState(() => score++)
+                            : null,
                         icon: const Icon(Icons.add),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.colorScheme.surface,
@@ -181,7 +185,10 @@ class StatsTab extends ConsumerWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('CANCEL', style: TextStyle(color: Colors.grey)),
+                  child: const Text(
+                    'CANCEL',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -248,7 +255,9 @@ class StatsTab extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton.filledTonal(
-                        onPressed: level > 1 ? () => setState(() => level--) : null,
+                        onPressed: level > 1
+                            ? () => setState(() => level--)
+                            : null,
                         icon: const Icon(Icons.remove),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.colorScheme.surface,
@@ -257,7 +266,9 @@ class StatsTab extends ConsumerWidget {
                       ),
                       const SizedBox(width: 24),
                       IconButton.filledTonal(
-                        onPressed: level < 20 ? () => setState(() => level++) : null,
+                        onPressed: level < 20
+                            ? () => setState(() => level++)
+                            : null,
                         icon: const Icon(Icons.add),
                         style: IconButton.styleFrom(
                           backgroundColor: theme.colorScheme.surface,
@@ -271,7 +282,10 @@ class StatsTab extends ConsumerWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('CANCEL', style: TextStyle(color: Colors.grey)),
+                  child: const Text(
+                    'CANCEL',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -302,10 +316,7 @@ class StatsTab extends ConsumerWidget {
   void _launchLevelUpWizard(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => LevelUpWizardDialog(
-        state: state,
-        notifier: notifier,
-      ),
+      builder: (ctx) => LevelUpWizardDialog(state: state, notifier: notifier),
     );
   }
 
@@ -390,14 +401,22 @@ class StatsTab extends ConsumerWidget {
               ),
               const SizedBox(width: 4),
               ElevatedButton.icon(
-                onPressed: state.level < 20 ? () => _launchLevelUpWizard(context) : null,
+                onPressed: state.level < 20
+                    ? () => _launchLevelUpWizard(context)
+                    : null,
                 icon: const Icon(Icons.auto_awesome, size: 16),
                 label: const Text('LEVEL UP'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: theme.colorScheme.onPrimary,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  textStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ],
@@ -415,10 +434,7 @@ class StatsTab extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: actionButtons,
-                ),
+                Align(alignment: Alignment.centerRight, child: actionButtons),
               ],
             );
           }
@@ -455,7 +471,11 @@ class StatsTab extends ConsumerWidget {
         // Section Title
         Row(
           children: [
-            Icon(tokens.iconography.tabStats, size: 18, color: theme.colorScheme.primary),
+            Icon(
+              tokens.iconography.tabStats,
+              size: 18,
+              color: theme.colorScheme.primary,
+            ),
             const SizedBox(width: 8),
             Text(
               'ABILITY SCORES & SAVING THROWS',
@@ -476,8 +496,8 @@ class StatsTab extends ConsumerWidget {
             final crossAxisCount = constraints.maxWidth >= 800
                 ? 3
                 : constraints.maxWidth >= 500
-                    ? 2
-                    : 1;
+                ? 2
+                : 1;
 
             return GridView.builder(
               shrinkWrap: true,
@@ -518,11 +538,16 @@ class StatsTab extends ConsumerWidget {
               // Proficiency Bonus Badge
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surface,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: theme.colorScheme.primary.withAlpha(80)),
+                    border: Border.all(
+                      color: theme.colorScheme.primary.withAlpha(80),
+                    ),
                   ),
                   child: Column(
                     children: [
@@ -648,7 +673,9 @@ class StatsTab extends ConsumerWidget {
     final mod = state.getAbilityModifier(ability.key);
     final modStr = _formatModifier(mod);
 
-    final isSaveProf = state.savingThrowProficiencies.contains(ability.key.toLowerCase());
+    final isSaveProf = state.savingThrowProficiencies.contains(
+      ability.key.toLowerCase(),
+    );
     final saveBonus = state.getSavingThrowBonus(ability.key);
     final saveBonusStr = _formatModifier(saveBonus);
 
@@ -658,7 +685,9 @@ class StatsTab extends ConsumerWidget {
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(tokens.cardRadius),
         border: Border.all(
-          color: isSaveProf ? theme.colorScheme.primary.withAlpha(120) : theme.dividerColor.withAlpha(80),
+          color: isSaveProf
+              ? theme.colorScheme.primary.withAlpha(120)
+              : theme.dividerColor.withAlpha(80),
         ),
       ),
       child: Column(
@@ -724,15 +753,25 @@ class StatsTab extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: ElevatedButton.icon(
-                  onPressed: () => _rollAbilityCheck(context, ref, ability.name, mod),
+                  onPressed: () =>
+                      _rollAbilityCheck(context, ref, ability.name, mod),
                   icon: Icon(tokens.iconography.checkAction, size: 16),
                   label: Text('CHECK ($modStr)'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.surface,
                     foregroundColor: theme.colorScheme.primary,
-                    side: BorderSide(color: theme.colorScheme.primary, width: 1),
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    side: BorderSide(
+                      color: theme.colorScheme.primary,
+                      width: 1,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 8,
+                    ),
+                    textStyle: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -754,7 +793,9 @@ class StatsTab extends ConsumerWidget {
                     Icon(
                       isSaveProf ? Icons.star : Icons.star_border,
                       size: 18,
-                      color: isSaveProf ? theme.colorScheme.primary : Colors.grey,
+                      color: isSaveProf
+                          ? theme.colorScheme.primary
+                          : Colors.grey,
                     ),
                     const SizedBox(width: 4),
                     const Text(
@@ -771,10 +812,14 @@ class StatsTab extends ConsumerWidget {
               const Spacer(),
               // Save Roll Button
               InkWell(
-                onTap: () => _rollSavingThrow(context, ref, ability.name, saveBonus),
+                onTap: () =>
+                    _rollSavingThrow(context, ref, ability.name, saveBonus),
                 borderRadius: BorderRadius.circular(6),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: isSaveProf
                         ? theme.colorScheme.primary.withAlpha(30)
@@ -793,14 +838,18 @@ class StatsTab extends ConsumerWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: isSaveProf ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                          color: isSaveProf
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(width: 4),
                       Icon(
                         tokens.iconography.saveAction,
                         size: 14,
-                        color: isSaveProf ? theme.colorScheme.primary : theme.colorScheme.onSurface.withAlpha(160),
+                        color: isSaveProf
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.onSurface.withAlpha(160),
                       ),
                     ],
                   ),

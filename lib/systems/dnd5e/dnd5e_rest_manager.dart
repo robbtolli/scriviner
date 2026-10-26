@@ -30,14 +30,18 @@ class Dnd5eRestManager {
     updated['hitDice'] = hitDice;
 
     // 3. Recharge Short-Rest features (like Second Wind / Pact slots)
-    final features = Map<String, dynamic>.from(updated['features'] as Map? ?? {});
+    final features = Map<String, dynamic>.from(
+      updated['features'] as Map? ?? {},
+    );
     if (features.containsKey('secondWind')) {
       features['secondWind'] = true; // Available again
     }
     updated['features'] = features;
 
     // Reset pact slots if warlock
-    final spellSlots = Map<String, dynamic>.from(updated['spellSlots'] as Map? ?? {});
+    final spellSlots = Map<String, dynamic>.from(
+      updated['spellSlots'] as Map? ?? {},
+    );
     if (spellSlots.containsKey('pact')) {
       final pact = Map<String, dynamic>.from(spellSlots['pact'] as Map? ?? {});
       pact['spent'] = 0;
@@ -87,7 +91,9 @@ class Dnd5eRestManager {
     updated['spellSlots'] = resetSlots;
 
     // 4. Reset features
-    final features = Map<String, dynamic>.from(updated['features'] as Map? ?? {});
+    final features = Map<String, dynamic>.from(
+      updated['features'] as Map? ?? {},
+    );
     features['secondWind'] = true;
     updated['features'] = features;
 

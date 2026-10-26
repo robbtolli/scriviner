@@ -48,9 +48,9 @@ class _DamageHealDialogState extends State<DamageHealDialog> {
               Text(
                 'Adjust Hit Points',
                 style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),

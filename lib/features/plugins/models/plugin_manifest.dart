@@ -41,13 +41,19 @@ class PluginManifest {
       throw const FormatException('Plugin manifest missing required field: id');
     }
     if (name.trim().isEmpty) {
-      throw const FormatException('Plugin manifest missing required field: name');
+      throw const FormatException(
+        'Plugin manifest missing required field: name',
+      );
     }
     if (version.trim().isEmpty) {
-      throw const FormatException('Plugin manifest missing required field: version');
+      throw const FormatException(
+        'Plugin manifest missing required field: version',
+      );
     }
     if (targetSystem.trim().isEmpty) {
-      throw const FormatException('Plugin manifest missing required field: targetSystem');
+      throw const FormatException(
+        'Plugin manifest missing required field: targetSystem',
+      );
     }
   }
 

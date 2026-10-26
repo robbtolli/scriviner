@@ -5,11 +5,7 @@ import 'package:scrivener/core/engine/property_pipeline.dart';
 void main() {
   group('PropertyPipeline', () {
     test('resolves base properties without modifiers', () {
-      final base = {
-        'name': 'Gimli',
-        'level': 5,
-        'abilities.str.score': 16,
-      };
+      final base = {'name': 'Gimli', 'level': 5, 'abilities.str.score': 16};
 
       final state = PropertyPipeline.resolve(
         baseProperties: base,
@@ -22,9 +18,7 @@ void main() {
     });
 
     test('applies additive modifiers in priority order', () {
-      final base = {
-        'attributes.ac': 10,
-      };
+      final base = {'attributes.ac': 10};
 
       final modifiers = [
         const Modifier(
@@ -55,9 +49,7 @@ void main() {
     });
 
     test('applies override modifiers correctly', () {
-      final base = {
-        'abilities.str.score': 12,
-      };
+      final base = {'abilities.str.score': 12};
 
       final modifiers = [
         const Modifier(
@@ -87,10 +79,7 @@ void main() {
     });
 
     test('resolves formula rules dynamically after modifiers', () {
-      final base = {
-        'abilities.str.score': 14,
-        'proficiency_bonus': 2,
-      };
+      final base = {'abilities.str.score': 14, 'proficiency_bonus': 2};
 
       final modifiers = [
         const Modifier(
@@ -122,9 +111,7 @@ void main() {
     });
 
     test('collects situational dice bonuses (e.g. Bless)', () {
-      final base = {
-        'attacks.melee.bonus': 5,
-      };
+      final base = {'attacks.melee.bonus': 5};
 
       final modifiers = [
         const Modifier(

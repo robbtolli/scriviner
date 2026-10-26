@@ -15,6 +15,9 @@ class CharactersTable extends Table {
   Set<Column> get primaryKey => {id};
 
   List<Index> get indexes => [
-        Index('idx_characters_last_played', 'CREATE INDEX IF NOT EXISTS idx_characters_last_played ON characters_table (last_played_at DESC)'),
-      ];
+    Index(
+      'idx_characters_last_played',
+      'CREATE INDEX IF NOT EXISTS idx_characters_last_played ON characters_table (last_played_at DESC)',
+    ),
+  ];
 }

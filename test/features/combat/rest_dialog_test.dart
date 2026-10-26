@@ -25,24 +25,14 @@ void main() {
       'class': 'Fighter',
       'race': 'Mountain Dwarf',
       'level': 1,
-      'hp': {
-        'current': 4,
-        'max': 12,
-        'temp': 0,
-      },
+      'hp': {'current': 4, 'max': 12, 'temp': 0},
       'armorClass': 16,
       'speed': 25,
-      'hitDice': {
-        'total': 2,
-        'spent': 0,
-        'die': '1d10',
-      },
+      'hitDice': {'total': 2, 'spent': 0, 'die': '1d10'},
       'spellSlots': {
         '1': {'total': 2, 'spent': 2},
       },
-      'features': {
-        'secondWind': false,
-      },
+      'features': {'secondWind': false},
     };
 
     await db.upsertCharacter(
@@ -59,9 +49,7 @@ void main() {
 
   Widget createWidgetUnderTest() {
     return ProviderScope(
-      overrides: [
-        databaseProvider.overrideWithValue(db),
-      ],
+      overrides: [databaseProvider.overrideWithValue(db)],
       child: const MaterialApp(
         home: CombatDashboardScreen(characterId: 'char_thorin_rest'),
       ),
@@ -107,7 +95,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   });
 
-  testWidgets('long rest fully recovers HP and resets spell slots', (tester) async {
+  testWidgets('long rest fully recovers HP and resets spell slots', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);

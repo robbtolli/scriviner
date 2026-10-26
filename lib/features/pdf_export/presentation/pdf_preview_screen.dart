@@ -38,7 +38,10 @@ class PdfPreviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     const service = PdfCharacterSheetService();
-    final sanitizedName = character.name.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_');
+    final sanitizedName = character.name.replaceAll(
+      RegExp(r'[^a-zA-Z0-9_-]'),
+      '_',
+    );
 
     return Scaffold(
       appBar: AppBar(

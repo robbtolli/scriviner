@@ -6,22 +6,24 @@ import '../../models/wizard_draft.dart';
 class LiveSheetPreview extends StatelessWidget {
   final WizardDraft draft;
 
-  const LiveSheetPreview({
-    super.key,
-    required this.draft,
-  });
+  const LiveSheetPreview({super.key, required this.draft});
 
   @override
   Widget build(BuildContext context) {
     final raceName = draft.race?.name ?? 'Race';
     final className = draft.charClass?.name ?? 'Class';
-    final name = draft.name.trim().isNotEmpty ? draft.name.trim() : 'Nameless Hero';
+    final name = draft.name.trim().isNotEmpty
+        ? draft.name.trim()
+        : 'Nameless Hero';
 
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.cardDark,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.primaryGold.withAlpha(140), width: 1.5),
+        border: Border.all(
+          color: AppTheme.primaryGold.withAlpha(140),
+          width: 1.5,
+        ),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -72,10 +74,30 @@ class LiveSheetPreview extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildMetric('HP', '${draft.maxHp}', Icons.favorite, Colors.redAccent),
-              _buildMetric('AC', '${draft.armorClass}', Icons.shield, Colors.blueAccent),
-              _buildMetric('SPD', '${draft.speed}ft', Icons.directions_run, Colors.greenAccent),
-              _buildMetric('PERC', '${draft.passivePerception}', Icons.visibility, Colors.amberAccent),
+              _buildMetric(
+                'HP',
+                '${draft.maxHp}',
+                Icons.favorite,
+                Colors.redAccent,
+              ),
+              _buildMetric(
+                'AC',
+                '${draft.armorClass}',
+                Icons.shield,
+                Colors.blueAccent,
+              ),
+              _buildMetric(
+                'SPD',
+                '${draft.speed}ft',
+                Icons.directions_run,
+                Colors.greenAccent,
+              ),
+              _buildMetric(
+                'PERC',
+                '${draft.passivePerception}',
+                Icons.visibility,
+                Colors.amberAccent,
+              ),
             ],
           ),
           const SizedBox(height: 14),
@@ -107,7 +129,10 @@ class LiveSheetPreview extends StatelessWidget {
               runSpacing: 4,
               children: draft.allProficientSkills.map((skill) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: AppTheme.surfaceDark,
                     borderRadius: BorderRadius.circular(4),
@@ -136,7 +161,10 @@ class LiveSheetPreview extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               label,
-              style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(160)),
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.white.withAlpha(160),
+              ),
             ),
           ],
         ),
@@ -173,15 +201,27 @@ class LiveSheetPreview extends StatelessWidget {
             children: [
               Text(
                 stat,
-                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey),
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
               ),
               Text(
                 '$score',
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
               Text(
                 modStr,
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.primaryGold),
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryGold,
+                ),
               ),
             ],
           ),

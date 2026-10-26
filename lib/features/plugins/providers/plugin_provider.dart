@@ -28,7 +28,9 @@ class PluginState {
       installedPlugins: installedPlugins ?? this.installedPlugins,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: clearMessages ? null : (errorMessage ?? this.errorMessage),
-      successMessage: clearMessages ? null : (successMessage ?? this.successMessage),
+      successMessage: clearMessages
+          ? null
+          : (successMessage ?? this.successMessage),
     );
   }
 }
@@ -106,4 +108,6 @@ class PluginNotifier extends Notifier<PluginState> {
   }
 }
 
-final pluginProvider = NotifierProvider<PluginNotifier, PluginState>(PluginNotifier.new);
+final pluginProvider = NotifierProvider<PluginNotifier, PluginState>(
+  PluginNotifier.new,
+);

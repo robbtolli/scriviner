@@ -8,7 +8,7 @@ class SituationalBonus {
   final String id;
   final String label;
   final String diceFormula; // e.g. "1d4"
-  final int flatModifier;   // e.g. 2 for "+2 Cover"
+  final int flatModifier; // e.g. 2 for "+2 Cover"
 
   const SituationalBonus({
     required this.id,
@@ -19,8 +19,16 @@ class SituationalBonus {
 
   static const List<SituationalBonus> defaultPresets = [
     SituationalBonus(id: 'bless', label: '+1d4 Bless', diceFormula: '1d4'),
-    SituationalBonus(id: 'guidance', label: '+1d4 Guidance', diceFormula: '1d4'),
-    SituationalBonus(id: 'inspiration', label: '+1d6 Inspiration', diceFormula: '1d6'),
+    SituationalBonus(
+      id: 'guidance',
+      label: '+1d4 Guidance',
+      diceFormula: '1d4',
+    ),
+    SituationalBonus(
+      id: 'inspiration',
+      label: '+1d6 Inspiration',
+      diceFormula: '1d6',
+    ),
     SituationalBonus(id: 'cover2', label: '+2 Cover', flatModifier: 2),
     SituationalBonus(id: 'coverMinus2', label: '-2 Cover', flatModifier: -2),
   ];
@@ -48,7 +56,8 @@ class DiceDrawerState {
     final terms = <String>[];
 
     // 1. Polyhedral dice
-    final sortedSides = diceCounts.keys.toList()..sort((a, b) => b.compareTo(a));
+    final sortedSides = diceCounts.keys.toList()
+      ..sort((a, b) => b.compareTo(a));
     for (final sides in sortedSides) {
       final count = diceCounts[sides] ?? 0;
       if (count <= 0) continue;
@@ -244,9 +253,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
       timestamp: DateTime.now(),
     );
 
-    state = state.copyWith(
-      history: [record, ...state.history],
-    );
+    state = state.copyWith(history: [record, ...state.history]);
 
     return record;
   }
@@ -267,5 +274,5 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
 
 final diceDrawerProvider =
     NotifierProvider<DiceDrawerNotifier, DiceDrawerState>(
-  DiceDrawerNotifier.new,
-);
+      DiceDrawerNotifier.new,
+    );

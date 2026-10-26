@@ -28,10 +28,7 @@ import 'widgets/resume_hero_card.dart';
 class HomeScreen extends ConsumerStatefulWidget {
   final void Function(CharactersTableData character)? onOpenCharacter;
 
-  const HomeScreen({
-    super.key,
-    this.onOpenCharacter,
-  });
+  const HomeScreen({super.key, this.onOpenCharacter});
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -122,7 +119,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => CharacterSheetScreen(characterId: character.id),
+            builder: (context) =>
+                CharacterSheetScreen(characterId: character.id),
           ),
         );
       }
@@ -137,7 +135,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         id: const Uuid().v4(),
         name: '${character.name} (Copy)',
         systemId: Value(character.systemId),
-        portraitUri: character.portraitUri != null ? Value(character.portraitUri) : const Value.absent(),
+        portraitUri: character.portraitUri != null
+            ? Value(character.portraitUri)
+            : const Value.absent(),
         createdAt: now,
         lastPlayedAt: now,
         rawPropertiesJson: character.rawPropertiesJson,
@@ -216,11 +216,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         'race': 'Human',
         'raceId': 'human',
         'background': 'Custom',
-        'hp': {
-          'current': 10,
-          'max': 10,
-          'temp': 0,
-        },
+        'hp': {'current': 10, 'max': 10, 'temp': 0},
         'armorClass': 10,
         'speed': 30,
         'proficiencyBonus': 2,
@@ -237,20 +233,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         'skillProficiencies': <String, int>{},
         'spells': <Map<String, dynamic>>[],
         'featuresList': <Map<String, dynamic>>[],
-        'hitDice': {
-          'total': 1,
-          'spent': 0,
-          'die': '1d8',
-        },
+        'hitDice': {'total': 1, 'spent': 0, 'die': '1d8'},
         'spellSlots': <String, dynamic>{},
         'equipment': <String>[],
-        'currency': {
-          'cp': 0,
-          'sp': 0,
-          'ep': 0,
-          'gp': 15,
-          'pp': 0,
-        },
+        'currency': {'cp': 0, 'sp': 0, 'ep': 0, 'gp': 15, 'pp': 0},
         'bio': {
           'personalityTraits': '',
           'ideals': '',
@@ -277,7 +263,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _openCharacter(char);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Freeform character created! Tap any field to customize.'),
+            content: Text(
+              'Freeform character created! Tap any field to customize.',
+            ),
             duration: Duration(seconds: 3),
           ),
         );
@@ -304,7 +292,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 decoration: InputDecoration(
                   hintText: 'Search characters by name or system...',
                   border: InputBorder.none,
-                  hintStyle: TextStyle(color: theme.colorScheme.onSurface.withAlpha(120)),
+                  hintStyle: TextStyle(
+                    color: theme.colorScheme.onSurface.withAlpha(120),
+                  ),
                 ),
                 style: TextStyle(color: theme.colorScheme.onSurface),
                 onChanged: (val) {
@@ -380,8 +370,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       endDrawer: const DiceRollerDrawer(),
       body: charactersAsync.when(
-        loading: () => Center(child: CircularProgressIndicator(color: theme.colorScheme.primary)),
-        error: (err, stack) => Center(child: Text('Error loading characters: $err')),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: theme.colorScheme.primary),
+        ),
+        error: (err, stack) =>
+            Center(child: Text('Error loading characters: $err')),
         data: (characters) {
           final totalCount = allRecentAsync.value?.length ?? 0;
 
@@ -425,8 +418,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               final crossAxisCount = constraints.maxWidth > 1000
                   ? 3
                   : constraints.maxWidth > 600
-                      ? 2
-                      : 1;
+                  ? 2
+                  : 1;
 
               final childAspectRatio = crossAxisCount == 1 ? 2.5 : 1.9;
 
@@ -449,7 +442,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           children: [
                             Text(
                               'RECENT HEROES',
-                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              style: Theme.of(context).textTheme.labelLarge
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.2,
                                     color: theme.colorScheme.primary,
@@ -457,15 +451,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                             const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: theme.colorScheme.surface,
                                 borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: theme.dividerColor.withAlpha(60)),
+                                border: Border.all(
+                                  color: theme.dividerColor.withAlpha(60),
+                                ),
                               ),
                               child: Text(
                                 '${characters.length}',
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -473,7 +475,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
                     SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       sliver: SliverGrid(
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: crossAxisCount,
@@ -481,26 +486,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           mainAxisSpacing: 12,
                           childAspectRatio: childAspectRatio,
                         ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final char = remainingCharacters[index];
-                            return CharacterCard(
-                              character: char,
-                              onTap: () => _openCharacter(char),
-                              onDuplicate: () => _duplicateCharacter(char),
-                              onDelete: () => _deleteCharacter(char),
-                              onExport: () => _exportCharacter(char),
-                              onPrintPdf: () => _printPdfCharacter(char),
-                            );
-                          },
-                          childCount: remainingCharacters.length,
-                        ),
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final char = remainingCharacters[index];
+                          return CharacterCard(
+                            character: char,
+                            onTap: () => _openCharacter(char),
+                            onDuplicate: () => _duplicateCharacter(char),
+                            onDelete: () => _deleteCharacter(char),
+                            onExport: () => _exportCharacter(char),
+                            onPrintPdf: () => _printPdfCharacter(char),
+                          );
+                        }, childCount: remainingCharacters.length),
                       ),
                     ),
                   ],
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: 80),
-                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 80)),
                 ],
               );
             },

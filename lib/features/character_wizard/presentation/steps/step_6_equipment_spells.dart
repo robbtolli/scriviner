@@ -34,9 +34,9 @@ class Step6EquipmentSpells extends ConsumerWidget {
           Text(
             'Step 6: Equipment & Magic',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryGold,
-                ),
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryGold,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
@@ -65,18 +65,26 @@ class Step6EquipmentSpells extends ConsumerWidget {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.primaryGold.withAlpha(25) : AppTheme.cardDark,
+                    color: isSelected
+                        ? AppTheme.primaryGold.withAlpha(25)
+                        : AppTheme.cardDark,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isSelected ? AppTheme.primaryGold : Colors.white.withAlpha(20),
+                      color: isSelected
+                          ? AppTheme.primaryGold
+                          : Colors.white.withAlpha(20),
                       width: isSelected ? 1.5 : 1,
                     ),
                   ),
                   child: Row(
                     children: [
                       Icon(
-                        isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                        color: isSelected ? AppTheme.primaryGold : Colors.white.withAlpha(120),
+                        isSelected
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_unchecked,
+                        color: isSelected
+                            ? AppTheme.primaryGold
+                            : Colors.white.withAlpha(120),
                         size: 20,
                       ),
                       const SizedBox(width: 10),
@@ -85,7 +93,9 @@ class Step6EquipmentSpells extends ConsumerWidget {
                           package,
                           style: TextStyle(
                             fontSize: 13,
-                            color: isSelected ? Colors.white : Colors.white.withAlpha(190),
+                            color: isSelected
+                                ? Colors.white
+                                : Colors.white.withAlpha(190),
                           ),
                         ),
                       ),
@@ -122,7 +132,10 @@ class Step6EquipmentSpells extends ConsumerWidget {
             const SizedBox(height: 4),
             Text(
               'Cantrips can be cast at-will. 1st-level spells expend daily spell slots.',
-              style: TextStyle(color: Colors.white.withAlpha(160), fontSize: 13),
+              style: TextStyle(
+                color: Colors.white.withAlpha(160),
+                fontSize: 13,
+              ),
             ),
             const SizedBox(height: 12),
             ...classSpells.map((spell) {
@@ -136,10 +149,14 @@ class Step6EquipmentSpells extends ConsumerWidget {
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppTheme.primaryGold.withAlpha(25) : AppTheme.cardDark,
+                      color: isSelected
+                          ? AppTheme.primaryGold.withAlpha(25)
+                          : AppTheme.cardDark,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: isSelected ? AppTheme.primaryGold : Colors.white.withAlpha(20),
+                        color: isSelected
+                            ? AppTheme.primaryGold
+                            : Colors.white.withAlpha(20),
                         width: isSelected ? 1.5 : 1,
                       ),
                     ),
@@ -164,19 +181,27 @@ class Step6EquipmentSpells extends ConsumerWidget {
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15,
-                                      color: isSelected ? AppTheme.primaryGold : Colors.white,
+                                      color: isSelected
+                                          ? AppTheme.primaryGold
+                                          : Colors.white,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: AppTheme.surfaceDark,
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
                                       spell.level == 0 ? 'Cantrip' : 'Level 1',
-                                      style: const TextStyle(fontSize: 10, color: Colors.cyanAccent),
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.cyanAccent,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -184,12 +209,18 @@ class Step6EquipmentSpells extends ConsumerWidget {
                               const SizedBox(height: 2),
                               Text(
                                 '${spell.school} • ${spell.castingTime} • ${spell.range}',
-                                style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(140)),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.white.withAlpha(140),
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 spell.description,
-                                style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(180)),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white.withAlpha(180),
+                                ),
                               ),
                             ],
                           ),

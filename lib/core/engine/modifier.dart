@@ -83,7 +83,8 @@ class Modifier {
       operation: ModifierOperation.values.byName(json['operation'] as String),
       value: json['value'],
       source: json['source'] as String,
-      priority: (json['priority'] as num?)?.toInt() ?? ModifierPriority.equipment,
+      priority:
+          (json['priority'] as num?)?.toInt() ?? ModifierPriority.equipment,
       isEnabled: (json['isEnabled'] as bool?) ?? true,
     );
   }

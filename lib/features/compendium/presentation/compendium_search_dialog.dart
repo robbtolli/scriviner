@@ -96,7 +96,11 @@ class _CompendiumSearchDialogState
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.menu_book, color: theme.colorScheme.primary, size: 22),
+                      Icon(
+                        Icons.menu_book,
+                        color: theme.colorScheme.primary,
+                        size: 22,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'SRD 5.1 COMPENDIUM',
@@ -124,7 +128,10 @@ class _CompendiumSearchDialogState
                 onChanged: (_) => _performSearch(),
                 decoration: InputDecoration(
                   hintText: 'Search spells, equipment, features...',
-                  prefixIcon: Icon(Icons.search, color: theme.colorScheme.primary),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: theme.colorScheme.primary,
+                  ),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Icons.clear, size: 18),
@@ -167,30 +174,40 @@ class _CompendiumSearchDialogState
               Expanded(
                 child: _isLoading
                     ? Center(
-                        child: CircularProgressIndicator(color: theme.colorScheme.primary),
+                        child: CircularProgressIndicator(
+                          color: theme.colorScheme.primary,
+                        ),
                       )
                     : _results.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.search_off, size: 40, color: theme.colorScheme.onSurface.withAlpha(80)),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'No entries found matching your search.',
-                                  style: TextStyle(color: theme.colorScheme.onSurface.withAlpha(120)),
-                                ),
-                              ],
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 40,
+                              color: theme.colorScheme.onSurface.withAlpha(80),
                             ),
-                          )
-                        : ListView.separated(
-                            itemCount: _results.length,
-                            separatorBuilder: (_, _) => const SizedBox(height: 8),
-                            itemBuilder: (context, index) {
-                              final entry = _results[index];
-                              return _buildResultCard(entry);
-                            },
-                          ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'No entries found matching your search.',
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface.withAlpha(
+                                  120,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.separated(
+                        itemCount: _results.length,
+                        separatorBuilder: (_, _) => const SizedBox(height: 8),
+                        itemBuilder: (context, index) {
+                          final entry = _results[index];
+                          return _buildResultCard(entry);
+                        },
+                      ),
               ),
             ],
           ),
@@ -218,7 +235,9 @@ class _CompendiumSearchDialogState
         labelStyle: TextStyle(
           fontSize: 11,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withAlpha(180),
+          color: isSelected
+              ? theme.colorScheme.primary
+              : theme.colorScheme.onSurface.withAlpha(180),
         ),
         side: BorderSide(
           color: isSelected ? theme.colorScheme.primary : theme.dividerColor,
@@ -235,13 +254,18 @@ class _CompendiumSearchDialogState
 
     String metaSubtitle = '';
     if (isSpell) {
-      final lvlStr = entry.spellLevel == 0 ? 'Cantrip' : 'Level ${entry.spellLevel}';
-      metaSubtitle = '$lvlStr • ${entry.school} • ${entry.castingTime} • ${entry.range}';
+      final lvlStr = entry.spellLevel == 0
+          ? 'Cantrip'
+          : 'Level ${entry.spellLevel}';
+      metaSubtitle =
+          '$lvlStr • ${entry.school} • ${entry.castingTime} • ${entry.range}';
     } else if (isEquip) {
       if (entry.isArmor) {
-        metaSubtitle = 'Armor (AC ${entry.armorClass}) • ${entry.weight} lbs • ${entry.cost}';
+        metaSubtitle =
+            'Armor (AC ${entry.armorClass}) • ${entry.weight} lbs • ${entry.cost}';
       } else if (entry.damage.isNotEmpty) {
-        metaSubtitle = 'Weapon (${entry.damage}) • ${entry.weight} lbs • ${entry.cost}';
+        metaSubtitle =
+            'Weapon (${entry.damage}) • ${entry.weight} lbs • ${entry.cost}';
       } else {
         metaSubtitle = 'Item • ${entry.weight} lbs • ${entry.cost}';
       }
@@ -289,7 +313,10 @@ class _CompendiumSearchDialogState
                   style: ElevatedButton.styleFrom(
                     backgroundColor: theme.colorScheme.primary,
                     foregroundColor: theme.colorScheme.onPrimary,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     visualDensity: VisualDensity.compact,
                   ),
                 ),

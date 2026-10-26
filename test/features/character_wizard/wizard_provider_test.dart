@@ -23,7 +23,9 @@ void main() {
     WizardDraft getDraft() => container.read(characterWizardProvider);
 
     test('auto-assigns standard array optimally based on class', () {
-      final fighter = SrdStarterData.classes.firstWhere((c) => c.id == 'fighter');
+      final fighter = SrdStarterData.classes.firstWhere(
+        (c) => c.id == 'fighter',
+      );
       notifier.setClass(fighter);
 
       expect(getDraft().baseAbilities['STR'], equals(15));
@@ -76,7 +78,9 @@ void main() {
       expect(isValid, isFalse);
       expect(error, contains('class'));
 
-      notifier.setClass(SrdStarterData.classes.firstWhere((c) => c.id == 'fighter'));
+      notifier.setClass(
+        SrdStarterData.classes.firstWhere((c) => c.id == 'fighter'),
+      );
       (isValid, _) = getDraft().validateStep(2);
       expect(isValid, isTrue);
     });
@@ -86,15 +90,21 @@ void main() {
       addTearDown(() => db.close());
 
       notifier.setName('Gimli');
-      notifier.setRace(SrdStarterData.races.firstWhere((r) => r.id == 'dwarf')); // +2 CON
-      notifier.setClass(SrdStarterData.classes.firstWhere((c) => c.id == 'fighter')); // d10 hit die
+      notifier.setRace(
+        SrdStarterData.races.firstWhere((r) => r.id == 'dwarf'),
+      ); // +2 CON
+      notifier.setClass(
+        SrdStarterData.classes.firstWhere((c) => c.id == 'fighter'),
+      ); // d10 hit die
       // Fighter auto-assigns CON 14. Dwarf adds +2 CON -> CON is 16 (+3 mod).
       // Max HP = Hit die (10) + CON mod (3) = 13 HP!
       expect(getDraft().finalAbilities['CON'], equals(16));
       expect(getDraft().abilityModifiers['CON'], equals(3));
       expect(getDraft().maxHp, equals(13));
 
-      notifier.setBackground(SrdStarterData.backgrounds.firstWhere((b) => b.id == 'soldier'));
+      notifier.setBackground(
+        SrdStarterData.backgrounds.firstWhere((b) => b.id == 'soldier'),
+      );
       notifier.toggleSkill('Athletics');
       notifier.toggleSkill('Perception');
 

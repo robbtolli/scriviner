@@ -101,7 +101,10 @@ class CharacterCard extends StatelessWidget {
                     ),
                   ),
                   PopupMenuButton<String>(
-                    icon: Icon(Icons.more_vert, color: theme.colorScheme.onSurface.withAlpha(160)),
+                    icon: Icon(
+                      Icons.more_vert,
+                      color: theme.colorScheme.onSurface.withAlpha(160),
+                    ),
                     color: theme.colorScheme.surface,
                     onSelected: (value) {
                       if (value == 'open') onTap();
@@ -155,9 +158,16 @@ class CharacterCard extends StatelessWidget {
                         value: 'delete',
                         child: Row(
                           children: [
-                            Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
+                            Icon(
+                              Icons.delete_outline,
+                              size: 18,
+                              color: Colors.redAccent,
+                            ),
                             SizedBox(width: 8),
-                            Text('Delete', style: TextStyle(color: Colors.redAccent)),
+                            Text(
+                              'Delete',
+                              style: TextStyle(color: Colors.redAccent),
+                            ),
                           ],
                         ),
                       ),
@@ -169,11 +179,16 @@ class CharacterCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surface,
                       borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: theme.colorScheme.primary.withAlpha(100)),
+                      border: Border.all(
+                        color: theme.colorScheme.primary.withAlpha(100),
+                      ),
                     ),
                     child: Text(
                       character.systemId.toUpperCase(),
@@ -185,9 +200,19 @@ class CharacterCard extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  _buildStatBadge(context, Icons.favorite, '$currentHp/$maxHp', Colors.redAccent),
+                  _buildStatBadge(
+                    context,
+                    Icons.favorite,
+                    '$currentHp/$maxHp',
+                    Colors.redAccent,
+                  ),
                   const SizedBox(width: 8),
-                  _buildStatBadge(context, tokens.iconography.tabCombat, '$ac', theme.colorScheme.primary),
+                  _buildStatBadge(
+                    context,
+                    tokens.iconography.tabCombat,
+                    '$ac',
+                    theme.colorScheme.primary,
+                  ),
                 ],
               ),
             ],
@@ -197,7 +222,12 @@ class CharacterCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatBadge(BuildContext context, IconData icon, String value, Color color) {
+  Widget _buildStatBadge(
+    BuildContext context,
+    IconData icon,
+    String value,
+    Color color,
+  ) {
     final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
@@ -229,7 +259,9 @@ class CharacterCard extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Delete Character?'),
-        content: Text('Are you sure you want to delete ${character.name}? This action cannot be undone.'),
+        content: Text(
+          'Are you sure you want to delete ${character.name}? This action cannot be undone.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),

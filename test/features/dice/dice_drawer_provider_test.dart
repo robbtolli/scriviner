@@ -102,28 +102,31 @@ void main() {
       expect(state.rollType, equals(RollType.advantage));
     });
 
-    test('roll() executes formula, prepends to history, and calculates breakdown', () {
-      final notifier = container.read(diceDrawerProvider.notifier);
+    test(
+      'roll() executes formula, prepends to history, and calculates breakdown',
+      () {
+        final notifier = container.read(diceDrawerProvider.notifier);
 
-      notifier.setContext(
-        title: 'Test Roll',
-        diceCounts: {6: 2},
-        flatModifier: 3,
-      );
+        notifier.setContext(
+          title: 'Test Roll',
+          diceCounts: {6: 2},
+          flatModifier: 3,
+        );
 
-      final record = notifier.roll();
+        final record = notifier.roll();
 
-      expect(record.context, equals('Test Roll'));
-      expect(record.formula, equals('2d6 + 3'));
-      // Total must be between 2*1+3 = 5 and 2*6+3 = 15
-      expect(record.total, greaterThanOrEqualTo(5));
-      expect(record.total, lessThanOrEqualTo(15));
-      expect(record.formattedBreakdown, contains('= ${record.total}'));
+        expect(record.context, equals('Test Roll'));
+        expect(record.formula, equals('2d6 + 3'));
+        // Total must be between 2*1+3 = 5 and 2*6+3 = 15
+        expect(record.total, greaterThanOrEqualTo(5));
+        expect(record.total, lessThanOrEqualTo(15));
+        expect(record.formattedBreakdown, contains('= ${record.total}'));
 
-      final state = container.read(diceDrawerProvider);
-      expect(state.history.length, equals(1));
-      expect(state.history.first.id, equals(record.id));
-    });
+        final state = container.read(diceDrawerProvider);
+        expect(state.history.length, equals(1));
+        expect(state.history.first.id, equals(record.id));
+      },
+    );
 
     test('clearHistory() empties log', () {
       final notifier = container.read(diceDrawerProvider.notifier);

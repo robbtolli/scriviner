@@ -8,11 +8,7 @@ class ConditionsBar extends StatelessWidget {
   final CombatSessionState state;
   final CombatSessionNotifier notifier;
 
-  const ConditionsBar({
-    super.key,
-    required this.state,
-    required this.notifier,
-  });
+  const ConditionsBar({super.key, required this.state, required this.notifier});
 
   void _showConditionPicker(BuildContext context) {
     final theme = Theme.of(context);
@@ -65,11 +61,15 @@ class ConditionsBar extends StatelessWidget {
                     child: ListView.separated(
                       controller: scrollController,
                       itemCount: Dnd5eCondition.all.length,
-                      separatorBuilder: (_, _) =>
-                          Divider(height: 1, color: theme.dividerColor.withAlpha(50)),
+                      separatorBuilder: (_, _) => Divider(
+                        height: 1,
+                        color: theme.dividerColor.withAlpha(50),
+                      ),
                       itemBuilder: (context, index) {
                         final condition = Dnd5eCondition.all[index];
-                        final isActive = state.activeConditions.contains(condition.id);
+                        final isActive = state.activeConditions.contains(
+                          condition.id,
+                        );
 
                         return CheckboxListTile(
                           value: isActive,
@@ -79,7 +79,9 @@ class ConditionsBar extends StatelessWidget {
                             condition.name,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                              color: isActive
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.onSurface,
                             ),
                           ),
                           subtitle: Text(
@@ -124,7 +126,11 @@ class ConditionsBar extends StatelessWidget {
         ),
         content: Text(
           condition.description,
-          style: TextStyle(fontSize: 14, height: 1.4, color: theme.colorScheme.onSurface),
+          style: TextStyle(
+            fontSize: 14,
+            height: 1.4,
+            color: theme.colorScheme.onSurface,
+          ),
         ),
         actions: [
           TextButton(
@@ -132,7 +138,10 @@ class ConditionsBar extends StatelessWidget {
               notifier.toggleCondition(condition.id);
               Navigator.of(ctx).pop();
             },
-            child: const Text('Remove Condition', style: TextStyle(color: Colors.redAccent)),
+            child: const Text(
+              'Remove Condition',
+              style: TextStyle(color: Colors.redAccent),
+            ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(),
@@ -146,17 +155,21 @@ class ConditionsBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+    final tokens =
+        theme.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.ancientTomeTokens;
 
     final activeConditionsList = state.activeConditions
-        .map((id) => Dnd5eCondition.all.firstWhere(
-              (c) => c.id == id,
-              orElse: () => Dnd5eCondition(
-                id: id,
-                name: id[0].toUpperCase() + id.substring(1),
-                description: 'Custom condition.',
-              ),
-            ))
+        .map(
+          (id) => Dnd5eCondition.all.firstWhere(
+            (c) => c.id == id,
+            orElse: () => Dnd5eCondition(
+              id: id,
+              name: id[0].toUpperCase() + id.substring(1),
+              description: 'Custom condition.',
+            ),
+          ),
+        )
         .toList();
 
     return Container(
@@ -174,7 +187,11 @@ class ConditionsBar extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.shield_moon_outlined, color: theme.colorScheme.primary, size: 18),
+                  Icon(
+                    Icons.shield_moon_outlined,
+                    color: theme.colorScheme.primary,
+                    size: 18,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'ACTIVE CONDITIONS & BUFFS',
@@ -193,8 +210,14 @@ class ConditionsBar extends StatelessWidget {
                 label: const Text('MANAGE', style: TextStyle(fontSize: 11)),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: theme.colorScheme.primary,
-                  side: BorderSide(color: theme.colorScheme.primary, width: 0.8),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  side: BorderSide(
+                    color: theme.colorScheme.primary,
+                    width: 0.8,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   visualDensity: VisualDensity.compact,
                 ),
               ),
@@ -232,7 +255,11 @@ class ConditionsBar extends StatelessWidget {
                       const SizedBox(width: 4),
                       InkWell(
                         onTap: () => notifier.toggleCondition(condition.id),
-                        child: const Icon(Icons.close, size: 14, color: Colors.grey),
+                        child: const Icon(
+                          Icons.close,
+                          size: 14,
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),

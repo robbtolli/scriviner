@@ -8,9 +8,9 @@ import '../../../core/database/database_provider.dart';
 /// Streams the list of recent characters ordered by lastPlayedAt descending.
 final recentCharactersStreamProvider =
     StreamProvider<List<CharactersTableData>>((ref) {
-  final db = ref.watch(databaseProvider);
-  return db.watchRecentCharacters(limit: 20);
-});
+      final db = ref.watch(databaseProvider);
+      return db.watchRecentCharacters(limit: 20);
+    });
 
 /// Current search query string entered in the Home Hub.
 class CharacterSearchQueryNotifier extends Notifier<String> {
@@ -22,25 +22,28 @@ class CharacterSearchQueryNotifier extends Notifier<String> {
 
 final characterSearchQueryProvider =
     NotifierProvider<CharacterSearchQueryNotifier, String>(
-  CharacterSearchQueryNotifier.new,
-);
+      CharacterSearchQueryNotifier.new,
+    );
 
 /// Filtered list of recent characters matching the current search query.
 final filteredCharactersProvider =
     Provider<AsyncValue<List<CharactersTableData>>>((ref) {
-  final recentsAsync = ref.watch(recentCharactersStreamProvider);
-  final query = ref.watch(characterSearchQueryProvider).trim().toLowerCase();
+      final recentsAsync = ref.watch(recentCharactersStreamProvider);
+      final query = ref
+          .watch(characterSearchQueryProvider)
+          .trim()
+          .toLowerCase();
 
-  return recentsAsync.whenData((characters) {
-    if (query.isEmpty) return characters;
+      return recentsAsync.whenData((characters) {
+        if (query.isEmpty) return characters;
 
-    return characters.where((c) {
-      final matchesName = c.name.toLowerCase().contains(query);
-      final matchesSystem = c.systemId.toLowerCase().contains(query);
-      return matchesName || matchesSystem;
-    }).toList();
-  });
-});
+        return characters.where((c) {
+          final matchesName = c.name.toLowerCase().contains(query);
+          final matchesSystem = c.systemId.toLowerCase().contains(query);
+          return matchesName || matchesSystem;
+        }).toList();
+      });
+    });
 
 /// Seeds sample level 3 characters into the database for immediate testing, play, and documentation.
 Future<void> seedSampleCharacters(AppDatabase db) async {
@@ -79,17 +82,20 @@ Future<void> seedSampleCharacters(AppDatabase db) async {
       {
         'name': 'Second Wind',
         'source': 'Fighter Level 1',
-        'description': 'Regain 1d10 + fighter level hit points as a bonus action once per short rest.',
+        'description':
+            'Regain 1d10 + fighter level hit points as a bonus action once per short rest.',
       },
       {
         'name': 'Action Surge',
         'source': 'Fighter Level 2',
-        'description': 'Take one additional action on your turn once per short rest.',
+        'description':
+            'Take one additional action on your turn once per short rest.',
       },
       {
         'name': 'Improved Critical',
         'source': 'Champion Level 3',
-        'description': 'Your weapon attacks score a critical hit on a roll of 19 or 20.',
+        'description':
+            'Your weapon attacks score a critical hit on a roll of 19 or 20.',
       },
     ],
     'deathSaves': {'successes': 0, 'failures': 0},
@@ -144,7 +150,8 @@ Future<void> seedSampleCharacters(AppDatabase db) async {
         'castingTime': '1 action',
         'range': '120 feet',
         'damage': '3d4 + 3 Force',
-        'description': 'Launches 3 glowing darts of magical force that unfailingly strike targets.',
+        'description':
+            'Launches 3 glowing darts of magical force that unfailingly strike targets.',
       },
       {
         'name': 'Misty Step',
@@ -152,7 +159,8 @@ Future<void> seedSampleCharacters(AppDatabase db) async {
         'school': 'Conjuration',
         'castingTime': '1 bonus action',
         'range': 'Self',
-        'description': 'Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space you can see.',
+        'description':
+            'Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space you can see.',
       },
       {
         'name': 'Scorching Ray',
@@ -161,19 +169,22 @@ Future<void> seedSampleCharacters(AppDatabase db) async {
         'castingTime': '1 action',
         'range': '120 feet',
         'damage': '2d6 Fire per ray',
-        'description': 'Creates three rays of fire and hurls them at targets within range.',
+        'description':
+            'Creates three rays of fire and hurls them at targets within range.',
       },
     ],
     'featuresList': [
       {
         'name': 'Arcane Recovery',
         'source': 'Wizard Level 1',
-        'description': 'Once per day during a short rest, recover expended spell slots up to half your wizard level.',
+        'description':
+            'Once per day during a short rest, recover expended spell slots up to half your wizard level.',
       },
       {
         'name': 'Sculpt Spells',
         'source': 'Evocation Level 2',
-        'description': 'Create pockets of relative safety within the effects of your evocation spells.',
+        'description':
+            'Create pockets of relative safety within the effects of your evocation spells.',
       },
     ],
     'currency': {'cp': 0, 'sp': 18, 'ep': 0, 'gp': 85, 'pp': 5},
@@ -213,88 +224,114 @@ Future<void> seedSampleCharacters(AppDatabase db) async {
       {
         'name': 'Sneak Attack',
         'source': 'Rogue Level 1',
-        'description': 'Deal an extra 2d6 damage to one creature you hit with an attack if you have advantage on the roll.',
+        'description':
+            'Deal an extra 2d6 damage to one creature you hit with an attack if you have advantage on the roll.',
       },
       {
         'name': 'Cunning Action',
         'source': 'Rogue Level 2',
-        'description': 'Take a bonus action on each of your turns to Dash, Disengage, or Hide.',
+        'description':
+            'Take a bonus action on each of your turns to Dash, Disengage, or Hide.',
       },
     ],
     'deathSaves': {'successes': 0, 'failures': 0},
   };
 
   // Upsert characters
-  await db.upsertCharacter(CharactersTableCompanion.insert(
-    id: 'sample-thorin',
-    name: 'Thorin Ironforge',
-    systemId: const Value('dnd5e'),
-    createdAt: now.subtract(const Duration(hours: 3)),
-    lastPlayedAt: now.subtract(const Duration(minutes: 15)),
-    rawPropertiesJson: jsonEncode(fighterProps),
-    notes: const Value('Stalwart dwarven warrior armed with shield and mastercrafted warhammer.'),
-  ));
+  await db.upsertCharacter(
+    CharactersTableCompanion.insert(
+      id: 'sample-thorin',
+      name: 'Thorin Ironforge',
+      systemId: const Value('dnd5e'),
+      createdAt: now.subtract(const Duration(hours: 3)),
+      lastPlayedAt: now.subtract(const Duration(minutes: 15)),
+      rawPropertiesJson: jsonEncode(fighterProps),
+      notes: const Value(
+        'Stalwart dwarven warrior armed with shield and mastercrafted warhammer.',
+      ),
+    ),
+  );
 
-  await db.upsertCharacter(CharactersTableCompanion.insert(
-    id: 'sample-lyra',
-    name: 'Lyra Moonsong',
-    systemId: const Value('dnd5e'),
-    createdAt: now.subtract(const Duration(days: 1)),
-    lastPlayedAt: now.subtract(const Duration(hours: 2)),
-    rawPropertiesJson: jsonEncode(wizardProps),
-    notes: const Value('Elven scholar of evocation and ancient arcane runes.'),
-  ));
+  await db.upsertCharacter(
+    CharactersTableCompanion.insert(
+      id: 'sample-lyra',
+      name: 'Lyra Moonsong',
+      systemId: const Value('dnd5e'),
+      createdAt: now.subtract(const Duration(days: 1)),
+      lastPlayedAt: now.subtract(const Duration(hours: 2)),
+      rawPropertiesJson: jsonEncode(wizardProps),
+      notes: const Value(
+        'Elven scholar of evocation and ancient arcane runes.',
+      ),
+    ),
+  );
 
-  await db.upsertCharacter(CharactersTableCompanion.insert(
-    id: 'sample-shadow',
-    name: 'Shadow Shadowstep',
-    systemId: const Value('dnd5e'),
-    createdAt: now.subtract(const Duration(days: 2)),
-    lastPlayedAt: now.subtract(const Duration(hours: 6)),
-    rawPropertiesJson: jsonEncode(rogueProps),
-    notes: const Value('Quick-witted halfling scout with an eye for ancient treasure.'),
-  ));
+  await db.upsertCharacter(
+    CharactersTableCompanion.insert(
+      id: 'sample-shadow',
+      name: 'Shadow Shadowstep',
+      systemId: const Value('dnd5e'),
+      createdAt: now.subtract(const Duration(days: 2)),
+      lastPlayedAt: now.subtract(const Duration(hours: 6)),
+      rawPropertiesJson: jsonEncode(rogueProps),
+      notes: const Value(
+        'Quick-witted halfling scout with an eye for ancient treasure.',
+      ),
+    ),
+  );
 
   // Seed sample inventory items
-  await db.upsertInventoryItem(InventoryTableCompanion.insert(
-    id: 'item-warhammer',
-    characterId: 'sample-thorin',
-    name: 'Dwarven Warhammer',
-    quantity: const Value(1),
-    weight: const Value(2.0),
-    isEquipped: const Value(true),
-    containerName: const Value('Main Hand'),
-    itemDataJson: const Value('{"damage": "1d8+3 Bludgeoning", "type": "Martial Weapon"}'),
-  ));
+  await db.upsertInventoryItem(
+    InventoryTableCompanion.insert(
+      id: 'item-warhammer',
+      characterId: 'sample-thorin',
+      name: 'Dwarven Warhammer',
+      quantity: const Value(1),
+      weight: const Value(2.0),
+      isEquipped: const Value(true),
+      containerName: const Value('Main Hand'),
+      itemDataJson: const Value(
+        '{"damage": "1d8+3 Bludgeoning", "type": "Martial Weapon"}',
+      ),
+    ),
+  );
 
-  await db.upsertInventoryItem(InventoryTableCompanion.insert(
-    id: 'item-shield',
-    characterId: 'sample-thorin',
-    name: 'Steel Heater Shield',
-    quantity: const Value(1),
-    weight: const Value(6.0),
-    isEquipped: const Value(true),
-    containerName: const Value('Off Hand'),
-    itemDataJson: const Value('{"acBonus": 2, "type": "Shield"}'),
-  ));
+  await db.upsertInventoryItem(
+    InventoryTableCompanion.insert(
+      id: 'item-shield',
+      characterId: 'sample-thorin',
+      name: 'Steel Heater Shield',
+      quantity: const Value(1),
+      weight: const Value(6.0),
+      isEquipped: const Value(true),
+      containerName: const Value('Off Hand'),
+      itemDataJson: const Value('{"acBonus": 2, "type": "Shield"}'),
+    ),
+  );
 
-  await db.upsertInventoryItem(InventoryTableCompanion.insert(
-    id: 'item-plate',
-    characterId: 'sample-thorin',
-    name: 'Plate Armor',
-    quantity: const Value(1),
-    weight: const Value(65.0),
-    isEquipped: const Value(true),
-    containerName: const Value('Body'),
-    itemDataJson: const Value('{"ac": 18, "type": "Heavy Armor"}'),
-  ));
+  await db.upsertInventoryItem(
+    InventoryTableCompanion.insert(
+      id: 'item-plate',
+      characterId: 'sample-thorin',
+      name: 'Plate Armor',
+      quantity: const Value(1),
+      weight: const Value(65.0),
+      isEquipped: const Value(true),
+      containerName: const Value('Body'),
+      itemDataJson: const Value('{"ac": 18, "type": "Heavy Armor"}'),
+    ),
+  );
 
   // Seed conditions
-  await db.addCondition(ConditionsTableCompanion.insert(
-    id: 'cond-blessed',
-    characterId: 'sample-thorin',
-    conditionId: 'blessed',
-    durationRounds: const Value(10),
-    customNotes: const Value('Blessed by dwarven ancestors (+1d4 to attack rolls and saves)'),
-  ));
+  await db.addCondition(
+    ConditionsTableCompanion.insert(
+      id: 'cond-blessed',
+      characterId: 'sample-thorin',
+      conditionId: 'blessed',
+      durationRounds: const Value(10),
+      customNotes: const Value(
+        'Blessed by dwarven ancestors (+1d4 to attack rolls and saves)',
+      ),
+    ),
+  );
 }

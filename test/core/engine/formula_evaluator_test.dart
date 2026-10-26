@@ -13,10 +13,7 @@ void main() {
     });
 
     test('replaces @variable tokens with mapped values', () {
-      final props = {
-        'abilities.str.score': 16,
-        'proficiency_bonus': 3,
-      };
+      final props = {'abilities.str.score': 16, 'proficiency_bonus': 3};
 
       final result = FormulaEvaluator.evaluate(
         'floor((@abilities.str.score - 10) / 2) + @proficiency_bonus',

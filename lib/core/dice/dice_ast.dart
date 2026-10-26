@@ -14,11 +14,9 @@ class DiceTerm {
     this.isNegative = false,
   });
 
-  bool get isAdvantage =>
-      (count == 2 && sides == 20 && keepHighest == 1);
+  bool get isAdvantage => (count == 2 && sides == 20 && keepHighest == 1);
 
-  bool get isDisadvantage =>
-      (count == 2 && sides == 20 && keepLowest == 1);
+  bool get isDisadvantage => (count == 2 && sides == 20 && keepLowest == 1);
 
   @override
   String toString() {
@@ -114,10 +112,12 @@ class DiceRollResult {
 
   @override
   String toString() {
-    final details = groups.map((g) {
-      final rolls = g.dice.map((d) => d.toString()).join(', ');
-      return '[${g.term}: $rolls]';
-    }).join(' + ');
+    final details = groups
+        .map((g) {
+          final rolls = g.dice.map((d) => d.toString()).join(', ');
+          return '[${g.term}: $rolls]';
+        })
+        .join(' + ');
 
     final modStr = modifier != 0
         ? (modifier > 0 ? ' + $modifier' : ' - ${modifier.abs()}')

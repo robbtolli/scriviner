@@ -33,7 +33,8 @@ class CharacterSheetScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<CharacterSheetScreen> createState() => _CharacterSheetScreenState();
+  ConsumerState<CharacterSheetScreen> createState() =>
+      _CharacterSheetScreenState();
 }
 
 class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
@@ -96,27 +97,36 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     });
   }
 
-  void _showRestDialog(CombatSessionState combatState, CombatSessionNotifier combatNotifier) {
+  void _showRestDialog(
+    CombatSessionState combatState,
+    CombatSessionNotifier combatNotifier,
+  ) {
     showDialog(
       context: context,
-      builder: (ctx) => RestDialog(
-        state: combatState,
-        notifier: combatNotifier,
-      ),
+      builder: (ctx) =>
+          RestDialog(state: combatState, notifier: combatNotifier),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final effectiveThemeMode = ref.watch(characterThemeModeProvider(widget.characterId));
+    final effectiveThemeMode = ref.watch(
+      characterThemeModeProvider(widget.characterId),
+    );
     final themeData = AppTheme.getThemeData(effectiveThemeMode);
-    final tokens = themeData.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.defaultTokens;
+    final tokens =
+        themeData.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.defaultTokens;
     final icons = tokens.iconography;
 
     final sheetState = ref.watch(characterSheetProvider(widget.characterId));
-    final sheetNotifier = ref.read(characterSheetProvider(widget.characterId).notifier);
+    final sheetNotifier = ref.read(
+      characterSheetProvider(widget.characterId).notifier,
+    );
     final combatState = ref.watch(combatSessionProvider(widget.characterId));
-    final combatNotifier = ref.read(combatSessionProvider(widget.characterId).notifier);
+    final combatNotifier = ref.read(
+      combatSessionProvider(widget.characterId).notifier,
+    );
 
     if (sheetState == null) {
       return Theme(
@@ -124,7 +134,9 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
         child: Scaffold(
           appBar: AppBar(title: const Text('Character Sheet')),
           body: Center(
-            child: CircularProgressIndicator(color: themeData.colorScheme.primary),
+            child: CircularProgressIndicator(
+              color: themeData.colorScheme.primary,
+            ),
           ),
         ),
       );
@@ -165,7 +177,10 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                 child: DropdownButton<int>(
                   value: _tabController.index,
                   dropdownColor: themeData.colorScheme.surface,
-                  icon: Icon(Icons.arrow_drop_down, color: themeData.colorScheme.primary),
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: themeData.colorScheme.primary,
+                  ),
                   style: TextStyle(
                     color: themeData.colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
@@ -190,7 +205,9 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                               size: 18,
                               color: idx == _tabController.index
                                   ? themeData.colorScheme.primary
-                                  : themeData.colorScheme.onSurface.withAlpha(160),
+                                  : themeData.colorScheme.onSurface.withAlpha(
+                                      160,
+                                    ),
                             ),
                             const SizedBox(width: 8),
                             Text(p.title),
@@ -201,10 +218,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                         label = Text(p.title);
                         break;
                     }
-                    return DropdownMenuItem<int>(
-                      value: idx,
-                      child: label,
-                    );
+                    return DropdownMenuItem<int>(value: idx, child: label);
                   }),
                 ),
               ),
@@ -270,7 +284,10 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                       tooltip: 'Edit character name',
                       color: themeData.colorScheme.primary.withAlpha(220),
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                      constraints: const BoxConstraints(
+                        minWidth: 28,
+                        minHeight: 28,
+                      ),
                       onPressed: () => _startEditingName(sheetState.name),
                     ),
                   ],
@@ -293,16 +310,24 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                           cursorColor: themeData.colorScheme.primary,
                           decoration: InputDecoration(
                             isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 8,
+                            ),
                             filled: true,
                             fillColor: themeData.colorScheme.surface,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(6),
-                              borderSide: BorderSide(color: themeData.colorScheme.primary),
+                              borderSide: BorderSide(
+                                color: themeData.colorScheme.primary,
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(6),
-                              borderSide: BorderSide(color: themeData.colorScheme.primary, width: 1.5),
+                              borderSide: BorderSide(
+                                color: themeData.colorScheme.primary,
+                                width: 1.5,
+                              ),
                             ),
                           ),
                           onSubmitted: (val) => _saveName(val, sheetNotifier),
@@ -315,15 +340,22 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                       tooltip: 'Confirm new name',
                       color: Colors.greenAccent,
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                      onPressed: () => _saveName(_nameController.text, sheetNotifier),
+                      constraints: const BoxConstraints(
+                        minWidth: 28,
+                        minHeight: 28,
+                      ),
+                      onPressed: () =>
+                          _saveName(_nameController.text, sheetNotifier),
                     ),
                     IconButton(
                       icon: const Icon(Icons.close, size: 20),
                       tooltip: 'Cancel edit',
                       color: Colors.redAccent,
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                      constraints: const BoxConstraints(
+                        minWidth: 28,
+                        minHeight: 28,
+                      ),
                       onPressed: _cancelEditingName,
                     ),
                   ],
@@ -369,8 +401,12 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
               onPressed: () async {
                 final db = ref.read(databaseProvider);
                 final char = await db.getCharacter(widget.characterId);
-                final inventory = await db.getInventoryForCharacter(widget.characterId);
-                final conditions = await db.getConditionsForCharacter(widget.characterId);
+                final inventory = await db.getInventoryForCharacter(
+                  widget.characterId,
+                );
+                final conditions = await db.getConditionsForCharacter(
+                  widget.characterId,
+                );
                 if (char != null && context.mounted) {
                   PdfPreviewScreen.show(
                     context,
@@ -418,7 +454,10 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: themeData.colorScheme.surface,
                     foregroundColor: themeData.colorScheme.primary,
-                    side: BorderSide(color: themeData.colorScheme.primary, width: 1),
+                    side: BorderSide(
+                      color: themeData.colorScheme.primary,
+                      width: 1,
+                    ),
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                   ),
                 ),

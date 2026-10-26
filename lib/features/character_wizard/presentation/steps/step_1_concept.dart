@@ -99,9 +99,7 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
   void initState() {
     super.initState();
     final currentDraft = ref.read(characterWizardProvider);
-    _nameController = TextEditingController(
-      text: currentDraft.name,
-    );
+    _nameController = TextEditingController(text: currentDraft.name);
     if (currentDraft.gender == 'female') {
       _selectedGender = NameGender.female;
     } else {
@@ -147,9 +145,9 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
           Text(
             'Step 1: Character Concept & Identity',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryGold,
-                ),
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryGold,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
@@ -199,7 +197,9 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
                     onSelectionChanged: (set) {
                       setState(() {
                         _selectedGender = set.first;
-                        ref.read(characterWizardProvider.notifier).setGender(_selectedGender.name);
+                        ref
+                            .read(characterWizardProvider.notifier)
+                            .setGender(_selectedGender.name);
                       });
                     },
                     style: const ButtonStyle(
@@ -219,7 +219,10 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
                   controller: _nameController,
                   decoration: const InputDecoration(
                     hintText: 'e.g. Gandalf the Grey, Thorin Oakenshield',
-                    prefixIcon: Icon(Icons.person_outline, color: AppTheme.primaryGold),
+                    prefixIcon: Icon(
+                      Icons.person_outline,
+                      color: AppTheme.primaryGold,
+                    ),
                   ),
                   onChanged: (val) => notifier.setName(val),
                 ),
@@ -230,7 +233,10 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
                 icon: const Icon(Icons.casino, size: 18),
                 label: const Text('RANDOM'),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 16,
+                  ),
                 ),
               ),
             ],
@@ -267,10 +273,14 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
                 child: Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.primaryGold.withAlpha(30) : AppTheme.cardDark,
+                    color: isSelected
+                        ? AppTheme.primaryGold.withAlpha(30)
+                        : AppTheme.cardDark,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isSelected ? AppTheme.primaryGold : Colors.white.withAlpha(20),
+                      color: isSelected
+                          ? AppTheme.primaryGold
+                          : Colors.white.withAlpha(20),
                       width: isSelected ? 1.5 : 1,
                     ),
                   ),
@@ -278,7 +288,9 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
                     children: [
                       Icon(
                         _getArchetypeIcon(archetype),
-                        color: isSelected ? AppTheme.primaryGold : Colors.white.withAlpha(180),
+                        color: isSelected
+                            ? AppTheme.primaryGold
+                            : Colors.white.withAlpha(180),
                         size: 26,
                       ),
                       const SizedBox(width: 14),
@@ -291,19 +303,28 @@ class _Step1ConceptState extends ConsumerState<Step1Concept> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
-                                color: isSelected ? AppTheme.primaryGold : Colors.white,
+                                color: isSelected
+                                    ? AppTheme.primaryGold
+                                    : Colors.white,
                               ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               archetype.description,
-                              style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(160)),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white.withAlpha(160),
+                              ),
                             ),
                           ],
                         ),
                       ),
                       if (isSelected)
-                        const Icon(Icons.check_circle, color: AppTheme.primaryGold, size: 20),
+                        const Icon(
+                          Icons.check_circle,
+                          color: AppTheme.primaryGold,
+                          size: 20,
+                        ),
                     ],
                   ),
                 ),

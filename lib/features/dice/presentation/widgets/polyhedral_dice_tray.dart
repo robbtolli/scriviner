@@ -61,9 +61,7 @@ class PolyhedralDiceTray extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              sides == 20
-                                  ? Icons.casino
-                                  : Icons.change_history,
+                              sides == 20 ? Icons.casino : Icons.change_history,
                               size: 16,
                               color: isSelected
                                   ? theme.colorScheme.primary
@@ -130,7 +128,10 @@ class PolyhedralDiceTray extends StatelessWidget {
             children: [
               Text(
                 'Flat Modifier:',
-                style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface.withAlpha(180)),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: theme.colorScheme.onSurface.withAlpha(180),
+                ),
               ),
               Row(
                 children: [

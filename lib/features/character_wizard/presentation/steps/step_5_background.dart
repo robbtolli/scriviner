@@ -24,9 +24,9 @@ class Step5Background extends ConsumerWidget {
           Text(
             'Step 5: Background & Skills',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryGold,
-                ),
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryGold,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
@@ -55,10 +55,14 @@ class Step5Background extends ConsumerWidget {
                 child: Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.primaryGold.withAlpha(25) : AppTheme.cardDark,
+                    color: isSelected
+                        ? AppTheme.primaryGold.withAlpha(25)
+                        : AppTheme.cardDark,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isSelected ? AppTheme.primaryGold : Colors.white.withAlpha(20),
+                      color: isSelected
+                          ? AppTheme.primaryGold
+                          : Colors.white.withAlpha(20),
                       width: isSelected ? 1.5 : 1,
                     ),
                   ),
@@ -73,24 +77,36 @@ class Step5Background extends ConsumerWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
-                                color: isSelected ? AppTheme.primaryGold : Colors.white,
+                                color: isSelected
+                                    ? AppTheme.primaryGold
+                                    : Colors.white,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'Grants skills: ${bg.grantedSkills.join(", ")}',
-                              style: TextStyle(fontSize: 12, color: Colors.white.withAlpha(180)),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white.withAlpha(180),
+                              ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               'Feature: ${bg.featureName} - ${bg.featureDescription}',
-                              style: TextStyle(fontSize: 11, color: Colors.white.withAlpha(140)),
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.white.withAlpha(140),
+                              ),
                             ),
                           ],
                         ),
                       ),
                       if (isSelected)
-                        const Icon(Icons.check_circle, color: AppTheme.primaryGold, size: 20),
+                        const Icon(
+                          Icons.check_circle,
+                          color: AppTheme.primaryGold,
+                          size: 20,
+                        ),
                     ],
                   ),
                 ),
@@ -132,7 +148,8 @@ class Step5Background extends ConsumerWidget {
             spacing: 8,
             runSpacing: 8,
             children: availableSkills.map((skill) {
-              final isGrantedByBg = draft.background?.grantedSkills.contains(skill) ?? false;
+              final isGrantedByBg =
+                  draft.background?.grantedSkills.contains(skill) ?? false;
               final isSelected = draft.selectedSkills.contains(skill);
 
               return FilterChip(
@@ -142,13 +159,15 @@ class Step5Background extends ConsumerWidget {
                     color: isGrantedByBg
                         ? Colors.grey
                         : isSelected
-                            ? Colors.black
-                            : Colors.white,
+                        ? Colors.black
+                        : Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 selected: isSelected || isGrantedByBg,
-                selectedColor: isGrantedByBg ? Colors.white.withAlpha(40) : AppTheme.primaryGold,
+                selectedColor: isGrantedByBg
+                    ? Colors.white.withAlpha(40)
+                    : AppTheme.primaryGold,
                 backgroundColor: AppTheme.cardDark,
                 onSelected: isGrantedByBg
                     ? null

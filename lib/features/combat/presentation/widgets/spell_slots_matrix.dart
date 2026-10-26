@@ -28,7 +28,9 @@ class SpellSlotsMatrix extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tokens = theme.extension<ScrivenerThemeTokens>() ?? ScrivenerThemeTokens.ancientTomeTokens;
+    final tokens =
+        theme.extension<ScrivenerThemeTokens>() ??
+        ScrivenerThemeTokens.ancientTomeTokens;
 
     if (state.spellSlots.isEmpty) {
       return const SizedBox.shrink();
@@ -49,7 +51,11 @@ class SpellSlotsMatrix extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(tokens.iconography.spells, color: theme.colorScheme.primary, size: 18),
+              Icon(
+                tokens.iconography.spells,
+                color: theme.colorScheme.primary,
+                size: 18,
+              ),
               const SizedBox(width: 8),
               Text(
                 'SPELL SLOTS & RESOURCES',

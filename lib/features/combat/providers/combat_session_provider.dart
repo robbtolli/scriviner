@@ -82,7 +82,8 @@ class CombatSessionState {
   });
 
   bool get isConscious => currentHp > 0;
-  bool get isDying => currentHp == 0 && deathSaveFailures < 3 && deathSaveSuccesses < 3;
+  bool get isDying =>
+      currentHp == 0 && deathSaveFailures < 3 && deathSaveSuccesses < 3;
   bool get isStabilized => currentHp == 0 && deathSaveSuccesses >= 3;
   bool get isDead => deathSaveFailures >= 3;
   int get availableHitDice => max(0, hitDiceTotal - hitDiceSpent);
@@ -240,10 +241,7 @@ class CombatSessionNotifier extends Notifier<CombatSessionState?> {
 
     final newCurrentHp = max(0, state!.currentHp - remainingDamage);
 
-    state = state!.copyWith(
-      tempHp: newTempHp,
-      currentHp: newCurrentHp,
-    );
+    state = state!.copyWith(tempHp: newTempHp, currentHp: newCurrentHp);
     _persistToDatabase();
   }
 
@@ -312,10 +310,14 @@ class CombatSessionNotifier extends Notifier<CombatSessionState?> {
     if (currentSlot == null) return;
 
     final isCurrentlySpent = slotIndex < currentSlot.spent;
-    final newSpent = isCurrentlySpent ? currentSlot.spent - 1 : currentSlot.spent + 1;
+    final newSpent = isCurrentlySpent
+        ? currentSlot.spent - 1
+        : currentSlot.spent + 1;
 
     final updatedSlots = Map<String, SpellSlotInfo>.from(state!.spellSlots);
-    updatedSlots[slotKey] = currentSlot.copyWith(spent: newSpent.clamp(0, currentSlot.total));
+    updatedSlots[slotKey] = currentSlot.copyWith(
+      spent: newSpent.clamp(0, currentSlot.total),
+    );
 
     state = state!.copyWith(spellSlots: updatedSlots);
     _persistToDatabase();
@@ -386,9 +388,7 @@ class CombatSessionNotifier extends Notifier<CombatSessionState?> {
         (k, v) => MapEntry(k, {'total': v.total, 'spent': v.spent}),
       ),
       'activeConditions': state!.activeConditions.toList(),
-      'features': {
-        'secondWind': state!.hasSecondWind,
-      },
+      'features': {'secondWind': state!.hasSecondWind},
     };
   }
 
@@ -453,20 +453,20 @@ class CombatSessionNotifier extends Notifier<CombatSessionState?> {
       (k, v) => MapEntry(k, {'total': v.total, 'spent': v.spent}),
     );
     raw['activeConditions'] = state!.activeConditions.toList();
-    raw['features'] = {
-      'secondWind': state!.hasSecondWind,
-    };
+    raw['features'] = {'secondWind': state!.hasSecondWind};
 
     await db.upsertCharacter(
-      char.toCompanion(true).copyWith(
-        rawPropertiesJson: Value(jsonEncode(raw)),
-        lastPlayedAt: Value(DateTime.now()),
-      ),
+      char
+          .toCompanion(true)
+          .copyWith(
+            rawPropertiesJson: Value(jsonEncode(raw)),
+            lastPlayedAt: Value(DateTime.now()),
+          ),
     );
   }
 }
 
 final combatSessionProvider =
     NotifierProvider.family<CombatSessionNotifier, CombatSessionState?, String>(
-  CombatSessionNotifier.new,
-);
+      CombatSessionNotifier.new,
+    );

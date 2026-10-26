@@ -16,10 +16,7 @@ import 'widgets/live_sheet_preview.dart';
 class CharacterWizardScreen extends ConsumerWidget {
   final void Function(String characterId)? onCharacterCreated;
 
-  const CharacterWizardScreen({
-    super.key,
-    this.onCharacterCreated,
-  });
+  const CharacterWizardScreen({super.key, this.onCharacterCreated});
 
   static const List<String> _stepTitles = [
     'Concept & Identity',
@@ -102,100 +99,103 @@ class CharacterWizardScreen extends ConsumerWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-        title: Text(
-          'Step ${currentStep + 1} of 7: ${_stepTitles[currentStep]}',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryGold),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4),
-          child: LinearProgressIndicator(
-            value: progress,
-            backgroundColor: Colors.white.withAlpha(20),
-            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryGold),
+          title: Text(
+            'Step ${currentStep + 1} of 7: ${_stepTitles[currentStep]}',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.primaryGold,
+            ),
+          ),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(4),
+            child: LinearProgressIndicator(
+              value: progress,
+              backgroundColor: Colors.white.withAlpha(20),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                AppTheme.primaryGold,
+              ),
+            ),
           ),
         ),
-      ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isWide = constraints.maxWidth > 900;
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth > 900;
 
-          if (isWide) {
-            // Split-view on Desktop and Tablet
-            return Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: stepWidget,
-                ),
-                VerticalDivider(width: 1, color: Colors.white.withAlpha(20)),
-                Expanded(
-                  flex: 2,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'LIVE CHARACTER PREVIEW',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                            color: AppTheme.primaryGold,
+            if (isWide) {
+              // Split-view on Desktop and Tablet
+              return Row(
+                children: [
+                  Expanded(flex: 3, child: stepWidget),
+                  VerticalDivider(width: 1, color: Colors.white.withAlpha(20)),
+                  Expanded(
+                    flex: 2,
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'LIVE CHARACTER PREVIEW',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
+                              color: AppTheme.primaryGold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        LiveSheetPreview(draft: draft),
-                      ],
+                          const SizedBox(height: 10),
+                          LiveSheetPreview(draft: draft),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
-          } else {
-            // Mobile Single-column
-            return stepWidget;
-          }
-        },
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          border: Border(top: BorderSide(color: Colors.white.withAlpha(20))),
+                ],
+              );
+            } else {
+              // Mobile Single-column
+              return stepWidget;
+            }
+          },
         ),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            child: Row(
-              children: [
-                if (currentStep > 0)
-                  OutlinedButton.icon(
-                    onPressed: () => notifier.previousStep(),
-                    icon: const Icon(Icons.arrow_back, size: 18),
-                    label: const Text('BACK'),
-                  )
-                else
-                  TextButton(
-                    onPressed: () {
-                      notifier.reset();
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('CANCEL'),
-                  ),
-                const Spacer(),
-                if (currentStep < 6)
-                  ElevatedButton.icon(
-                    onPressed: handleNext,
-                    icon: const Icon(Icons.arrow_forward, size: 18),
-                    label: const Text('NEXT STEP'),
-                  ),
-              ],
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            border: Border(top: BorderSide(color: Colors.white.withAlpha(20))),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Row(
+                children: [
+                  if (currentStep > 0)
+                    OutlinedButton.icon(
+                      onPressed: () => notifier.previousStep(),
+                      icon: const Icon(Icons.arrow_back, size: 18),
+                      label: const Text('BACK'),
+                    )
+                  else
+                    TextButton(
+                      onPressed: () {
+                        notifier.reset();
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('CANCEL'),
+                    ),
+                  const Spacer(),
+                  if (currentStep < 6)
+                    ElevatedButton.icon(
+                      onPressed: handleNext,
+                      icon: const Icon(Icons.arrow_forward, size: 18),
+                      label: const Text('NEXT STEP'),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
     );
   }
 }

@@ -68,36 +68,46 @@ void main() {
   }
 
   group('CharacterExportService Tests', () {
-    test('exports full character to JSON with conditions and inventory', () async {
-      await seedTestCharacter();
+    test(
+      'exports full character to JSON with conditions and inventory',
+      () async {
+        await seedTestCharacter();
 
-      final jsonString = await service.exportCharacterToJson(db, 'char-thorin');
-      expect(jsonString.isNotEmpty, isTrue);
+        final jsonString = await service.exportCharacterToJson(
+          db,
+          'char-thorin',
+        );
+        expect(jsonString.isNotEmpty, isTrue);
 
-      final Map<String, dynamic> decoded = jsonDecode(jsonString);
-      expect(decoded['format'], 'scrivener-character-backup');
-      expect(decoded['schemaVersion'], 1);
+        final Map<String, dynamic> decoded = jsonDecode(jsonString);
+        expect(decoded['format'], 'scrivener-character-backup');
+        expect(decoded['schemaVersion'], 1);
 
-      final char = decoded['character'];
-      expect(char['id'], 'char-thorin');
-      expect(char['name'], 'Thorin Oakenshield');
-      expect(char['rawProperties']['class'], 'Fighter');
+        final char = decoded['character'];
+        expect(char['id'], 'char-thorin');
+        expect(char['name'], 'Thorin Oakenshield');
+        expect(char['rawProperties']['class'], 'Fighter');
 
-      final conditions = decoded['conditions'] as List;
-      expect(conditions.length, 1);
-      expect(conditions.first['conditionId'], 'blessed');
+        final conditions = decoded['conditions'] as List;
+        expect(conditions.length, 1);
+        expect(conditions.first['conditionId'], 'blessed');
 
-      final inventory = decoded['inventory'] as List;
-      expect(inventory.length, 1);
-      expect(inventory.first['name'], 'Orcrist the Goblin-cleaver');
-      expect(inventory.first['isEquipped'], isTrue);
-    });
+        final inventory = decoded['inventory'] as List;
+        expect(inventory.length, 1);
+        expect(inventory.first['name'], 'Orcrist the Goblin-cleaver');
+        expect(inventory.first['isEquipped'], isTrue);
+      },
+    );
 
     test('imports character from JSON and deduplicates IDs', () async {
       await seedTestCharacter();
       final jsonString = await service.exportCharacterToJson(db, 'char-thorin');
 
-      final newCharId = await service.importCharacterFromJson(db, jsonString, generateNewId: true);
+      final newCharId = await service.importCharacterFromJson(
+        db,
+        jsonString,
+        generateNewId: true,
+      );
       expect(newCharId, isNot('char-thorin'));
 
       final importedChar = await db.getCharacter(newCharId);
@@ -129,41 +139,47 @@ void main() {
   });
 
   group('Export/Import Dialogs Widget Tests', () {
-    testWidgets('ExportCharacterDialog renders payload and copies to clipboard', (tester) async {
-      await seedTestCharacter();
+    testWidgets(
+      'ExportCharacterDialog renders payload and copies to clipboard',
+      (tester) async {
+        await seedTestCharacter();
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            databaseProvider.overrideWithValue(db),
-          ],
-          child: const MaterialApp(
-            home: Scaffold(
-              body: ExportCharacterDialog(
-                characterId: 'char-thorin',
-                characterName: 'Thorin Oakenshield',
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [databaseProvider.overrideWithValue(db)],
+            child: const MaterialApp(
+              home: Scaffold(
+                body: ExportCharacterDialog(
+                  characterId: 'char-thorin',
+                  characterName: 'Thorin Oakenshield',
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      expect(find.text('EXPORT: THORIN OAKENSHIELD'), findsOneWidget);
-      expect(find.textContaining('scrivener-character-backup'), findsOneWidget);
-      expect(find.text('COPY TO CLIPBOARD'), findsOneWidget);
+        expect(find.text('EXPORT: THORIN OAKENSHIELD'), findsOneWidget);
+        expect(
+          find.textContaining('scrivener-character-backup'),
+          findsOneWidget,
+        );
+        expect(find.text('COPY TO CLIPBOARD'), findsOneWidget);
 
-      await tester.tap(find.text('COPY TO CLIPBOARD'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('COPY TO CLIPBOARD'));
+        await tester.pumpAndSettle();
 
-      expect(find.textContaining('copied to clipboard!'), findsOneWidget);
-    });
+        expect(find.textContaining('copied to clipboard!'), findsOneWidget);
+      },
+    );
 
-    testWidgets('ImportCharacterDialog imports valid JSON and triggers callback', (tester) async {
-      String? importedId;
+    testWidgets(
+      'ImportCharacterDialog imports valid JSON and triggers callback',
+      (tester) async {
+        String? importedId;
 
-      const validPayload = '''
+        const validPayload = '''
       {
         "format": "scrivener-character-backup",
         "schemaVersion": 1,
@@ -181,37 +197,36 @@ void main() {
       }
       ''';
 
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            databaseProvider.overrideWithValue(db),
-          ],
-          child: MaterialApp(
-            home: Scaffold(
-              body: ImportCharacterDialog(
-                onCharacterImported: (id) => importedId = id,
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [databaseProvider.overrideWithValue(db)],
+            child: MaterialApp(
+              home: Scaffold(
+                body: ImportCharacterDialog(
+                  onCharacterImported: (id) => importedId = id,
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      await tester.pumpAndSettle();
+        await tester.pumpAndSettle();
 
-      expect(find.text('IMPORT HERO (JSON)'), findsOneWidget);
+        expect(find.text('IMPORT HERO (JSON)'), findsOneWidget);
 
-      // Enter valid JSON
-      await tester.enterText(find.byType(TextField), validPayload);
-      await tester.pumpAndSettle();
+        // Enter valid JSON
+        await tester.enterText(find.byType(TextField), validPayload);
+        await tester.pumpAndSettle();
 
-      // Tap IMPORT HERO
-      await tester.tap(find.text('IMPORT HERO'));
-      await tester.pumpAndSettle();
+        // Tap IMPORT HERO
+        await tester.tap(find.text('IMPORT HERO'));
+        await tester.pumpAndSettle();
 
-      expect(importedId, isNotNull);
-      final character = await db.getCharacter(importedId!);
-      expect(character, isNotNull);
-      expect(character!.name, 'Bilbo Baggins');
-    });
+        expect(importedId, isNotNull);
+        final character = await db.getCharacter(importedId!);
+        expect(character, isNotNull);
+        expect(character!.name, 'Bilbo Baggins');
+      },
+    );
   });
 }

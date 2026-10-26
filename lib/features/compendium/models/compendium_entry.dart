@@ -37,13 +37,13 @@ class CompendiumEntry {
   bool get isShield => data['isShield'] as bool? ?? false;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'systemId': systemId,
-        'category': category,
-        'name': name,
-        'summary': summary,
-        'data': data,
-      };
+    'id': id,
+    'systemId': systemId,
+    'category': category,
+    'name': name,
+    'summary': summary,
+    'data': data,
+  };
 
   factory CompendiumEntry.fromJson(Map<String, dynamic> json) {
     return CompendiumEntry(
@@ -55,9 +55,10 @@ class CompendiumEntry {
       data: json['data'] is Map
           ? Map<String, dynamic>.from(json['data'] as Map)
           : (json['fullDataJson'] != null && json['fullDataJson'] is String
-              ? Map<String, dynamic>.from(
-                  jsonDecode(json['fullDataJson'] as String) as Map)
-              : {}),
+                ? Map<String, dynamic>.from(
+                    jsonDecode(json['fullDataJson'] as String) as Map,
+                  )
+                : {}),
     );
   }
 }

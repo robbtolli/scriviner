@@ -7,11 +7,7 @@ class HpTrackerCard extends StatelessWidget {
   final CombatSessionState state;
   final CombatSessionNotifier notifier;
 
-  const HpTrackerCard({
-    super.key,
-    required this.state,
-    required this.notifier,
-  });
+  const HpTrackerCard({super.key, required this.state, required this.notifier});
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +19,8 @@ class HpTrackerCard extends StatelessWidget {
     final hpColor = hpPercent > 0.5
         ? Colors.greenAccent
         : hpPercent > 0.2
-            ? Colors.amberAccent
-            : Colors.redAccent;
+        ? Colors.amberAccent
+        : Colors.redAccent;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -32,7 +28,9 @@ class HpTrackerCard extends StatelessWidget {
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: state.currentHp == 0 ? Colors.redAccent : theme.colorScheme.primary.withAlpha(120),
+          color: state.currentHp == 0
+              ? Colors.redAccent
+              : theme.colorScheme.primary.withAlpha(120),
           width: state.currentHp == 0 ? 2 : 1.5,
         ),
         boxShadow: [
@@ -61,7 +59,10 @@ class HpTrackerCard extends StatelessWidget {
               ),
               if (state.tempHp > 0)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.blueAccent.withAlpha(40),
                     borderRadius: BorderRadius.circular(6),
@@ -70,7 +71,11 @@ class HpTrackerCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.shield, size: 13, color: Colors.blueAccent),
+                      const Icon(
+                        Icons.shield,
+                        size: 13,
+                        color: Colors.blueAccent,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         '+${state.tempHp} Temp HP',
@@ -126,12 +131,42 @@ class HpTrackerCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildQuickButton(context, '-10', () => notifier.applyDamage(10), isDamage: true),
-              _buildQuickButton(context, '-5', () => notifier.applyDamage(5), isDamage: true),
-              _buildQuickButton(context, '-1', () => notifier.applyDamage(1), isDamage: true),
-              _buildQuickButton(context, '+1', () => notifier.applyHealing(1), isDamage: false),
-              _buildQuickButton(context, '+5', () => notifier.applyHealing(5), isDamage: false),
-              _buildQuickButton(context, '+10', () => notifier.applyHealing(10), isDamage: false),
+              _buildQuickButton(
+                context,
+                '-10',
+                () => notifier.applyDamage(10),
+                isDamage: true,
+              ),
+              _buildQuickButton(
+                context,
+                '-5',
+                () => notifier.applyDamage(5),
+                isDamage: true,
+              ),
+              _buildQuickButton(
+                context,
+                '-1',
+                () => notifier.applyDamage(1),
+                isDamage: true,
+              ),
+              _buildQuickButton(
+                context,
+                '+1',
+                () => notifier.applyHealing(1),
+                isDamage: false,
+              ),
+              _buildQuickButton(
+                context,
+                '+5',
+                () => notifier.applyHealing(5),
+                isDamage: false,
+              ),
+              _buildQuickButton(
+                context,
+                '+10',
+                () => notifier.applyHealing(10),
+                isDamage: false,
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -172,10 +207,14 @@ class HpTrackerCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          color: isDamage ? Colors.redAccent.withAlpha(25) : Colors.green.withAlpha(25),
+          color: isDamage
+              ? Colors.redAccent.withAlpha(25)
+              : Colors.green.withAlpha(25),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isDamage ? Colors.redAccent.withAlpha(80) : Colors.green.withAlpha(80),
+            color: isDamage
+                ? Colors.redAccent.withAlpha(80)
+                : Colors.green.withAlpha(80),
           ),
         ),
         child: Text(

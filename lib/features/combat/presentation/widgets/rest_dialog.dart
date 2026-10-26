@@ -20,7 +20,8 @@ class RestDialog extends StatefulWidget {
   State<RestDialog> createState() => _RestDialogState();
 }
 
-class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateMixin {
+class _RestDialogState extends State<RestDialog>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late DiceRoller _diceRoller;
 
@@ -86,7 +87,9 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Long Rest complete! Hit points, spell slots, and hit dice restored.'),
+        content: Text(
+          'Long Rest complete! Hit points, spell slots, and hit dice restored.',
+        ),
         backgroundColor: Colors.green,
       ),
     );
@@ -111,7 +114,9 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
               TabBar(
                 controller: _tabController,
                 labelColor: theme.colorScheme.primary,
-                unselectedLabelColor: theme.colorScheme.onSurface.withAlpha(120),
+                unselectedLabelColor: theme.colorScheme.onSurface.withAlpha(
+                  120,
+                ),
                 indicatorColor: theme.colorScheme.primary,
                 tabs: const [
                   Tab(text: 'Short Rest (1 hr)'),
@@ -147,14 +152,20 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
               Expanded(
                 child: Text(
                   'Available Hit Dice: $_remainingHitDice / ${widget.state.hitDiceTotal}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(width: 8),
               Text(
                 widget.state.hitDiceDie,
-                style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -182,7 +193,9 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
                   '$_projectedHp / ${widget.state.maxHp} HP',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: _healedThisRest > 0 ? Colors.greenAccent : theme.colorScheme.onSurface,
+                    color: _healedThisRest > 0
+                        ? Colors.greenAccent
+                        : theme.colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -200,7 +213,10 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: _rollLogs
-                    .map((log) => Text('• $log', style: const TextStyle(fontSize: 12)))
+                    .map(
+                      (log) =>
+                          Text('• $log', style: const TextStyle(fontSize: 12)),
+                    )
                     .toList(),
               ),
             ),
@@ -225,12 +241,19 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
             ),
             child: Row(
               children: [
-                Icon(Icons.autorenew, size: 16, color: theme.colorScheme.primary),
+                Icon(
+                  Icons.autorenew,
+                  size: 16,
+                  color: theme.colorScheme.primary,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Recharges: Second Wind & Pact Spell Slots',
-                    style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withAlpha(170)),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: theme.colorScheme.onSurface.withAlpha(170),
+                    ),
                   ),
                 ),
               ],
@@ -269,7 +292,11 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Icon(Icons.nightlight_round, size: 48, color: theme.colorScheme.primary),
+        Icon(
+          Icons.nightlight_round,
+          size: 48,
+          color: theme.colorScheme.primary,
+        ),
         const SizedBox(height: 12),
         Text(
           'Take an 8-Hour Long Rest',
@@ -291,11 +318,20 @@ class _RestDialogState extends State<RestDialog> with SingleTickerProviderStateM
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildBenefitRow(Icons.favorite, 'Full HP Restoration (${widget.state.maxHp} HP)'),
+              _buildBenefitRow(
+                Icons.favorite,
+                'Full HP Restoration (${widget.state.maxHp} HP)',
+              ),
               _buildBenefitRow(Icons.shield_outlined, 'Temporary HP cleared'),
-              _buildBenefitRow(Icons.casino_outlined, 'Recover up to $halfDice Hit Dice'),
+              _buildBenefitRow(
+                Icons.casino_outlined,
+                'Recover up to $halfDice Hit Dice',
+              ),
               _buildBenefitRow(Icons.auto_awesome, 'All Spell Slots restored'),
-              _buildBenefitRow(Icons.refresh, 'Daily features recharged & Death Saves reset'),
+              _buildBenefitRow(
+                Icons.refresh,
+                'Daily features recharged & Death Saves reset',
+              ),
             ],
           ),
         ),

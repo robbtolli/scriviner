@@ -35,34 +35,40 @@ class DiceRoller {
 
         if (term.keepHighest != null) {
           indexed.sort((a, b) => b.value.compareTo(a.value));
-          final keptIndices =
-              indexed.take(term.keepHighest!).map((e) => e.key).toSet();
+          final keptIndices = indexed
+              .take(term.keepHighest!)
+              .map((e) => e.key)
+              .toSet();
           for (int i = 0; i < rolledValues.length; i++) {
-            diceResults.add(SingleDieResult(
-              value: rolledValues[i],
-              sides: term.sides,
-              isDropped: !keptIndices.contains(i),
-            ));
+            diceResults.add(
+              SingleDieResult(
+                value: rolledValues[i],
+                sides: term.sides,
+                isDropped: !keptIndices.contains(i),
+              ),
+            );
           }
         } else if (term.keepLowest != null) {
           indexed.sort((a, b) => a.value.compareTo(b.value));
-          final keptIndices =
-              indexed.take(term.keepLowest!).map((e) => e.key).toSet();
+          final keptIndices = indexed
+              .take(term.keepLowest!)
+              .map((e) => e.key)
+              .toSet();
           for (int i = 0; i < rolledValues.length; i++) {
-            diceResults.add(SingleDieResult(
-              value: rolledValues[i],
-              sides: term.sides,
-              isDropped: !keptIndices.contains(i),
-            ));
+            diceResults.add(
+              SingleDieResult(
+                value: rolledValues[i],
+                sides: term.sides,
+                isDropped: !keptIndices.contains(i),
+              ),
+            );
           }
         }
       } else {
         for (final val in rolledValues) {
-          diceResults.add(SingleDieResult(
-            value: val,
-            sides: term.sides,
-            isDropped: false,
-          ));
+          diceResults.add(
+            SingleDieResult(value: val, sides: term.sides, isDropped: false),
+          );
         }
       }
 
@@ -84,11 +90,9 @@ class DiceRoller {
         }
       }
 
-      groupResults.add(DiceGroupResult(
-        term: term,
-        dice: diceResults,
-        subtotal: subtotal,
-      ));
+      groupResults.add(
+        DiceGroupResult(term: term, dice: diceResults, subtotal: subtotal),
+      );
     }
 
     final totalModifier = expression.totalFlatModifier + additionalModifier;
@@ -105,10 +109,7 @@ class DiceRoller {
   }
 
   /// Convenience method to parse and roll a formula string directly.
-  DiceRollResult rollFormula(
-    String formula, {
-    int additionalModifier = 0,
-  }) {
+  DiceRollResult rollFormula(String formula, {int additionalModifier = 0}) {
     final parsed = DiceParser.parse(formula);
     return roll(parsed, additionalModifier: additionalModifier);
   }

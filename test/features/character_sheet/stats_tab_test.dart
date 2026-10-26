@@ -36,10 +36,7 @@ void main() {
         'cha': {'score': 8, 'mod': -1},
       },
       'savingThrows': ['str', 'con'],
-      'skillProficiencies': {
-        'Athletics': 1,
-        'Perception': 1,
-      },
+      'skillProficiencies': {'Athletics': 1, 'Perception': 1},
       'armorClass': 18,
     };
 
@@ -57,16 +54,16 @@ void main() {
 
   Widget createWidgetUnderTest(WidgetRef? Function(WidgetRef)? onRef) {
     return ProviderScope(
-      overrides: [
-        databaseProvider.overrideWithValue(db),
-      ],
+      overrides: [databaseProvider.overrideWithValue(db)],
       child: MaterialApp(
         home: Scaffold(
           body: Consumer(
             builder: (context, ref, _) {
               if (onRef != null) onRef(ref);
               final sheet = ref.watch(characterSheetProvider('char_test'));
-              final notifier = ref.read(characterSheetProvider('char_test').notifier);
+              final notifier = ref.read(
+                characterSheetProvider('char_test').notifier,
+              );
               if (sheet == null) return const CircularProgressIndicator();
               return StatsTab(state: sheet, notifier: notifier);
             },
@@ -76,7 +73,9 @@ void main() {
     );
   }
 
-  testWidgets('displays all 6 ability scores, modifiers, and passive scores', (tester) async {
+  testWidgets('displays all 6 ability scores, modifiers, and passive scores', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -87,7 +86,10 @@ void main() {
 
     // Verify Overview banner
     expect(find.text('PROFICIENCY'), findsOneWidget);
-    expect(find.text('+2'), findsWidgets); // Proficiency is +2 and WIS mod is +2
+    expect(
+      find.text('+2'),
+      findsWidgets,
+    ); // Proficiency is +2 and WIS mod is +2
     expect(find.text('PASSIVE PERC'), findsOneWidget);
     // WIS mod is +2, Perception prof is +2 => 10 + 4 = 14
     expect(find.text('14'), findsOneWidget);
@@ -121,10 +123,12 @@ void main() {
     await seedCharacter();
     WidgetRef? capturedRef;
 
-    await tester.pumpWidget(createWidgetUnderTest((ref) {
-      capturedRef = ref;
-      return ref;
-    }));
+    await tester.pumpWidget(
+      createWidgetUnderTest((ref) {
+        capturedRef = ref;
+        return ref;
+      }),
+    );
     await tester.pumpAndSettle();
 
     // Find and tap STR Check button
@@ -143,7 +147,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   });
 
-  testWidgets('toggling saving throw updates proficiency and bonus', (tester) async {
+  testWidgets('toggling saving throw updates proficiency and bonus', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -151,22 +157,25 @@ void main() {
     await seedCharacter();
     WidgetRef? capturedRef;
 
-    await tester.pumpWidget(createWidgetUnderTest((ref) {
-      capturedRef = ref;
-      return ref;
-    }));
+    await tester.pumpWidget(
+      createWidgetUnderTest((ref) {
+        capturedRef = ref;
+        return ref;
+      }),
+    );
     await tester.pumpAndSettle();
 
     // In initial seed, STR and CON are proficient saves
-    final charStateBefore = capturedRef!.read(characterSheetProvider('char_test'))!;
+    final charStateBefore = capturedRef!.read(
+      characterSheetProvider('char_test'),
+    )!;
     expect(charStateBefore.savingThrowProficiencies.contains('str'), isTrue);
     expect(charStateBefore.savingThrowProficiencies.contains('dex'), isFalse);
 
     // Tap DEX Save star/label to toggle
-    final dexCard = find.ancestor(
-      of: find.text('DEXTERITY'),
-      matching: find.byType(Container),
-    ).first;
+    final dexCard = find
+        .ancestor(of: find.text('DEXTERITY'), matching: find.byType(Container))
+        .first;
 
     final dexSaveToggle = find.descendant(
       of: dexCard,
@@ -175,7 +184,9 @@ void main() {
     await tester.tap(dexSaveToggle);
     await tester.pumpAndSettle();
 
-    final charStateAfter = capturedRef!.read(characterSheetProvider('char_test'))!;
+    final charStateAfter = capturedRef!.read(
+      characterSheetProvider('char_test'),
+    )!;
     expect(charStateAfter.savingThrowProficiencies.contains('dex'), isTrue);
 
     // Clean teardown
@@ -183,7 +194,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   });
 
-  testWidgets('editing ability score updates score and modifier', (tester) async {
+  testWidgets('editing ability score updates score and modifier', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -191,10 +204,12 @@ void main() {
     await seedCharacter();
     WidgetRef? capturedRef;
 
-    await tester.pumpWidget(createWidgetUnderTest((ref) {
-      capturedRef = ref;
-      return ref;
-    }));
+    await tester.pumpWidget(
+      createWidgetUnderTest((ref) {
+        capturedRef = ref;
+        return ref;
+      }),
+    );
     await tester.pumpAndSettle();
 
     // Tap edit icon on STR card specifically
@@ -228,7 +243,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   });
 
-  testWidgets('displays player level and allows manual level editing', (tester) async {
+  testWidgets('displays player level and allows manual level editing', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -236,10 +253,12 @@ void main() {
     await seedCharacter();
     WidgetRef? capturedRef;
 
-    await tester.pumpWidget(createWidgetUnderTest((ref) {
-      capturedRef = ref;
-      return ref;
-    }));
+    await tester.pumpWidget(
+      createWidgetUnderTest((ref) {
+        capturedRef = ref;
+        return ref;
+      }),
+    );
     await tester.pumpAndSettle();
 
     // Verify Hero Level card display
@@ -284,7 +303,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   });
 
-  testWidgets('launches level up wizard and guides advancement through steps', (tester) async {
+  testWidgets('launches level up wizard and guides advancement through steps', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -292,10 +313,12 @@ void main() {
     await seedCharacter();
     WidgetRef? capturedRef;
 
-    await tester.pumpWidget(createWidgetUnderTest((ref) {
-      capturedRef = ref;
-      return ref;
-    }));
+    await tester.pumpWidget(
+      createWidgetUnderTest((ref) {
+        capturedRef = ref;
+        return ref;
+      }),
+    );
     await tester.pumpAndSettle();
 
     // Find and tap LEVEL UP button
@@ -306,7 +329,10 @@ void main() {
 
     // Verify Wizard Dialog Header
     expect(find.text('LEVEL UP WIZARD'), findsOneWidget);
-    expect(find.textContaining('Advance Bruenor from Level 3 to 4'), findsOneWidget);
+    expect(
+      find.textContaining('Advance Bruenor from Level 3 to 4'),
+      findsOneWidget,
+    );
 
     // Step 1: Hit Points
     expect(find.text('Fighter Hit Die: 1d10'), findsOneWidget);
@@ -342,7 +368,10 @@ void main() {
     expect(updatedChar.getAbilityModifier('str'), 4);
 
     // Verify celebratory feedback
-    expect(find.textContaining('Level Up Complete! Welcome to Level 4 Fighter!'), findsOneWidget);
+    expect(
+      find.textContaining('Level Up Complete! Welcome to Level 4 Fighter!'),
+      findsOneWidget,
+    );
 
     // Clean teardown
     await tester.pumpWidget(const SizedBox());

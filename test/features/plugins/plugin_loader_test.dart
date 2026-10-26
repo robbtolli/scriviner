@@ -76,18 +76,33 @@ void main() {
       final count = await loaderService.installPlugin(db, sample);
 
       expect(count, 7); // 3 spells + 3 items + 1 feature
-      expect(loaderService.isPluginInstalled('eloria-homebrew-compendium'), isTrue);
+      expect(
+        loaderService.isPluginInstalled('eloria-homebrew-compendium'),
+        isTrue,
+      );
 
       // Verify queryable via database
-      final spells = await db.searchCompendium('dnd5e', category: 'spell', query: 'Moonfire');
+      final spells = await db.searchCompendium(
+        'dnd5e',
+        category: 'spell',
+        query: 'Moonfire',
+      );
       expect(spells.length, 1);
       expect(spells.first.name, 'Elorian Moonfire');
 
-      final items = await db.searchCompendium('dnd5e', category: 'item', query: 'Sunforged');
+      final items = await db.searchCompendium(
+        'dnd5e',
+        category: 'item',
+        query: 'Sunforged',
+      );
       expect(items.length, 1);
       expect(items.first.name, 'Sunforged Blade');
 
-      final features = await db.searchCompendium('dnd5e', category: 'feature', query: 'Blessing');
+      final features = await db.searchCompendium(
+        'dnd5e',
+        category: 'feature',
+        query: 'Blessing',
+      );
       expect(features.length, 1);
       expect(features.first.name, 'Moonlight Blessing');
     });
@@ -96,22 +111,29 @@ void main() {
       final sample = PluginLoaderService.sampleEloriaPlugin;
       await loaderService.installPlugin(db, sample);
 
-      final uninstalledCount = await loaderService.uninstallPlugin(db, sample.id);
+      final uninstalledCount = await loaderService.uninstallPlugin(
+        db,
+        sample.id,
+      );
       expect(uninstalledCount, 7);
       expect(loaderService.isPluginInstalled(sample.id), isFalse);
 
-      final spellsAfter = await db.searchCompendium('dnd5e', category: 'spell', query: 'Moonfire');
+      final spellsAfter = await db.searchCompendium(
+        'dnd5e',
+        category: 'spell',
+        query: 'Moonfire',
+      );
       expect(spellsAfter, isEmpty);
     });
   });
 
   group('PluginsDialog Widget Tests', () {
-    testWidgets('installs and uninstalls sample pack via dialog', (tester) async {
+    testWidgets('installs and uninstalls sample pack via dialog', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            databaseProvider.overrideWithValue(db),
-          ],
+          overrides: [databaseProvider.overrideWithValue(db)],
           child: MaterialApp(
             home: Scaffold(
               body: Builder(

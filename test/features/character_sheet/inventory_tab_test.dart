@@ -31,11 +31,7 @@ void main() {
         'dex': {'score': 12, 'mod': 1},
       },
       'armorClass': 11,
-      'currency': {
-        'gp': 25,
-        'sp': 10,
-        'cp': 50,
-      },
+      'currency': {'gp': 25, 'sp': 10, 'cp': 50},
     };
 
     await db.upsertCharacter(
@@ -77,29 +73,26 @@ void main() {
         weight: const Value(6.0),
         quantity: const Value(1),
         isEquipped: const Value(false),
-        itemDataJson: Value(
-          jsonEncode({
-            'isShield': true,
-            'armorClass': 2,
-          }),
-        ),
+        itemDataJson: Value(jsonEncode({'isShield': true, 'armorClass': 2})),
       ),
     );
   }
 
   Widget createWidgetUnderTest() {
     return ProviderScope(
-      overrides: [
-        databaseProvider.overrideWithValue(db),
-      ],
+      overrides: [databaseProvider.overrideWithValue(db)],
       child: MaterialApp(
         home: Consumer(
           builder: (context, ref, _) {
             final state = ref.watch(characterSheetProvider('char_fighter_inv'));
-            final notifier = ref.read(characterSheetProvider('char_fighter_inv').notifier);
+            final notifier = ref.read(
+              characterSheetProvider('char_fighter_inv').notifier,
+            );
 
             if (state == null) {
-              return const Scaffold(body: Center(child: CircularProgressIndicator()));
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
             }
 
             return Scaffold(
@@ -111,7 +104,9 @@ void main() {
     );
   }
 
-  testWidgets('renders currency, carried weight, and equipment items', (tester) async {
+  testWidgets('renders currency, carried weight, and equipment items', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1000, 1400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -137,65 +132,74 @@ void main() {
     await tester.pump(const Duration(milliseconds: 50));
   });
 
-  testWidgets('equipping armor and shield dynamically recalculates character AC', (tester) async {
-    tester.view.physicalSize = const Size(1000, 1400);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
+  testWidgets(
+    'equipping armor and shield dynamically recalculates character AC',
+    (tester) async {
+      tester.view.physicalSize = const Size(1000, 1400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
 
-    await seedFighterWithInventory();
+      await seedFighterWithInventory();
 
-    final container = ProviderContainer(
-      overrides: [databaseProvider.overrideWithValue(db)],
-    );
-    addTearDown(container.dispose);
+      final container = ProviderContainer(
+        overrides: [databaseProvider.overrideWithValue(db)],
+      );
+      addTearDown(container.dispose);
 
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: MaterialApp(
-          home: Consumer(
-            builder: (context, ref, _) {
-              final state = ref.watch(characterSheetProvider('char_fighter_inv'));
-              final notifier = ref.read(characterSheetProvider('char_fighter_inv').notifier);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            home: Consumer(
+              builder: (context, ref, _) {
+                final state = ref.watch(
+                  characterSheetProvider('char_fighter_inv'),
+                );
+                final notifier = ref.read(
+                  characterSheetProvider('char_fighter_inv').notifier,
+                );
 
-              if (state == null) {
-                return const Scaffold(body: Center(child: CircularProgressIndicator()));
-              }
+                if (state == null) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
 
-              return Scaffold(
-                body: InventoryTab(state: state, notifier: notifier),
-              );
-            },
+                return Scaffold(
+                  body: InventoryTab(state: state, notifier: notifier),
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    // Initially AC is 11 (10 + 1 DEX)
-    var state = container.read(characterSheetProvider('char_fighter_inv'));
-    expect(state?.armorClass, equals(11));
+      // Initially AC is 11 (10 + 1 DEX)
+      var state = container.read(characterSheetProvider('char_fighter_inv'));
+      expect(state?.armorClass, equals(11));
 
-    // Tap Checkbox for Chain Mail (the first Checkbox)
-    final checkboxes = find.byType(Checkbox);
-    expect(checkboxes, findsNWidgets(2));
-    await tester.tap(checkboxes.first);
-    await tester.pumpAndSettle();
+      // Tap Checkbox for Chain Mail (the first Checkbox)
+      final checkboxes = find.byType(Checkbox);
+      expect(checkboxes, findsNWidgets(2));
+      await tester.tap(checkboxes.first);
+      await tester.pumpAndSettle();
 
-    // Equipping Chain Mail sets AC to 16
-    state = container.read(characterSheetProvider('char_fighter_inv'));
-    expect(state?.armorClass, equals(16));
+      // Equipping Chain Mail sets AC to 16
+      state = container.read(characterSheetProvider('char_fighter_inv'));
+      expect(state?.armorClass, equals(16));
 
-    // Tap Checkbox for Shield (the second Checkbox)
-    await tester.tap(checkboxes.last);
-    await tester.pumpAndSettle();
+      // Tap Checkbox for Shield (the second Checkbox)
+      await tester.tap(checkboxes.last);
+      await tester.pumpAndSettle();
 
-    // Equipping Shield adds +2 -> AC becomes 18!
-    state = container.read(characterSheetProvider('char_fighter_inv'));
-    expect(state?.armorClass, equals(18));
+      // Equipping Shield adds +2 -> AC becomes 18!
+      state = container.read(characterSheetProvider('char_fighter_inv'));
+      expect(state?.armorClass, equals(18));
 
-    // Clean teardown
-    await tester.pumpWidget(const SizedBox());
-    await tester.pump(const Duration(milliseconds: 50));
-  });
+      // Clean teardown
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 50));
+    },
+  );
 }

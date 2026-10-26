@@ -38,11 +38,7 @@ class SkillsTab extends ConsumerStatefulWidget {
   final CharacterSheetState state;
   final CharacterSheetNotifier notifier;
 
-  const SkillsTab({
-    super.key,
-    required this.state,
-    required this.notifier,
-  });
+  const SkillsTab({super.key, required this.state, required this.notifier});
 
   @override
   ConsumerState<SkillsTab> createState() => _SkillsTabState();
@@ -84,7 +80,8 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
 
     final filteredSkills = standardSkills.where((skill) {
       if (_selectedAbilityFilter != 'ALL' &&
-          skill.abilityKey.toLowerCase() != _selectedAbilityFilter.toLowerCase()) {
+          skill.abilityKey.toLowerCase() !=
+              _selectedAbilityFilter.toLowerCase()) {
         return false;
       }
       if (_searchQuery.isNotEmpty &&
@@ -107,14 +104,28 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
               TextField(
                 controller: _searchController,
                 onChanged: (val) => setState(() => _searchQuery = val.trim()),
-                style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14),
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface,
+                  fontSize: 14,
+                ),
                 decoration: InputDecoration(
                   hintText: 'Search skills (e.g. Perception, Athletics)...',
-                  hintStyle: TextStyle(color: theme.colorScheme.onSurface.withAlpha(120), fontSize: 13),
-                  prefixIcon: Icon(Icons.search, size: 20, color: theme.colorScheme.onSurface.withAlpha(140)),
+                  hintStyle: TextStyle(
+                    color: theme.colorScheme.onSurface.withAlpha(120),
+                    fontSize: 13,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    size: 20,
+                    color: theme.colorScheme.onSurface.withAlpha(140),
+                  ),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
-                          icon: Icon(Icons.clear, size: 18, color: theme.colorScheme.onSurface.withAlpha(140)),
+                          icon: Icon(
+                            Icons.clear,
+                            size: 18,
+                            color: theme.colorScheme.onSurface.withAlpha(140),
+                          ),
                           onPressed: () {
                             _searchController.clear();
                             setState(() => _searchQuery = '');
@@ -123,14 +134,21 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
                       : null,
                   filled: true,
                   fillColor: theme.cardColor,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 0,
+                    horizontal: 12,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: theme.dividerColor.withAlpha(80)),
+                    borderSide: BorderSide(
+                      color: theme.dividerColor.withAlpha(80),
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: theme.dividerColor.withAlpha(80)),
+                    borderSide: BorderSide(
+                      color: theme.dividerColor.withAlpha(80),
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -144,14 +162,9 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  children: [
-                    'ALL',
-                    'STR',
-                    'DEX',
-                    'INT',
-                    'WIS',
-                    'CHA',
-                  ].map((filter) {
+                  children: ['ALL', 'STR', 'DEX', 'INT', 'WIS', 'CHA'].map((
+                    filter,
+                  ) {
                     final isSelected = _selectedAbilityFilter == filter;
                     return Padding(
                       padding: const EdgeInsets.only(right: 6),
@@ -166,12 +179,18 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
                         selectedColor: theme.colorScheme.primary,
                         backgroundColor: theme.cardColor,
                         labelStyle: TextStyle(
-                          color: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface.withAlpha(180),
+                          color: isSelected
+                              ? theme.colorScheme.onPrimary
+                              : theme.colorScheme.onSurface.withAlpha(180),
                           fontSize: 11,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                         side: BorderSide(
-                          color: isSelected ? theme.colorScheme.primary : theme.dividerColor.withAlpha(80),
+                          color: isSelected
+                              ? theme.colorScheme.primary
+                              : theme.dividerColor.withAlpha(80),
                         ),
                         visualDensity: VisualDensity.compact,
                         padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -200,23 +219,40 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(Icons.radio_button_unchecked, size: 12, color: Colors.grey),
+              const Icon(
+                Icons.radio_button_unchecked,
+                size: 12,
+                color: Colors.grey,
+              ),
               const SizedBox(width: 2),
-              const Text('None', style: TextStyle(fontSize: 10, color: Colors.grey)),
+              const Text(
+                'None',
+                style: TextStyle(fontSize: 10, color: Colors.grey),
+              ),
               const SizedBox(width: 8),
               Icon(Icons.star, size: 12, color: theme.colorScheme.primary),
               const SizedBox(width: 2),
-              Text('Proficient',
-                  style: TextStyle(fontSize: 10, color: theme.colorScheme.primary)),
+              Text(
+                'Proficient',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
               const SizedBox(width: 8),
               const Icon(Icons.stars, size: 12, color: Colors.amberAccent),
               const SizedBox(width: 2),
-              const Text('Expertise',
-                  style: TextStyle(fontSize: 10, color: Colors.amberAccent)),
+              const Text(
+                'Expertise',
+                style: TextStyle(fontSize: 10, color: Colors.amberAccent),
+              ),
               const Spacer(),
               Text(
                 '${filteredSkills.length} Skills',
-                style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withAlpha(140)),
+                style: TextStyle(
+                  fontSize: 10,
+                  color: theme.colorScheme.onSurface.withAlpha(140),
+                ),
               ),
             ],
           ),
@@ -228,18 +264,26 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
               ? Center(
                   child: Text(
                     'No skills found matching "$_searchQuery"',
-                    style: TextStyle(color: theme.colorScheme.onSurface.withAlpha(140)),
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface.withAlpha(140),
+                    ),
                   ),
                 )
               : ListView.separated(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
                   itemCount: filteredSkills.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 6),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 6),
                   itemBuilder: (context, index) {
                     final skill = filteredSkills[index];
                     final profLevel = state.skillProficiencies[skill.name] ?? 0;
-                    final abilityMod = state.getAbilityModifier(skill.abilityKey);
-                    final bonus = state.getSkillBonus(skill.name, skill.abilityKey);
+                    final abilityMod = state.getAbilityModifier(
+                      skill.abilityKey,
+                    );
+                    final bonus = state.getSkillBonus(
+                      skill.name,
+                      skill.abilityKey,
+                    );
                     final bonusStr = _formatModifier(bonus);
 
                     // Proficiency Icon and Color
@@ -263,7 +307,10 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
                         : '${skill.abilityKey.toUpperCase()} (${_formatModifier(abilityMod)})';
 
                     return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: theme.cardColor,
                         borderRadius: BorderRadius.circular(10),
@@ -278,10 +325,15 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
                           // Proficiency Cycle Button
                           IconButton(
                             icon: Icon(profIcon, color: profColor, size: 22),
-                            tooltip: 'Cycle proficiency (Normal / Proficient / Expertise)',
+                            tooltip:
+                                'Cycle proficiency (Normal / Proficient / Expertise)',
                             padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                            onPressed: () => notifier.cycleSkillProficiency(skill.name),
+                            constraints: const BoxConstraints(
+                              minWidth: 32,
+                              minHeight: 32,
+                            ),
+                            onPressed: () =>
+                                notifier.cycleSkillProficiency(skill.name),
                           ),
                           const SizedBox(width: 8),
 
@@ -306,12 +358,16 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
                                     const SizedBox(width: 6),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 6, vertical: 2),
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: theme.colorScheme.surface,
                                         borderRadius: BorderRadius.circular(4),
                                         border: Border.all(
-                                          color: theme.dividerColor.withAlpha(80),
+                                          color: theme.dividerColor.withAlpha(
+                                            80,
+                                          ),
                                         ),
                                       ),
                                       child: Text(
@@ -319,7 +375,8 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,
-                                          color: theme.colorScheme.onSurface.withAlpha(160),
+                                          color: theme.colorScheme.onSurface
+                                              .withAlpha(160),
                                         ),
                                       ),
                                     ),
@@ -330,7 +387,8 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
                                   breakdown,
                                   style: TextStyle(
                                     fontSize: 11,
-                                    color: theme.colorScheme.onSurface.withAlpha(140),
+                                    color: theme.colorScheme.onSurface
+                                        .withAlpha(140),
                                   ),
                                 ),
                               ],
@@ -340,7 +398,9 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
                           // Bonus Badge
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             margin: const EdgeInsets.only(right: 8),
                             decoration: BoxDecoration(
                               color: profLevel > 0
@@ -367,20 +427,21 @@ class _SkillsTabState extends ConsumerState<SkillsTab> {
 
                           // Roll Button
                           ElevatedButton.icon(
-                            onPressed: () => _rollSkillCheck(
-                              context,
-                              skill.name,
-                              bonus,
-                            ),
+                            onPressed: () =>
+                                _rollSkillCheck(context, skill.name, bonus),
                             icon: Icon(tokens.iconography.diceAction, size: 14),
                             label: const Text('ROLL'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: theme.colorScheme.surface,
                               foregroundColor: theme.colorScheme.primary,
                               side: BorderSide(
-                                  color: theme.colorScheme.primary, width: 1),
+                                color: theme.colorScheme.primary,
+                                width: 1,
+                              ),
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 8),
+                                horizontal: 10,
+                                vertical: 8,
+                              ),
                               visualDensity: VisualDensity.compact,
                               textStyle: const TextStyle(
                                 fontSize: 11,
