@@ -210,6 +210,19 @@ class SrdStarterData {
           description:
               'Descendants of an ancient subterranean divergence with heightened darkvision and innate fey magic.',
         ),
+        SubraceDefinition(
+          id: 'sea_elf',
+          name: 'Sea Elf',
+          abilityBonuses: {'CON': 1},
+          traits: [
+            'Sea Elf Weapon Training',
+            'Child of the Sea (Swim 30ft & Breathe Water)',
+            'Friend of the Sea',
+            'Cold Resistance',
+          ],
+          description:
+              'At home in oceanic depths, possessing natural swimming prowess, underwater breathing, and kinship with marine beasts.',
+        ),
       ],
     ),
     RaceDefinition(

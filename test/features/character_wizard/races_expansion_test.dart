@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,7 +58,7 @@ void main() {
       final elf = SrdStarterData.races.firstWhere((r) => r.id == 'elf');
       expect(
         elf.subraces.map((s) => s.id),
-        containsAll(['high_elf', 'wood_elf', 'drow']),
+        containsAll(['high_elf', 'wood_elf', 'drow', 'sea_elf']),
       );
 
       final dwarf = SrdStarterData.races.firstWhere((r) => r.id == 'dwarf');
@@ -126,6 +128,19 @@ void main() {
       expect(draft.finalAbilities['WIS'], equals(11));
       expect(draft.speed, equals(35));
 
+      // Select Sea Elf: CON +1, Speed 30
+      final seaElf = elf.subraces.firstWhere((s) => s.id == 'sea_elf');
+      notifier.setSubrace(seaElf);
+      draft = container.read(characterWizardProvider);
+      expect(draft.finalAbilities['DEX'], equals(12));
+      expect(draft.finalAbilities['CON'], equals(11));
+      expect(draft.finalAbilities['WIS'], equals(10));
+      expect(draft.speed, equals(30));
+      expect(
+        draft.subrace?.traits,
+        contains('Child of the Sea (Swim 30ft & Breathe Water)'),
+      );
+
       // Clear subrace back to base
       notifier.setSubrace(null);
       draft = container.read(characterWizardProvider);
@@ -178,6 +193,47 @@ void main() {
       },
     );
 
+    test(
+      'Saving character with Sea Elf subrace persists combined race name and traits',
+      () async {
+        final notifier = container.read(characterWizardProvider.notifier);
+        final elf = SrdStarterData.races.firstWhere((r) => r.id == 'elf');
+        final seaElf = elf.subraces.firstWhere((s) => s.id == 'sea_elf');
+        final rogue = SrdStarterData.classes.firstWhere((c) => c.id == 'rogue');
+        final acolyte = SrdStarterData.backgrounds.firstWhere(
+          (b) => b.id == 'acolyte',
+        );
+
+        notifier.setName('Ariel');
+        notifier.setRace(elf);
+        notifier.setSubrace(seaElf);
+        notifier.setClass(rogue);
+        notifier.setBackground(acolyte);
+
+        final charId = await notifier.saveCharacter(db);
+        expect(charId, isNotEmpty);
+
+        final char = await db.getCharacter(charId);
+        expect(char, isNotNull);
+        final rawProps =
+            jsonDecode(char!.rawPropertiesJson) as Map<String, dynamic>;
+        expect(rawProps['race'], equals('Elf (Sea Elf)'));
+        expect(rawProps['subraceId'], equals('sea_elf'));
+        expect(
+          rawProps['traits'],
+          containsAll([
+            'Darkvision 60ft',
+            'Keen Senses',
+            'Fey Ancestry (Adv vs Charm)',
+            'Child of the Sea (Swim 30ft & Breathe Water)',
+            'Friend of the Sea',
+            'Cold Resistance',
+            'Sea Elf Weapon Training',
+          ]),
+        );
+      },
+    );
+
     testWidgets('Step2Race renders subrace selector when race is selected', (
       tester,
     ) async {
@@ -200,6 +256,7 @@ void main() {
       expect(find.text('Base / Standard'), findsOneWidget);
       expect(find.textContaining('High Elf'), findsOneWidget);
       expect(find.textContaining('Wood Elf'), findsOneWidget);
+      expect(find.textContaining('Sea Elf'), findsOneWidget);
 
       // Tap Wood Elf chip
       await tester.tap(find.textContaining('Wood Elf'));

@@ -783,6 +783,32 @@ final List<CompendiumEntry> bundledSrdEntries = [
           'As a bonus action, you let out a cry at your enemies within 10 feet of you. Until the start of your next turn, you and your allies have advantage on attack rolls against any of those enemies who could hear you.',
     },
   ),
+  CompendiumEntry(
+    id: 'srd_trait_child_of_the_sea',
+    category: 'feature',
+    name: 'Child of the Sea',
+    summary:
+        'Sea Elf: You have a swimming speed of 30 feet, and you can breathe both air and water.',
+    data: {
+      'source': 'Sea Elf Racial Trait',
+      'recharge': 'Passive',
+      'description':
+          'You have a swimming speed of 30 feet, and you can breathe both air and water.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_trait_friend_of_the_sea',
+    category: 'feature',
+    name: 'Friend of the Sea',
+    summary:
+        'Sea Elf: Using gestures and sounds, you can communicate simple ideas to beasts that have a swimming speed.',
+    data: {
+      'source': 'Sea Elf Racial Trait',
+      'recharge': 'Passive',
+      'description':
+          'Using gestures and sounds, you can communicate simple ideas with any beast that has an inborn swimming speed.',
+    },
+  ),
 ];
 
 /// Seeds the bundled SRD 5.1 entries into the Drift compendium database if empty.
