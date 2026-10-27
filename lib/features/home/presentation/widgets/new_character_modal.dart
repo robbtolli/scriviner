@@ -81,15 +81,16 @@ class _NewCharacterModalState extends State<NewCharacterModal> {
                 subtitle: 'Full SRD 5.1 rules, classes, races, and spellbook.',
                 icon: tokens.iconography.tabSpells,
               ),
-              const SizedBox(height: 8),
-              _buildSystemTile(
-                context,
-                id: 'pf2e',
-                title: 'Pathfinder 2e (Remaster)',
-                subtitle: 'Modular support coming in upcoming milestones.',
-                icon: tokens.iconography.tabFeatures,
-                isComingSoon: true,
-              ),
+              // Pathfinder 2e support is commented out until implemented:
+              // const SizedBox(height: 8),
+              // _buildSystemTile(
+              //   context,
+              //   id: 'pf2e',
+              //   title: 'Pathfinder 2e (Remaster)',
+              //   subtitle: 'Modular support coming in upcoming milestones.',
+              //   icon: tokens.iconography.tabFeatures,
+              //   isComingSoon: true,
+              // ),
               const SizedBox(height: 20),
               Text(
                 'CREATION MODE',
