@@ -23,6 +23,11 @@
 
 **Scrivener** is an offline-first tabletop roleplaying companion application designed for players, dungeon masters, and game architects. Whether rolling dice during an intense boss encounter on your phone, managing character leveling on a tablet, or building homebrew compendiums on a desktop workstation, Scrivener combines digital speed with the tactile charm of traditional pen-and-paper gaming.
 
+### What is a Scrivener?
+In medieval and early modern history, a **scrivener** was a master scribe, clerk, and record keeper—entrusted with writing legal documents, drafting contracts, and painstakingly preserving vital records with quill and parchment.
+
+This app is named **Scrivener** because it serves as your personal digital scribe: faithfully recording, calculating, and safeguarding every attribute, ability score, spell, and heroic deed for your tabletop characters.
+
 ### Core Philosophy
 - **Mathematical Accuracy Without Clutter**: Derived statistics (Armor Class, spell save DCs, attack bonuses, and skill proficiencies) evaluate through a dedicated modifier pipeline (`PropertyPipeline`) with stacking bonuses, hard overrides, and formula parsing.
 - **Offline First & Private**: Your characters, homebrew packs, and roll logs live locally in SQLite via Drift. No forced cloud accounts, no subscriptions, and zero external network dependency required.

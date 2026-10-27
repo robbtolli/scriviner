@@ -49,6 +49,8 @@ void main() {
         expect(find.text('SCRIVENER'), findsOneWidget);
         expect(find.text('v1.0.0'), findsOneWidget);
         expect(find.text('Robert Tolliver (tollitech.com)'), findsOneWidget);
+        expect(find.text('What is a Scrivener?'), findsOneWidget);
+        expect(find.byIcon(Icons.history_edu), findsOneWidget);
         expect(find.text('MPL 2.0'), findsOneWidget);
         expect(find.text('Open Source License'), findsOneWidget);
         expect(find.text('SRD 5.1 Attribution (CC-BY-4.0)'), findsOneWidget);

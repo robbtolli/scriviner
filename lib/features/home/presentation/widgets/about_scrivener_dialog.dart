@@ -107,6 +107,53 @@ class AboutScrivenerDialog extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 14),
+
+              // Name Origin & Meaning
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest.withAlpha(
+                    60,
+                  ),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: theme.colorScheme.outline.withAlpha(40),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.history_edu,
+                          size: 16,
+                          color: tokens.accentColor,
+                        ),
+                        const SizedBox(width: 6),
+                        const Text(
+                          'What is a Scrivener?',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'In medieval times, a scrivener was a master scribe and record keeper entrusted with cataloging vital records. '
+                      'This app is called Scrivener because it serves as your digital scribe—faithfully chronicling, calculating, and preserving your heroes\' attributes, gear, and adventures.',
+                      style: TextStyle(
+                        fontSize: 11,
+                        height: 1.4,
+                        color: theme.colorScheme.onSurface.withAlpha(200),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 16),
               const Divider(),
               const SizedBox(height: 12),
