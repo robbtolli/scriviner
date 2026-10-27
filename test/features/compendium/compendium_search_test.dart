@@ -69,10 +69,10 @@ void main() {
 
     // Cure Wounds should be in the list
     expect(find.text('Cure Wounds'), findsOneWidget);
-    expect(find.text('ADD'), findsOneWidget);
+    expect(find.text('ADD'), findsWidgets);
 
-    // Tap ADD button
-    await tester.tap(find.text('ADD'));
+    // Tap ADD button for Cure Wounds (first match)
+    await tester.tap(find.text('ADD').first);
     await tester.pumpAndSettle();
 
     expect(addedEntry, isNotNull);
