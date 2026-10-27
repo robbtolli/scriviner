@@ -1,0 +1,35 @@
+Scrivener — Modern TTRPG Character Manager & Rules Engine
+Copyright (c) 2026 Robert Tolliver (tollitech.com)
+
+========================================================================
+1. Software License
+========================================================================
+
+Scrivener source code is licensed under the Mozilla Public License,
+Version 2.0 (MPL-2.0). A copy of the license is included in the LICENSE
+file at the root of this repository and is also available at:
+https://mozilla.org/MPL/2.0/
+
+========================================================================
+2. Systems Reference Document 5.1 (SRD 5.1) Content
+========================================================================
+
+This work includes material taken from the System Reference Document 5.1
+("SRD 5.1") by Wizards of the Coast LLC and available at:
+https://dnd.wizards.com/resources/systems-reference-document
+
+The SRD 5.1 is licensed under the Creative Commons Attribution 4.0
+International License available at:
+https://creativecommons.org/licenses/by/4.0/legalcode
+
+========================================================================
+3. Fonts & Iconography
+========================================================================
+
+Scrivener utilizes open-source fonts loaded via google_fonts:
+- MedievalSharp, Cinzel, Playfair Display (SIL Open Font License)
+- Spectral, Merriweather, Roboto (SIL Open Font License / Apache 2.0)
+- Alegreya SC, Oswald (SIL Open Font License)
+
+Material Icons and Cupertino Icons are provided under the Apache License 2.0
+and MIT licenses respectively.

@@ -3,6 +3,7 @@
 > **Project**: Scrivener — Modern TTRPG Character Manager & Rules Engine  
 > **Author & Copyright**: Robert Tolliver (tollitech.com)  
 > **Bundle Identifier**: `com.tollitech.scrivener`  
+> **License**: Mozilla Public License 2.0 (MPL-2.0)  
 > **Tech Stack**: Flutter 3.x, Dart 3.x, Riverpod 2.x, Drift / SQLite, Google Fonts, PDF / Printing
 
 ---
@@ -160,5 +161,6 @@ Scrivener runs on phones, tablets, and desktops. Follow these strict UI safety r
 ## 6. Codebase Hygiene & Documentation Integrity
 
 - **Comments & Docstrings**: Preserve existing comments, explanatory notes, and copyright headers.
-- **Copyright & Author**: Robert Tolliver (`com.tollitech.scrivener`).
+- **Copyright & Author**: Robert Tolliver (tollitech.com) (`com.tollitech.scrivener`).
+- **License**: Mozilla Public License 2.0 (MPL-2.0) with D&D 5e SRD 5.1 under Creative Commons Attribution 4.0 International (CC-BY-4.0).
 - **Static Analysis**: Never commit code that causes `flutter analyze` warnings or errors.

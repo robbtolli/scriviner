@@ -20,6 +20,7 @@ import '../../export_import/presentation/import_character_dialog.dart';
 import '../../pdf_export/presentation/pdf_preview_screen.dart';
 import '../../plugins/presentation/plugins_dialog.dart';
 import '../providers/home_providers.dart';
+import 'widgets/about_scrivener_dialog.dart';
 import 'widgets/character_card.dart';
 import 'widgets/empty_home_state.dart';
 import 'widgets/new_character_modal.dart';
@@ -92,6 +93,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ThemeSelectorDialog.show(context);
     } else if (uri.queryParameters['openPlugins'] == 'true' && mounted) {
       PluginsDialog.show(context);
+    } else if (uri.queryParameters['openAbout'] == 'true' && mounted) {
+      AboutScrivenerDialog.show(context);
     } else if (uri.queryParameters['openWizard'] == 'true' && mounted) {
       showDialog(
         context: context,
@@ -364,6 +367,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             icon: const Icon(Icons.extension_outlined),
             tooltip: 'Plugins & Compendiums',
             onPressed: () => PluginsDialog.show(context),
+          ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            padding: const EdgeInsets.all(6),
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'About Scrivener',
+            onPressed: () => AboutScrivenerDialog.show(context),
           ),
           const SizedBox(width: 8),
         ],

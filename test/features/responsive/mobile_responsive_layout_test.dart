@@ -39,6 +39,7 @@ void main() {
         expect(find.text('SCRIVENER'), findsOneWidget);
         expect(find.byIcon(Icons.palette_outlined), findsOneWidget);
         expect(find.byIcon(Icons.extension_outlined), findsOneWidget);
+        expect(find.byIcon(Icons.info_outline), findsOneWidget);
         expect(find.byIcon(Icons.search), findsOneWidget);
 
         // Verify "+ New Hero" / "NEW HERO" is absent from AppBar

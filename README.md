@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/Architecture-Riverpod%202.x-blue" alt="Riverpod 2.x" />
   <img src="https://img.shields.io/badge/Database-Drift%20SQLite-4E9A06" alt="Drift SQLite" />
   <img src="https://img.shields.io/badge/Ruleset-D%26D%205e%20%2F%202024-8B261E" alt="D&D 5e / 2024" />
-  <img src="https://img.shields.io/badge/License-Copyright%20Robert%20Tolliver-C89B3C" alt="License" />
+  <img src="https://img.shields.io/badge/License-MPL%202.0-blue.svg" alt="License: MPL 2.0" />
 </p>
 
 ---
@@ -259,4 +259,12 @@ For AI coding agents and human contributors, see [`AGENTS.md`](AGENTS.md) for ar
 - **Author**: Robert Tolliver
 - **Website**: [tollitech.com](https://tollitech.com)
 - **Bundle Identifier**: `com.tollitech.scrivener`
-- **Copyright**: © 2026 Robert Tolliver. All rights reserved.
+- **Copyright**: © 2026 Robert Tolliver (tollitech.com).
+
+---
+
+## License & Legal Attributions
+
+- **Software License**: Scrivener is licensed under the [Mozilla Public License 2.0 (MPL-2.0)](LICENSE).
+- **D&D 5e SRD 5.1 Content**: This work includes material taken from the System Reference Document 5.1 ("SRD 5.1") by Wizards of the Coast LLC and available at [dnd.wizards.com](https://dnd.wizards.com/resources/systems-reference-document). The SRD 5.1 is licensed under the [Creative Commons Attribution 4.0 International License (CC-BY-4.0)](https://creativecommons.org/licenses/by/4.0/legalcode).
+- **Third-Party Notices**: See [NOTICE](NOTICE) for font licenses and dependency details.
