@@ -841,6 +841,18 @@ class _LevelUpWizardDialogState extends State<LevelUpWizardDialog> {
       if (cls.contains('cleric')) {
         return 'Channel Divinity (1/Rest) & Subclass Feature.';
       }
+      if (cls.contains('bard')) {
+        return 'Jack of All Trades & Song of Rest: Add half proficiency to non-proficient ability checks; allies regain +1d6 HP on short rest.';
+      }
+      if (cls.contains('druid')) {
+        return 'Wild Shape (2/Short Rest) & Druid Circle: Transform into beasts and select your druidic circle.';
+      }
+      if (cls.contains('ranger')) {
+        return 'Fighting Style & Ranger Spellcasting: Gain 1st-level primal spells and spell slots.';
+      }
+      if (cls.contains('sorcerer')) {
+        return 'Font of Magic & Sorcery Points: Gain sorcery points to create additional spell slots or fuel metamagic.';
+      }
       return 'Core class archetype mechanics and expanded resources unlocked.';
     }
     if (lvl == 3) {

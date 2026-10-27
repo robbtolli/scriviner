@@ -38,6 +38,32 @@ void main() {
       expect(getDraft().baseAbilities['INT'], equals(15));
       expect(getDraft().baseAbilities['CON'], equals(14));
       expect(getDraft().baseAbilities['STR'], equals(8));
+
+      final bard = SrdStarterData.classes.firstWhere((c) => c.id == 'bard');
+      notifier.setClass(bard);
+      expect(getDraft().baseAbilities['CHA'], equals(15));
+      expect(getDraft().baseAbilities['DEX'], equals(14));
+      expect(getDraft().baseAbilities['STR'], equals(8));
+
+      final ranger = SrdStarterData.classes.firstWhere((c) => c.id == 'ranger');
+      notifier.setClass(ranger);
+      expect(getDraft().baseAbilities['DEX'], equals(15));
+      expect(getDraft().baseAbilities['WIS'], equals(14));
+      expect(getDraft().baseAbilities['CHA'], equals(8));
+
+      final sorcerer = SrdStarterData.classes.firstWhere(
+        (c) => c.id == 'sorcerer',
+      );
+      notifier.setClass(sorcerer);
+      expect(getDraft().baseAbilities['CHA'], equals(15));
+      expect(getDraft().baseAbilities['CON'], equals(14));
+      expect(getDraft().baseAbilities['STR'], equals(8));
+
+      final druid = SrdStarterData.classes.firstWhere((c) => c.id == 'druid');
+      notifier.setClass(druid);
+      expect(getDraft().baseAbilities['WIS'], equals(15));
+      expect(getDraft().baseAbilities['CON'], equals(14));
+      expect(getDraft().baseAbilities['CHA'], equals(8));
     });
 
     test('calculates point buy remaining points correctly', () {

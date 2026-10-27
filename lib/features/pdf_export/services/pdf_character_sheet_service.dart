@@ -136,6 +136,17 @@ class PdfCharacterSheetService {
         'bonus': '+${dexMod + profBonus}',
         'damage': '1d6 + $dexMod Piercing',
       });
+    } else if (className.toString().toLowerCase().contains('ranger')) {
+      attacks.add({
+        'name': 'Longbow',
+        'bonus': '+${dexMod + profBonus}',
+        'damage': '1d8 + $dexMod Piercing',
+      });
+      attacks.add({
+        'name': 'Shortsword',
+        'bonus': '+${dexMod + profBonus}',
+        'damage': '1d6 + $dexMod Piercing',
+      });
     } else if (className.toString().toLowerCase().contains('rogue')) {
       attacks.add({
         'name': 'Rapier',
@@ -147,8 +158,40 @@ class PdfCharacterSheetService {
         'bonus': '+${dexMod + profBonus}',
         'damage': '1d6 + $dexMod Piercing',
       });
-    } else if (className.toString().toLowerCase().contains('wizard') ||
-        className.toString().toLowerCase().contains('sorcerer')) {
+    } else if (className.toString().toLowerCase().contains('bard')) {
+      attacks.add({
+        'name': 'Rapier',
+        'bonus': '+${dexMod + profBonus}',
+        'damage': '1d8 + $dexMod Piercing',
+      });
+      attacks.add({
+        'name': 'Vicious Mockery',
+        'bonus': 'DC ${8 + profBonus + chaMod}',
+        'damage': '1d4 Psychic',
+      });
+    } else if (className.toString().toLowerCase().contains('druid')) {
+      attacks.add({
+        'name': 'Quarterstaff',
+        'bonus': '+${strMod + profBonus}',
+        'damage': '1d6 + $strMod Bludgeoning',
+      });
+      attacks.add({
+        'name': 'Druidcraft',
+        'bonus': 'Utility',
+        'damage': 'Sensory Effect',
+      });
+    } else if (className.toString().toLowerCase().contains('sorcerer')) {
+      attacks.add({
+        'name': 'Fire Bolt',
+        'bonus': '+${chaMod + profBonus}',
+        'damage': '1d10 Fire',
+      });
+      attacks.add({
+        'name': 'Dagger',
+        'bonus': '+${dexMod + profBonus}',
+        'damage': '1d4 + $dexMod Piercing',
+      });
+    } else if (className.toString().toLowerCase().contains('wizard')) {
       attacks.add({
         'name': 'Fire Bolt',
         'bonus': '+${intMod + profBonus}',

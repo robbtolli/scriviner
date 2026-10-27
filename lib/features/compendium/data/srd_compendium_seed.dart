@@ -90,6 +90,57 @@ final List<CompendiumEntry> bundledSrdEntries = [
           'Flame-like radiance descends on a creature that you can see within range. The target must succeed on a Dexterity saving throw or take 1d8 radiant damage.',
     },
   ),
+  CompendiumEntry(
+    id: 'srd_spell_vicious_mockery',
+    category: 'spell',
+    name: 'Vicious Mockery',
+    summary:
+        'Insults dealing 1d4 psychic damage and disadvantage on the next attack roll.',
+    data: {
+      'level': 0,
+      'school': 'Enchantment',
+      'castingTime': '1 action',
+      'range': '60 feet',
+      'components': 'V',
+      'duration': 'Instantaneous',
+      'description':
+          'You unleash a string of insults laced with subtle enchantments at a creature you can see within range. If the target can hear you, it must succeed on a Wisdom saving throw or take 1d4 psychic damage and have disadvantage on the next attack roll it makes before the end of its next turn.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_spell_druidcraft',
+    category: 'spell',
+    name: 'Druidcraft',
+    summary:
+        'Whisper to nature to predict the weather, bloom a flower, or create sensory effects.',
+    data: {
+      'level': 0,
+      'school': 'Transmutation',
+      'castingTime': '1 action',
+      'range': '30 feet',
+      'components': 'V, S',
+      'duration': 'Instantaneous',
+      'description':
+          'Whispering to the spirits of nature, you create one of several minor effects: predict weather for the next 24 hours, make a flower blossom or seed pod open, create an instantaneous harmless sensory effect, or light/snuff a small flame.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_spell_ray_of_frost',
+    category: 'spell',
+    name: 'Ray of Frost',
+    summary:
+        'A frigid beam dealing 1d8 cold damage and reducing target speed by 10 ft.',
+    data: {
+      'level': 0,
+      'school': 'Evocation',
+      'castingTime': '1 action',
+      'range': '60 feet',
+      'components': 'V, S',
+      'duration': 'Instantaneous',
+      'description':
+          'A frigid beam of blue-white light streaks toward a creature within range. Make a ranged spell attack against the target. On a hit, it takes 1d8 cold damage, and its speed is reduced by 10 feet until the start of your next turn.',
+    },
+  ),
 
   // --- 1st Level Spells ---
   CompendiumEntry(
@@ -123,6 +174,74 @@ final List<CompendiumEntry> bundledSrdEntries = [
       'duration': 'Instantaneous',
       'description':
           'A creature of your choice that you can see within range regains hit points equal to 1d4 + your spellcasting ability modifier.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_spell_thunderwave',
+    category: 'spell',
+    name: 'Thunderwave',
+    summary:
+        'Wave of thunderous force deals 2d8 thunder damage and pushes creatures 10 ft.',
+    data: {
+      'level': 1,
+      'school': 'Evocation',
+      'castingTime': '1 action',
+      'range': 'Self (15-foot cube)',
+      'components': 'V, S',
+      'duration': 'Instantaneous',
+      'description':
+          'A wave of thunderous force sweeps out from you. Each creature in a 15-foot cube originating from you must make a Constitution saving throw. On a failed save, a creature takes 2d8 thunder damage and is pushed 10 feet away from you. On a successful save, the creature takes half as much damage and isn\'t pushed.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_spell_entangle',
+    category: 'spell',
+    name: 'Entangle',
+    summary:
+        'Grasping weeds and vines sprout in a 20-ft square, restraining creatures.',
+    data: {
+      'level': 1,
+      'school': 'Conjuration',
+      'castingTime': '1 action',
+      'range': '90 feet',
+      'components': 'V, S',
+      'duration': 'Concentration, up to 1 minute',
+      'description':
+          'Grasping weeds and vines sprout from the ground in a 20-foot square starting from a point within range. For the duration, these plants turn the ground in the area into difficult terrain. A creature in the area when you cast the spell must succeed on a Strength saving throw or be restrained.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_spell_dissonant_whispers',
+    category: 'spell',
+    name: 'Dissonant Whispers',
+    summary:
+        'Whispers deal 3d6 psychic damage and force target to immediately flee.',
+    data: {
+      'level': 1,
+      'school': 'Enchantment',
+      'castingTime': '1 action',
+      'range': '60 feet',
+      'components': 'V',
+      'duration': 'Instantaneous',
+      'description':
+          'You whisper a discordant melody that only one creature of your choice within range can hear. The target must make a Wisdom saving throw. On a failed save, it takes 3d6 psychic damage and must immediately use its reaction, if available, to move as far as its speed allows away from you.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_spell_hunters_mark',
+    category: 'spell',
+    name: 'Hunter\'s Mark',
+    summary:
+        'Mark a quarry to deal +1d6 damage on weapon hits and gain advantage to track it.',
+    data: {
+      'level': 1,
+      'school': 'Divination',
+      'castingTime': '1 bonus action',
+      'range': '90 feet',
+      'components': 'V',
+      'duration': 'Concentration, up to 1 hour',
+      'description':
+          'You choose a creature you can see within range and mystically mark it as your quarry. Until the spell ends, you deal an extra 1d6 damage to the target whenever you hit it with a weapon attack, and you have advantage on any Wisdom (Perception) or Wisdom (Survival) check you make to find it.',
     },
   ),
   CompendiumEntry(
@@ -472,6 +591,73 @@ final List<CompendiumEntry> bundledSrdEntries = [
       'recharge': 'At-Will (1/turn)',
       'description':
           'Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack if you have advantage on the attack roll.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_feature_bardic_inspiration',
+    category: 'feature',
+    name: 'Bardic Inspiration',
+    summary:
+        'Bard 1st level: Use a bonus action to give an ally an inspiration die (1d6) to add to one d20 roll.',
+    data: {
+      'source': 'Bard (Level 1)',
+      'recharge': 'Long Rest',
+      'usesMax': 3,
+      'description':
+          'You can inspire others through stirring words or music. As a bonus action on your turn, choose one other creature within 60 feet who can hear you. That creature gains one Bardic Inspiration die (1d6). Once within the next 10 minutes, the creature can roll the die and add the number rolled to one ability check, attack roll, or saving throw.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_feature_druidic',
+    category: 'feature',
+    name: 'Druidic',
+    summary:
+        'Druid 1st level: Speak and leave secret messages in the hidden language of druids.',
+    data: {
+      'source': 'Druid (Level 1)',
+      'recharge': 'Passive',
+      'description':
+          'You know Druidic, the secret language of druids. You can speak the language and use it to leave hidden messages. Others who know this language automatically notice such a message.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_feature_wild_shape',
+    category: 'feature',
+    name: 'Wild Shape',
+    summary:
+        'Druid 2nd level: Use an action to magically assume the shape of a beast you have seen (2/Short Rest).',
+    data: {
+      'source': 'Druid (Level 2)',
+      'recharge': 'Short or Long Rest',
+      'usesMax': 2,
+      'description':
+          'You can use your action to magically assume the shape of a beast that you have seen before. You can use this feature twice, and regain expended uses when you finish a short or long rest.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_feature_natural_explorer',
+    category: 'feature',
+    name: 'Natural Explorer',
+    summary:
+        'Ranger 1st level: Expert navigation and survival benefits in chosen favored terrain.',
+    data: {
+      'source': 'Ranger (Level 1)',
+      'recharge': 'Passive',
+      'description':
+          'You are particularly familiar with one type of natural environment and are adept at traveling and surviving in such regions. Difficult terrain doesn\'t slow your group\'s travel, and you remain alert to danger even when engaged in another activity while traveling.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_feature_sorcerous_origin',
+    category: 'feature',
+    name: 'Sorcerous Origin',
+    summary:
+        'Sorcerer 1st level: Magical power derived from draconic ancestry or wild chaos magic.',
+    data: {
+      'source': 'Sorcerer (Level 1)',
+      'recharge': 'Passive',
+      'description':
+          'Choose a sorcerous origin which describes the source of your innate magical power, such as Draconic Bloodline or Wild Magic.',
     },
   ),
 ];

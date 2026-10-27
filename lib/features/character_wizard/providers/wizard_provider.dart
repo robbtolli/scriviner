@@ -113,6 +113,46 @@ class CharacterWizardNotifier extends Notifier<WizardDraft> {
           'INT': 8,
         };
         break;
+      case 'bard':
+        assigned = {
+          'CHA': 15,
+          'DEX': 14,
+          'CON': 13,
+          'WIS': 12,
+          'INT': 10,
+          'STR': 8,
+        };
+        break;
+      case 'ranger':
+        assigned = {
+          'DEX': 15,
+          'WIS': 14,
+          'CON': 13,
+          'STR': 12,
+          'INT': 10,
+          'CHA': 8,
+        };
+        break;
+      case 'sorcerer':
+        assigned = {
+          'CHA': 15,
+          'CON': 14,
+          'DEX': 13,
+          'WIS': 12,
+          'INT': 10,
+          'STR': 8,
+        };
+        break;
+      case 'druid':
+        assigned = {
+          'WIS': 15,
+          'CON': 14,
+          'DEX': 13,
+          'INT': 12,
+          'STR': 10,
+          'CHA': 8,
+        };
+        break;
       default:
         assigned = {
           'STR': 15,

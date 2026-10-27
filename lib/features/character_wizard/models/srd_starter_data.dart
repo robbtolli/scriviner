@@ -362,6 +362,117 @@ class SrdStarterData {
       description:
           'Holy knight bound by a sacred oath to battle evil and heal allies.',
     ),
+    ClassDefinition(
+      id: 'bard',
+      name: 'Bard',
+      archetype: PlaystyleArchetype.skirmisher,
+      hitDie: 8,
+      primaryAbility: 'CHA',
+      savingThrows: ['DEX', 'CHA'],
+      skillCount: 3,
+      availableSkills: [
+        'Acrobatics',
+        'Animal Handling',
+        'Arcana',
+        'Athletics',
+        'Deception',
+        'History',
+        'Insight',
+        'Intimidation',
+        'Investigation',
+        'Medicine',
+        'Nature',
+        'Perception',
+        'Performance',
+        'Persuasion',
+        'Religion',
+        'Sleight of Hand',
+        'Stealth',
+        'Survival',
+      ],
+      startingFeatures: ['Spellcasting', 'Bardic Inspiration (1d6)'],
+      cantripsKnown: 2,
+      firstLevelSpellsKnown: 4,
+      isSpellcaster: true,
+      description:
+          'Inspiring magician who weaves music, wit, and versatility into powerful support and arcane charms.',
+    ),
+    ClassDefinition(
+      id: 'ranger',
+      name: 'Ranger',
+      archetype: PlaystyleArchetype.skirmisher,
+      hitDie: 10,
+      primaryAbility: 'DEX',
+      savingThrows: ['STR', 'DEX'],
+      skillCount: 3,
+      availableSkills: [
+        'Animal Handling',
+        'Athletics',
+        'Insight',
+        'Investigation',
+        'Nature',
+        'Perception',
+        'Stealth',
+        'Survival',
+      ],
+      startingFeatures: ['Favored Enemy', 'Natural Explorer'],
+      cantripsKnown: 0,
+      firstLevelSpellsKnown: 0,
+      isSpellcaster: false,
+      description:
+          'Deadly hunter and wilderness tracker mastering archery, two-weapon combat, and primal survival.',
+    ),
+    ClassDefinition(
+      id: 'sorcerer',
+      name: 'Sorcerer',
+      archetype: PlaystyleArchetype.arcane,
+      hitDie: 6,
+      primaryAbility: 'CHA',
+      savingThrows: ['CON', 'CHA'],
+      skillCount: 2,
+      availableSkills: [
+        'Arcana',
+        'Deception',
+        'Insight',
+        'Intimidation',
+        'Persuasion',
+        'Religion',
+      ],
+      startingFeatures: [
+        'Spellcasting',
+        'Sorcerous Origin (Draconic Bloodline)',
+      ],
+      cantripsKnown: 4,
+      firstLevelSpellsKnown: 2,
+      isSpellcaster: true,
+      description:
+          'Natural spellcaster channeling raw arcane power inherited from an extraordinary bloodline or magical anomaly.',
+    ),
+    ClassDefinition(
+      id: 'druid',
+      name: 'Druid',
+      archetype: PlaystyleArchetype.divine,
+      hitDie: 8,
+      primaryAbility: 'WIS',
+      savingThrows: ['INT', 'WIS'],
+      skillCount: 2,
+      availableSkills: [
+        'Animal Handling',
+        'Arcana',
+        'Insight',
+        'Medicine',
+        'Nature',
+        'Perception',
+        'Religion',
+        'Survival',
+      ],
+      startingFeatures: ['Spellcasting', 'Druidic'],
+      cantripsKnown: 2,
+      firstLevelSpellsKnown: 4,
+      isSpellcaster: true,
+      description:
+          'Priest of the primal forces of nature, channeling elemental wrath and adopting beast shapes.',
+    ),
   ];
 
   static const List<BackgroundDefinition> backgrounds = [
@@ -426,7 +537,7 @@ class SrdStarterData {
       range: '120 ft',
       description:
           'Hurls a mote of fire. Make a ranged spell attack: deals 1d10 fire damage.',
-      classes: ['wizard'],
+      classes: ['sorcerer', 'wizard'],
     ),
     SpellDefinition(
       id: 'mage_hand',
@@ -437,7 +548,7 @@ class SrdStarterData {
       range: '30 ft',
       description:
           'Creates a spectral hand to manipulate objects up to 10 pounds.',
-      classes: ['wizard'],
+      classes: ['bard', 'sorcerer', 'wizard'],
     ),
     SpellDefinition(
       id: 'light',
@@ -448,7 +559,7 @@ class SrdStarterData {
       range: 'Touch',
       description:
           'Touches an object to emit bright light in a 20-foot radius for 1 hour.',
-      classes: ['cleric', 'wizard'],
+      classes: ['bard', 'cleric', 'sorcerer', 'wizard'],
     ),
     SpellDefinition(
       id: 'sacred_flame',
@@ -470,7 +581,40 @@ class SrdStarterData {
       range: 'Touch',
       description:
           'Touches one willing creature. Target adds 1d4 to one ability check of choice.',
-      classes: ['cleric'],
+      classes: ['cleric', 'druid'],
+    ),
+    SpellDefinition(
+      id: 'vicious_mockery',
+      name: 'Vicious Mockery',
+      level: 0,
+      school: 'Enchantment',
+      castingTime: '1 Action',
+      range: '60 ft',
+      description:
+          'Unleashes a string of insults. Target makes a WIS save or takes 1d4 psychic damage and has disadvantage on its next attack.',
+      classes: ['bard'],
+    ),
+    SpellDefinition(
+      id: 'druidcraft',
+      name: 'Druidcraft',
+      level: 0,
+      school: 'Transmutation',
+      castingTime: '1 Action',
+      range: '30 ft',
+      description:
+          'Whispers to the spirits of nature to create a minor natural sensory effect or predict the weather.',
+      classes: ['druid'],
+    ),
+    SpellDefinition(
+      id: 'ray_of_frost',
+      name: 'Ray of Frost',
+      level: 0,
+      school: 'Evocation',
+      castingTime: '1 Action',
+      range: '60 ft',
+      description:
+          'A frigid beam of blue-white light strikes a creature. Make a ranged spell attack: deals 1d8 cold damage and reduces speed by 10 ft.',
+      classes: ['sorcerer', 'wizard'],
     ),
 
     // Level 1 Spells
@@ -483,7 +627,7 @@ class SrdStarterData {
       range: '120 ft',
       description:
           'Creates three glowing darts of magical force. Each unerringly deals 1d4+1 force damage.',
-      classes: ['wizard'],
+      classes: ['sorcerer', 'wizard'],
     ),
     SpellDefinition(
       id: 'shield',
@@ -494,7 +638,7 @@ class SrdStarterData {
       range: 'Self',
       description:
           'Grants +5 to Armor Class until the start of your next turn and negates Magic Missile.',
-      classes: ['wizard'],
+      classes: ['sorcerer', 'wizard'],
     ),
     SpellDefinition(
       id: 'cure_wounds',
@@ -505,7 +649,7 @@ class SrdStarterData {
       range: 'Touch',
       description:
           'A creature you touch regains hit points equal to 1d8 + your spellcasting modifier.',
-      classes: ['cleric'],
+      classes: ['bard', 'cleric', 'druid', 'ranger'],
     ),
     SpellDefinition(
       id: 'bless',
@@ -527,7 +671,51 @@ class SrdStarterData {
       range: '60 ft',
       description:
           'A creature of your choice regains 1d4 + your spellcasting ability modifier.',
-      classes: ['cleric'],
+      classes: ['bard', 'cleric', 'druid'],
+    ),
+    SpellDefinition(
+      id: 'thunderwave',
+      name: 'Thunderwave',
+      level: 1,
+      school: 'Evocation',
+      castingTime: '1 Action',
+      range: 'Self (15-ft cube)',
+      description:
+          'A wave of thunderous force sweeps out. Creatures make a CON save or take 2d8 thunder damage and are pushed 10 ft away.',
+      classes: ['bard', 'druid', 'sorcerer', 'wizard'],
+    ),
+    SpellDefinition(
+      id: 'entangle',
+      name: 'Entangle',
+      level: 1,
+      school: 'Conjuration',
+      castingTime: '1 Action',
+      range: '90 ft',
+      description:
+          'Grasping weeds and vines sprout in a 20-ft square. Creatures make a STR save or become restrained.',
+      classes: ['druid'],
+    ),
+    SpellDefinition(
+      id: 'dissonant_whispers',
+      name: 'Dissonant Whispers',
+      level: 1,
+      school: 'Enchantment',
+      castingTime: '1 Action',
+      range: '60 ft',
+      description:
+          'Whispers a discordant melody. Target makes a WIS save or takes 3d6 psychic damage and must immediately use its reaction to flee.',
+      classes: ['bard'],
+    ),
+    SpellDefinition(
+      id: 'hunters_mark',
+      name: 'Hunter\'s Mark',
+      level: 1,
+      school: 'Divination',
+      castingTime: '1 Bonus Action',
+      range: '90 ft',
+      description:
+          'Choose a creature within range. You deal an extra 1d6 damage to the target whenever you hit it with a weapon attack, and gain advantage on tracking it.',
+      classes: ['ranger'],
     ),
   ];
 }

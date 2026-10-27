@@ -262,15 +262,21 @@ class CharacterExportService {
       List<String> saves = ['str', 'dex'];
       if (classLower.contains('sorcerer')) {
         saves = ['con', 'cha'];
-      } else if (classLower.contains('wizard')) {
+      } else if (classLower.contains('wizard') ||
+          classLower.contains('druid')) {
         saves = ['int', 'wis'];
-      } else if (classLower.contains('fighter')) {
+      } else if (classLower.contains('fighter') ||
+          classLower.contains('barbarian')) {
         saves = ['str', 'con'];
       } else if (classLower.contains('rogue')) {
         saves = ['dex', 'int'];
       } else if (classLower.contains('cleric') ||
           classLower.contains('paladin')) {
         saves = ['wis', 'cha'];
+      } else if (classLower.contains('bard')) {
+        saves = ['dex', 'cha'];
+      } else if (classLower.contains('ranger')) {
+        saves = ['str', 'dex'];
       }
 
       final ckSkills = charData['skills'] as Map? ?? {};

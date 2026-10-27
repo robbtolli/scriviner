@@ -186,14 +186,20 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     final saves = Set<String>.from(rawSaves);
     if (saves.isEmpty) {
       final cls = className.toLowerCase();
-      if (cls.contains('fighter')) {
+      if (cls.contains('fighter') || cls.contains('barbarian')) {
         saves.addAll(['str', 'con']);
-      } else if (cls.contains('wizard')) {
+      } else if (cls.contains('wizard') || cls.contains('druid')) {
         saves.addAll(['int', 'wis']);
       } else if (cls.contains('rogue')) {
         saves.addAll(['dex', 'int']);
       } else if (cls.contains('cleric') || cls.contains('paladin')) {
         saves.addAll(['wis', 'cha']);
+      } else if (cls.contains('bard')) {
+        saves.addAll(['dex', 'cha']);
+      } else if (cls.contains('ranger')) {
+        saves.addAll(['str', 'dex']);
+      } else if (cls.contains('sorcerer')) {
+        saves.addAll(['con', 'cha']);
       } else {
         saves.addAll(['str', 'dex']);
       }
@@ -217,7 +223,8 @@ class CharacterSheetNotifier extends Notifier<CharacterSheetState?> {
     String spellAbility = 'int';
     int spellMod = intMod;
     if (className.toLowerCase().contains('cleric') ||
-        className.toLowerCase().contains('druid')) {
+        className.toLowerCase().contains('druid') ||
+        className.toLowerCase().contains('ranger')) {
       spellAbility = 'wis';
       spellMod = wisMod;
     } else if (className.toLowerCase().contains('warlock') ||
