@@ -95,7 +95,10 @@ class _Step2RaceState extends ConsumerState<Step2Race> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 8,
+                          runSpacing: 4,
                           children: [
                             const Text(
                               'Expanded Races',
@@ -105,7 +108,6 @@ class _Step2RaceState extends ConsumerState<Step2Race> {
                                 color: Colors.white,
                               ),
                             ),
-                            const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
@@ -199,210 +201,234 @@ class _Step2RaceState extends ConsumerState<Step2Race> {
               width: isSelected ? 1.5 : 1,
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Text(
-                      isSelected && draft.subrace != null
-                          ? '${race.name} (${draft.subrace!.name})'
-                          : race.name,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: isSelected ? AppTheme.primaryGold : Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Ability score bonus badges
-                  ...bonuses.entries.map((entry) {
-                    return Container(
-                      margin: const EdgeInsets.only(left: 6),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppTheme.surfaceDark,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: AppTheme.primaryGold.withAlpha(100),
-                        ),
-                      ),
-                      child: Text(
-                        '+${entry.value} ${entry.key}',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryGold,
-                        ),
-                      ),
-                    );
-                  }),
-                  const SizedBox(width: 8),
-                  if (isSelected)
-                    const Icon(
-                      Icons.check_circle,
-                      color: AppTheme.primaryGold,
-                      size: 20,
-                    ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                race.description,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.white.withAlpha(190),
-                  height: 1.3,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Icon(
-                    Icons.directions_run,
-                    size: 14,
-                    color: Colors.white.withAlpha(160),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Speed: $displaySpeed ft',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white.withAlpha(160),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Icon(
-                    Icons.star_border,
-                    size: 14,
-                    color: Colors.white.withAlpha(160),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      'Traits: ${race.traits.join(" • ")}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white.withAlpha(160),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-
-              // Inline Subrace Selector (displayed when selected and has subraces)
-              if (isSelected && race.subraces.isNotEmpty) ...[
-                const SizedBox(height: 14),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceDark.withAlpha(180),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: AppTheme.primaryGold.withAlpha(60),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
-                      const Row(
-                        children: [
-                          Icon(
-                            Icons.alt_route,
-                            size: 14,
-                            color: AppTheme.primaryGold,
-                          ),
-                          SizedBox(width: 6),
-                          Text(
-                            'CHOOSE SUBRACE / LINEAGE (OPTIONAL)',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.1,
-                              color: AppTheme.primaryGold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          _buildSubraceChip(
-                            label: 'Base / Standard',
-                            isSelected: draft.subrace == null,
-                            onTap: () => notifier.setSubrace(null),
-                          ),
-                          ...race.subraces.map((sub) {
-                            final isSubSelected = draft.subrace?.id == sub.id;
-                            final bonusDesc = sub.abilityBonuses.entries
-                                .map((e) => '+${e.value} ${e.key}')
-                                .join(', ');
-                            final label = bonusDesc.isNotEmpty
-                                ? '${sub.name} ($bonusDesc)'
-                                : sub.name;
-
-                            return _buildSubraceChip(
-                              label: label,
-                              isSelected: isSubSelected,
-                              onTap: () => notifier.setSubrace(sub),
-                            );
-                          }),
-                        ],
-                      ),
-                      if (draft.subrace != null) ...[
-                        const SizedBox(height: 10),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: AppTheme.cardDark,
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(
-                              color: Colors.white.withAlpha(15),
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                draft.subrace!.description,
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: constraints.maxWidth,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                isSelected && draft.subrace != null
+                                    ? '${race.name} (${draft.subrace!.name})'
+                                    : race.name,
                                 style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white.withAlpha(190),
-                                  height: 1.3,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: isSelected
+                                      ? AppTheme.primaryGold
+                                      : Colors.white,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (isSelected) ...[
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.check_circle,
+                                color: AppTheme.primaryGold,
+                                size: 20,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      if (bonuses.isNotEmpty)
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: bonuses.entries.map((entry) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppTheme.surfaceDark,
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: AppTheme.primaryGold.withAlpha(100),
                                 ),
                               ),
-                              if (draft.subrace!.traits.isNotEmpty) ...[
-                                const SizedBox(height: 6),
-                                Text(
-                                  'Extra Traits: ${draft.subrace!.traits.join(" • ")}',
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppTheme.primaryGold,
-                                  ),
+                              child: Text(
+                                '+${entry.value} ${entry.key}',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.primaryGold,
                                 ),
-                              ],
-                            ],
-                          ),
+                              ),
+                            );
+                          }).toList(),
                         ),
-                      ],
                     ],
                   ),
-                ),
-              ],
-            ],
+                  const SizedBox(height: 6),
+                  Text(
+                    race.description,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.white.withAlpha(190),
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.directions_run,
+                        size: 14,
+                        color: Colors.white.withAlpha(160),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Speed: $displaySpeed ft',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white.withAlpha(160),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Icon(
+                        Icons.star_border,
+                        size: 14,
+                        color: Colors.white.withAlpha(160),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          'Traits: ${race.traits.join(" • ")}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withAlpha(160),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Inline Subrace Selector (displayed when selected and has subraces)
+                  if (isSelected && race.subraces.isNotEmpty) ...[
+                    const SizedBox(height: 14),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceDark.withAlpha(180),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: AppTheme.primaryGold.withAlpha(60),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(
+                                Icons.alt_route,
+                                size: 14,
+                                color: AppTheme.primaryGold,
+                              ),
+                              SizedBox(width: 6),
+                              Text(
+                                'CHOOSE SUBRACE / LINEAGE (OPTIONAL)',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.1,
+                                  color: AppTheme.primaryGold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              _buildSubraceChip(
+                                label: 'Base / Standard',
+                                isSelected: draft.subrace == null,
+                                onTap: () => notifier.setSubrace(null),
+                              ),
+                              ...race.subraces.map((sub) {
+                                final isSubSelected =
+                                    draft.subrace?.id == sub.id;
+                                final bonusDesc = sub.abilityBonuses.entries
+                                    .map((e) => '+${e.value} ${e.key}')
+                                    .join(', ');
+                                final label = bonusDesc.isNotEmpty
+                                    ? '${sub.name} ($bonusDesc)'
+                                    : sub.name;
+
+                                return _buildSubraceChip(
+                                  label: label,
+                                  isSelected: isSubSelected,
+                                  onTap: () => notifier.setSubrace(sub),
+                                );
+                              }),
+                            ],
+                          ),
+                          if (draft.subrace != null) ...[
+                            const SizedBox(height: 10),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppTheme.cardDark,
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: Colors.white.withAlpha(15),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    draft.subrace!.description,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white.withAlpha(190),
+                                      height: 1.3,
+                                    ),
+                                  ),
+                                  if (draft.subrace!.traits.isNotEmpty) ...[
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'Extra Traits: ${draft.subrace!.traits.join(" • ")}',
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppTheme.primaryGold,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              );
+            },
           ),
         ),
       ),
