@@ -31,7 +31,15 @@ class CharacterWizardNotifier extends Notifier<WizardDraft> {
   }
 
   void setRace(RaceDefinition race) {
-    state = state.copyWith(race: race);
+    state = state.copyWith(race: race, clearSubrace: true);
+  }
+
+  void setSubrace(SubraceDefinition? subrace) {
+    if (subrace == null) {
+      state = state.copyWith(clearSubrace: true);
+    } else {
+      state = state.copyWith(subrace: subrace);
+    }
   }
 
   void setClass(ClassDefinition charClass) {

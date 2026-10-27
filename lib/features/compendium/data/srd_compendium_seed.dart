@@ -660,6 +660,129 @@ final List<CompendiumEntry> bundledSrdEntries = [
           'Choose a sorcerous origin which describes the source of your innate magical power, such as Draconic Bloodline or Wild Magic.',
     },
   ),
+  CompendiumEntry(
+    id: 'srd_trait_healing_hands',
+    category: 'feature',
+    name: 'Healing Hands',
+    summary:
+        'Aasimar: As an action, touch a creature to restore hit points equal to your level (1/Long Rest).',
+    data: {
+      'source': 'Aasimar Racial Trait',
+      'recharge': 'Long Rest',
+      'usesMax': 1,
+      'description':
+          'As an action, you can touch a creature and cause it to regain a number of hit points equal to your level. Once you use this trait, you can\'t use it again until you finish a long rest.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_trait_stones_endurance',
+    category: 'feature',
+    name: 'Stone\'s Endurance',
+    summary:
+        'Goliath: As a reaction when taking damage, roll 1d12 + CON modifier to reduce damage taken (1/Short Rest).',
+    data: {
+      'source': 'Goliath Racial Trait',
+      'recharge': 'Short or Long Rest',
+      'usesMax': 1,
+      'description':
+          'You can focus yourself to occasionally shrug off injury. When you take damage, you can use your reaction to roll a d12. Add your Constitution modifier to the number rolled, and reduce the damage by that total.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_trait_adrenaline_rush',
+    category: 'feature',
+    name: 'Adrenaline Rush',
+    summary:
+        'Orc: Dash as a bonus action, gaining temporary hit points equal to your proficiency bonus.',
+    data: {
+      'source': 'Orc Racial Trait',
+      'recharge': 'Short or Long Rest',
+      'usesMax': 2,
+      'description':
+          'You can take the Dash action as a bonus action. When you do so, you gain a number of temporary hit points equal to your proficiency bonus.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_trait_feline_agility',
+    category: 'feature',
+    name: 'Feline Agility',
+    summary:
+        'Tabaxi: Double your walking speed for one turn. Recharges when you spend a turn without moving.',
+    data: {
+      'source': 'Tabaxi Racial Trait',
+      'recharge': 'Special',
+      'description':
+          'Your reflexes and agility allow you to move with a burst of speed. When you move on your turn in combat, you can double your speed until the end of the turn. Once you use this trait, you can\'t use it again until you move 0 feet on one of your turns.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_trait_tortle_natural_armor',
+    category: 'feature',
+    name: 'Tortle Natural Armor',
+    summary:
+        'Tortle: Your shell provides you a base AC of 17. You gain no benefit from wearing armor.',
+    data: {
+      'source': 'Tortle Racial Trait',
+      'recharge': 'Passive',
+      'description':
+          'Your shell provides you a base AC of 17 (your Dexterity modifier doesn\'t affect this number). You can\'t wear light, medium, or heavy armor, but if you are using a shield, you can apply the shield\'s bonus as normal.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_trait_hidden_step',
+    category: 'feature',
+    name: 'Hidden Step',
+    summary:
+        'Firbolg: As a bonus action, turn magically invisible until the start of your next turn (1/Short Rest).',
+    data: {
+      'source': 'Firbolg Racial Trait',
+      'recharge': 'Short or Long Rest',
+      'usesMax': 1,
+      'description':
+          'As a bonus action, you can magically turn invisible until the start of your next turn or until you attack, make a damage roll, or force someone to make a saving throw.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_trait_shapechanger',
+    category: 'feature',
+    name: 'Shapechanger',
+    summary:
+        'Changeling: As an action, change your appearance and voice to any humanoid you have seen.',
+    data: {
+      'source': 'Changeling Racial Trait',
+      'recharge': 'At-Will',
+      'description':
+          'As an action, you can change your appearance and your voice. You determine the specifics of the changes, including your coloration, hair length, and sex. You can also adjust your height and weight, but not your basic humanoid shape.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_trait_fury_of_the_small',
+    category: 'feature',
+    name: 'Fury of the Small',
+    summary:
+        'Goblin: When damaging a creature of larger size, deal extra damage equal to your level (1/Short Rest).',
+    data: {
+      'source': 'Goblin Racial Trait',
+      'recharge': 'Short or Long Rest',
+      'usesMax': 1,
+      'description':
+          'When you damage a creature with an attack or a spell and the creature\'s size is larger than yours, you can cause the attack or spell to deal extra damage to the creature. The extra damage equals your level.',
+    },
+  ),
+  CompendiumEntry(
+    id: 'srd_trait_draconic_cry',
+    category: 'feature',
+    name: 'Draconic Cry',
+    summary:
+        'Kobold: As a bonus action, let out a cry to grant you and your allies advantage on attack rolls against nearby enemies.',
+    data: {
+      'source': 'Kobold Racial Trait',
+      'recharge': 'Long Rest',
+      'usesMax': 2,
+      'description':
+          'As a bonus action, you let out a cry at your enemies within 10 feet of you. Until the start of your next turn, you and your allies have advantage on attack rolls against any of those enemies who could hear you.',
+    },
+  ),
 ];
 
 /// Seeds the bundled SRD 5.1 entries into the Drift compendium database if empty.

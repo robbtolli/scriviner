@@ -27,6 +27,7 @@ class WizardDraft {
   final String? gender;
   final PlaystyleArchetype? archetype;
   final RaceDefinition? race;
+  final SubraceDefinition? subrace;
   final ClassDefinition? charClass;
   final AbilityGenMethod abilityMethod;
   final Map<String, int> baseAbilities;
@@ -42,6 +43,7 @@ class WizardDraft {
     this.gender,
     this.archetype,
     this.race,
+    this.subrace,
     this.charClass,
     this.abilityMethod = AbilityGenMethod.standardArray,
     this.baseAbilities = const {
@@ -65,6 +67,8 @@ class WizardDraft {
     String? gender,
     PlaystyleArchetype? archetype,
     RaceDefinition? race,
+    SubraceDefinition? subrace,
+    bool clearSubrace = false,
     ClassDefinition? charClass,
     AbilityGenMethod? abilityMethod,
     Map<String, int>? baseAbilities,
@@ -80,6 +84,7 @@ class WizardDraft {
       gender: gender ?? this.gender,
       archetype: archetype ?? this.archetype,
       race: race ?? this.race,
+      subrace: clearSubrace ? null : (subrace ?? this.subrace),
       charClass: charClass ?? this.charClass,
       abilityMethod: abilityMethod ?? this.abilityMethod,
       baseAbilities: baseAbilities ?? this.baseAbilities,
@@ -91,13 +96,18 @@ class WizardDraft {
     );
   }
 
-  /// Calculates final scores including racial bonuses.
+  /// Calculates final scores including racial and subracial bonuses.
   Map<String, int> get finalAbilities {
     final result = Map<String, int>.from(baseAbilities);
     if (race != null) {
       race!.abilityBonuses.forEach((stat, bonus) {
         result[stat] = (result[stat] ?? 10) + bonus;
       });
+      if (subrace != null) {
+        subrace!.abilityBonuses.forEach((stat, bonus) {
+          result[stat] = (result[stat] ?? 10) + bonus;
+        });
+      }
     }
     return result;
   }
@@ -119,6 +129,9 @@ class WizardDraft {
 
   int get armorClass {
     final dexMod = abilityModifiers['DEX'] ?? 0;
+    if (race?.id == 'tortle') {
+      return 17; // Tortle Natural Armor: base AC 17
+    }
     if (charClass?.id == 'barbarian') {
       final conMod = abilityModifiers['CON'] ?? 0;
       return 10 + dexMod + conMod;
@@ -126,7 +139,7 @@ class WizardDraft {
     return 10 + dexMod;
   }
 
-  int get speed => race?.speed ?? 30;
+  int get speed => subrace?.speed ?? race?.speed ?? 30;
 
   int get passivePerception {
     final wisMod = abilityModifiers['WIS'] ?? 0;
@@ -218,8 +231,12 @@ class WizardDraft {
       'gender': gender,
       'class': charClass?.name ?? 'Adventurer',
       'classId': charClass?.id ?? 'fighter',
-      'race': race?.name ?? 'Human',
+      'race': subrace != null
+          ? '${race?.name} (${subrace!.name})'
+          : (race?.name ?? 'Human'),
       'raceId': race?.id ?? 'human',
+      'subraceId': subrace?.id,
+      'traits': [...?race?.traits, ...?subrace?.traits],
       'background': background?.name ?? 'Folk Hero',
       'hp': {'current': maxHp, 'max': maxHp, 'temp': 0},
       'armorClass': armorClass,

@@ -24,6 +24,24 @@ enum PlaystyleArchetype {
   const PlaystyleArchetype(this.title, this.description);
 }
 
+class SubraceDefinition {
+  final String id;
+  final String name;
+  final Map<String, int> abilityBonuses;
+  final List<String> traits;
+  final int? speed;
+  final String description;
+
+  const SubraceDefinition({
+    required this.id,
+    required this.name,
+    this.abilityBonuses = const {},
+    this.traits = const [],
+    this.speed,
+    required this.description,
+  });
+}
+
 class RaceDefinition {
   final String id;
   final String name;
@@ -31,6 +49,8 @@ class RaceDefinition {
   final Map<String, int> abilityBonuses;
   final List<String> traits;
   final String description;
+  final List<SubraceDefinition> subraces;
+  final bool isExpanded;
 
   const RaceDefinition({
     required this.id,
@@ -39,6 +59,8 @@ class RaceDefinition {
     required this.abilityBonuses,
     required this.traits,
     required this.description,
+    this.subraces = const [],
+    this.isExpanded = false,
   });
 }
 
@@ -122,6 +144,24 @@ class SrdStarterData {
       traits: ['Darkvision 60ft', 'Dwarven Resilience (Adv vs Poison)'],
       description:
           'Sturdy and resilient warriors who resist poison and thrive in tough battles.',
+      subraces: [
+        SubraceDefinition(
+          id: 'hill_dwarf',
+          name: 'Hill Dwarf',
+          abilityBonuses: {'WIS': 1},
+          traits: ['Dwarven Toughness (+1 Max HP per level)'],
+          description:
+              'Deeply intuitive, stalwart defenders with incredible resilience and vitality.',
+        ),
+        SubraceDefinition(
+          id: 'mountain_dwarf',
+          name: 'Mountain Dwarf',
+          abilityBonuses: {'STR': 2},
+          traits: ['Dwarven Armor Training (Light & Medium Armor)'],
+          description:
+              'Strong and rugged highlanders accustomed to harsh mountain terrain.',
+        ),
+      ],
     ),
     RaceDefinition(
       id: 'elf',
@@ -131,6 +171,46 @@ class SrdStarterData {
       traits: ['Darkvision 60ft', 'Keen Senses', 'Fey Ancestry (Adv vs Charm)'],
       description:
           'Graceful, long-lived masters of archery, stealth, and ancient magic.',
+      subraces: [
+        SubraceDefinition(
+          id: 'high_elf',
+          name: 'High Elf',
+          abilityBonuses: {'INT': 1},
+          traits: [
+            'Elf Weapon Training',
+            'High Elf Cantrip (Wizard)',
+            'Extra Language',
+          ],
+          description:
+              'Haughty and contemplative, possessing a keen mind and mastery of basic magic.',
+        ),
+        SubraceDefinition(
+          id: 'wood_elf',
+          name: 'Wood Elf',
+          abilityBonuses: {'WIS': 1},
+          speed: 35,
+          traits: [
+            'Elf Weapon Training',
+            'Fleet of Foot (35 ft speed)',
+            'Mask of the Wild',
+          ],
+          description:
+              'Fleet-footed hunters and scouts at one with the primeval wilderness.',
+        ),
+        SubraceDefinition(
+          id: 'drow',
+          name: 'Drow (Dark Elf)',
+          abilityBonuses: {'CHA': 1},
+          traits: [
+            'Superior Darkvision 120ft',
+            'Drow Magic (Dancing Lights)',
+            'Drow Weapon Training',
+            'Sunlight Sensitivity',
+          ],
+          description:
+              'Descendants of an ancient subterranean divergence with heightened darkvision and innate fey magic.',
+        ),
+      ],
     ),
     RaceDefinition(
       id: 'halfling',
@@ -144,6 +224,24 @@ class SrdStarterData {
       ],
       description:
           'Small and nimble adventurers known for extraordinary luck and bravery.',
+      subraces: [
+        SubraceDefinition(
+          id: 'lightfoot_halfling',
+          name: 'Lightfoot Halfling',
+          abilityBonuses: {'CHA': 1},
+          traits: ['Naturally Stealthy (Hide behind larger creatures)'],
+          description:
+              'Graceful, stealthy wanderers able to easily slip away unnoticed.',
+        ),
+        SubraceDefinition(
+          id: 'stout_halfling',
+          name: 'Stout Halfling',
+          abilityBonuses: {'CON': 1},
+          traits: ['Stout Resilience (Poison resistance & save advantage)'],
+          description:
+              'Hardy folk with dwarven ancestry granting exceptional poison endurance.',
+        ),
+      ],
     ),
     RaceDefinition(
       id: 'human',
@@ -178,6 +276,27 @@ class SrdStarterData {
       traits: ['Darkvision 60ft', 'Gnome Cunning (Adv vs Magic Saves)'],
       description:
           'Curious, inventive tinkers and spellcasters with innate magical protection.',
+      subraces: [
+        SubraceDefinition(
+          id: 'forest_gnome',
+          name: 'Forest Gnome',
+          abilityBonuses: {'DEX': 1},
+          traits: [
+            'Natural Illusionist (Minor Illusion)',
+            'Speak with Small Beasts',
+          ],
+          description:
+              'Stealthy, agile forest dwellers who weave natural illusions.',
+        ),
+        SubraceDefinition(
+          id: 'rock_gnome',
+          name: 'Rock Gnome',
+          abilityBonuses: {'CON': 1},
+          traits: ['Artificer\'s Lore', 'Tinker (Craft clockwork devices)'],
+          description:
+              'Inventive craftspeople renowned for creating clockwork gadgets.',
+        ),
+      ],
     ),
     RaceDefinition(
       id: 'half_elf',
@@ -217,6 +336,218 @@ class SrdStarterData {
       ],
       description:
           'Infused with otherworldly heritage, wielding fire resistance and dark magic.',
+    ),
+
+    // --- Tier 1: Core 2024 Additions ---
+    RaceDefinition(
+      id: 'aasimar',
+      name: 'Aasimar',
+      speed: 30,
+      abilityBonuses: {'CHA': 2},
+      traits: [
+        'Darkvision 60ft',
+        'Celestial Resistance (Necrotic & Radiant)',
+        'Healing Hands',
+        'Light Bearer (Light cantrip)',
+      ],
+      description:
+          'Mortals bearing the spark of the Upper Planes, blessed with celestial radiance and healing touch.',
+      subraces: [
+        SubraceDefinition(
+          id: 'protector_aasimar',
+          name: 'Protector Aasimar',
+          abilityBonuses: {'WIS': 1},
+          traits: ['Radiant Soul (Grows angelic wings & flight speed)'],
+          description:
+              'Protectors guided by celestial duty, soaring on luminous angelic wings.',
+        ),
+        SubraceDefinition(
+          id: 'scourge_aasimar',
+          name: 'Scourge Aasimar',
+          abilityBonuses: {'CON': 1},
+          traits: ['Radiant Consumption (Burns with searing holy fire)'],
+          description:
+              'Fierce zealots who unleash intense inner divine radiance to purge evil.',
+        ),
+        SubraceDefinition(
+          id: 'fallen_aasimar',
+          name: 'Fallen Aasimar',
+          abilityBonuses: {'STR': 1},
+          traits: ['Necrotic Shroud (Skeletal wings & frightful presence)'],
+          description:
+              'A celestial touched by dark power in youth or through a tragic fall from grace.',
+        ),
+      ],
+    ),
+    RaceDefinition(
+      id: 'goliath',
+      name: 'Goliath',
+      speed: 30,
+      abilityBonuses: {'STR': 2, 'CON': 1},
+      traits: [
+        'Stone\'s Endurance (Damage reduction reaction 1d12+CON)',
+        'Mountain Born (Cold Resistance & altitude acclimation)',
+        'Powerful Build (Count as size larger for carrying)',
+      ],
+      description:
+          'Towering mountain nomads possessing the strength of stone and enduring punishing cold.',
+    ),
+    RaceDefinition(
+      id: 'orc',
+      name: 'Orc',
+      speed: 30,
+      abilityBonuses: {'STR': 2, 'CON': 1},
+      traits: [
+        'Darkvision 120ft',
+        'Adrenaline Rush (Bonus action Dash + Temp HP)',
+        'Relentless Endurance (Survive at 1 HP)',
+        'Powerful Build',
+      ],
+      description:
+          'Tenacious champions blessed with relentless stamina, explosive charges, and formidable endurance.',
+    ),
+
+    // --- Tier 2: Expanded Races ---
+    RaceDefinition(
+      id: 'tabaxi',
+      name: 'Tabaxi',
+      speed: 30,
+      isExpanded: true,
+      abilityBonuses: {'DEX': 2, 'CHA': 1},
+      traits: [
+        'Feline Agility (Double speed for 1 turn)',
+        'Cat\'s Claws (Climbing speed 20ft & 1d4 unarmed slashing)',
+        'Darkvision 60ft',
+        'Cat\'s Talent (Proficiency in Perception & Stealth)',
+      ],
+      description:
+          'Curious, nimble catfolk motivated by wanderlust, ancient secrets, and rare treasures.',
+    ),
+    RaceDefinition(
+      id: 'genasi',
+      name: 'Genasi',
+      speed: 30,
+      isExpanded: true,
+      abilityBonuses: {'CON': 2},
+      traits: ['Elemental Heritage', 'Planar Resistance'],
+      description:
+          'Mortals touched by the raw primal power of the four elemental planes.',
+      subraces: [
+        SubraceDefinition(
+          id: 'air_genasi',
+          name: 'Air Genasi',
+          abilityBonuses: {'DEX': 1},
+          speed: 35,
+          traits: ['Unending Breath', 'Mingle with the Wind (Levitate)'],
+          description:
+              'Breezy, mercurial beings carrying the wind of elemental air.',
+        ),
+        SubraceDefinition(
+          id: 'earth_genasi',
+          name: 'Earth Genasi',
+          abilityBonuses: {'STR': 1},
+          traits: ['Earth Walk', 'Merge with Stone (Pass Without Trace)'],
+          description:
+              'Patient, solid beings with the stoic resilience of elemental earth.',
+        ),
+        SubraceDefinition(
+          id: 'fire_genasi',
+          name: 'Fire Genasi',
+          abilityBonuses: {'INT': 1},
+          traits: [
+            'Darkvision 60ft',
+            'Fire Resistance',
+            'Reach to the Blaze (Produce Flame)',
+          ],
+          description:
+              'Fiery, passionate wanderers crackling with elemental heat.',
+        ),
+        SubraceDefinition(
+          id: 'water_genasi',
+          name: 'Water Genasi',
+          abilityBonuses: {'WIS': 1},
+          traits: [
+            'Acid Resistance',
+            'Amphibious (Breathe water)',
+            'Swim Speed 30ft',
+            'Call to the Wave',
+          ],
+          description:
+              'Fluid and adaptable nomads at home in oceanic depths and running streams.',
+        ),
+      ],
+    ),
+    RaceDefinition(
+      id: 'tortle',
+      name: 'Tortle',
+      speed: 30,
+      isExpanded: true,
+      abilityBonuses: {'STR': 2, 'WIS': 1},
+      traits: [
+        'Natural Armor (Base AC 17, cannot wear armor)',
+        'Shell Defense (+4 AC withdrawn in shell)',
+        'Claws (1d4 slashing)',
+        'Nature\'s Intuition (Survival proficiency)',
+      ],
+      description:
+          'Gentle, nomadic turtlefolk carrying their homes on their backs and thriving in nature.',
+    ),
+    RaceDefinition(
+      id: 'firbolg',
+      name: 'Firbolg',
+      speed: 30,
+      isExpanded: true,
+      abilityBonuses: {'WIS': 2, 'STR': 1},
+      traits: [
+        'Firbolg Magic (Detect Magic & Disguise Self)',
+        'Hidden Step (Bonus action turn invisible until next turn)',
+        'Powerful Build',
+        'Speech of Beast and Leaf',
+      ],
+      description:
+          'Gentle forest giants and guardians of harmony who live in peaceful seclusion.',
+    ),
+    RaceDefinition(
+      id: 'changeling',
+      name: 'Changeling',
+      speed: 30,
+      isExpanded: true,
+      abilityBonuses: {'CHA': 2, 'DEX': 1},
+      traits: [
+        'Shapechanger (Action change physical appearance and voice)',
+        'Changeling Instincts (Two social skill proficiencies)',
+        'Fey Ancestry (Adv vs Charm)',
+      ],
+      description:
+          'Subtle folk blessed with the innate fey gift to alter their physical form and voice at will.',
+    ),
+    RaceDefinition(
+      id: 'goblin',
+      name: 'Goblin',
+      speed: 30,
+      isExpanded: true,
+      abilityBonuses: {'DEX': 2, 'CON': 1},
+      traits: [
+        'Fury of the Small (Add level to damage against larger target 1/Rest)',
+        'Nimble Escape (Bonus action Disengage or Hide)',
+        'Darkvision 60ft',
+      ],
+      description:
+          'Small, resilient crafters and scouts known for quick reflexes and fierce tenacity.',
+    ),
+    RaceDefinition(
+      id: 'kobold',
+      name: 'Kobold',
+      speed: 30,
+      isExpanded: true,
+      abilityBonuses: {'DEX': 2},
+      traits: [
+        'Draconic Cry (Bonus action grant allies advantage on attacks)',
+        'Kobold Legacy (Draconic Sorcery / Craftiness)',
+        'Darkvision 60ft',
+      ],
+      description:
+          'Clever, reptilian crafters who revere dragons and thrive in tight-knit subterranean warrens.',
     ),
   ];
 
