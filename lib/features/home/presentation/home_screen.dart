@@ -282,12 +282,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final tokens = context.tokens;
     final charactersAsync = ref.watch(filteredCharactersProvider);
     final allRecentAsync = ref.watch(recentCharactersStreamProvider);
+    final isNarrow = MediaQuery.sizeOf(context).width < 600;
 
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         centerTitle: false,
-        titleSpacing: 16,
+        titleSpacing: isNarrow ? 12 : 16,
         title: _isSearching
             ? TextField(
                 controller: _searchController,
@@ -352,30 +353,84 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               FloatingDiceFab.openDiceRoller(context);
             },
           ),
-          IconButton(
-            visualDensity: VisualDensity.compact,
-            padding: const EdgeInsets.all(6),
-            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-            icon: const Icon(Icons.palette_outlined),
-            tooltip: 'App Theme',
-            onPressed: () => ThemeSelectorDialog.show(context),
-          ),
-          IconButton(
-            visualDensity: VisualDensity.compact,
-            padding: const EdgeInsets.all(6),
-            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-            icon: const Icon(Icons.extension_outlined),
-            tooltip: 'Plugins & Compendiums',
-            onPressed: () => PluginsDialog.show(context),
-          ),
-          IconButton(
-            visualDensity: VisualDensity.compact,
-            padding: const EdgeInsets.all(6),
-            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-            icon: const Icon(Icons.info_outline),
-            tooltip: 'About Scrivener',
-            onPressed: () => AboutScrivenerDialog.show(context),
-          ),
+          if (isNarrow)
+            PopupMenuButton<String>(
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              icon: const Icon(Icons.more_vert),
+              tooltip: 'More actions',
+              onSelected: (value) {
+                switch (value) {
+                  case 'theme':
+                    ThemeSelectorDialog.show(context);
+                    break;
+                  case 'plugins':
+                    PluginsDialog.show(context);
+                    break;
+                  case 'about':
+                    AboutScrivenerDialog.show(context);
+                    break;
+                }
+              },
+              itemBuilder: (ctx) => [
+                const PopupMenuItem(
+                  value: 'theme',
+                  child: Row(
+                    children: [
+                      Icon(Icons.palette_outlined, size: 20),
+                      SizedBox(width: 12),
+                      Expanded(child: Text('App Theme')),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'plugins',
+                  child: Row(
+                    children: [
+                      Icon(Icons.extension_outlined, size: 20),
+                      SizedBox(width: 12),
+                      Expanded(child: Text('Plugins & Compendiums')),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'about',
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, size: 20),
+                      SizedBox(width: 12),
+                      Expanded(child: Text('About Scrivener')),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          else ...[
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              icon: const Icon(Icons.palette_outlined),
+              tooltip: 'App Theme',
+              onPressed: () => ThemeSelectorDialog.show(context),
+            ),
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              icon: const Icon(Icons.extension_outlined),
+              tooltip: 'Plugins & Compendiums',
+              onPressed: () => PluginsDialog.show(context),
+            ),
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              icon: const Icon(Icons.info_outline),
+              tooltip: 'About Scrivener',
+              onPressed: () => AboutScrivenerDialog.show(context),
+            ),
+          ],
           const SizedBox(width: 8),
         ],
       ),

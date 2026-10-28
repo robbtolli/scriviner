@@ -59,14 +59,17 @@ class _DamageHealDialogState extends State<DamageHealDialog> {
                 autofocus: true,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                cursorColor: theme.colorScheme.primary,
+                style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: theme.colorScheme.onSurface,
                 ),
                 decoration: InputDecoration(
                   hintText: '0',
-                  hintStyle: TextStyle(color: Colors.white.withAlpha(60)),
+                  hintStyle: TextStyle(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),

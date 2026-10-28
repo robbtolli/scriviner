@@ -363,6 +363,7 @@ class _RestDialogState extends State<RestDialog>
   }
 
   Widget _buildBenefitRow(IconData icon, String text) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -372,7 +373,10 @@ class _RestDialogState extends State<RestDialog>
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(fontSize: 12, color: Colors.white),
+              style: TextStyle(
+                fontSize: 12,
+                color: theme.colorScheme.onSurface,
+              ),
             ),
           ),
         ],

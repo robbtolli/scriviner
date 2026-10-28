@@ -97,6 +97,99 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     });
   }
 
+  Future<void> _showEditNameDialog(
+    String currentName,
+    CharacterSheetNotifier notifier,
+    ThemeData themeData,
+  ) async {
+    final controller = TextEditingController(text: currentName);
+    final formKey = GlobalKey<FormState>();
+
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: themeData.colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: themeData.colorScheme.primary, width: 1.5),
+          ),
+          title: Text(
+            'Edit Character Name',
+            style: TextStyle(
+              color: themeData.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: controller,
+              autofocus: true,
+              textCapitalization: TextCapitalization.words,
+              style: TextStyle(
+                color: themeData.colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+              cursorColor: themeData.colorScheme.primary,
+              decoration: InputDecoration(
+                labelText: 'Character Name',
+                labelStyle: TextStyle(color: themeData.colorScheme.primary),
+                hintText: 'Enter character name',
+                hintStyle: TextStyle(
+                  color: themeData.colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: themeData.colorScheme.primary),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: themeData.colorScheme.primary,
+                    width: 2,
+                  ),
+                ),
+              ),
+              validator: (val) {
+                if (val == null || val.trim().isEmpty) {
+                  return 'Name cannot be empty';
+                }
+                return null;
+              },
+              onFieldSubmitted: (val) {
+                if (formKey.currentState?.validate() ?? false) {
+                  _saveName(val, notifier);
+                  Navigator.of(ctx).pop();
+                }
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: themeData.colorScheme.primary,
+                foregroundColor: themeData.colorScheme.onPrimary,
+              ),
+              onPressed: () {
+                if (formKey.currentState?.validate() ?? false) {
+                  _saveName(controller.text, notifier);
+                  Navigator.of(ctx).pop();
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showRestDialog(
     CombatSessionState combatState,
     CombatSessionNotifier combatNotifier,
@@ -255,10 +348,21 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
       );
     }
 
+    final isNarrow = MediaQuery.sizeOf(context).width < 600;
+
+    void handleEditName() {
+      if (isNarrow) {
+        _showEditNameDialog(sheetState.name, sheetNotifier, themeData);
+      } else {
+        _startEditingName(sheetState.name);
+      }
+    }
+
     return Theme(
       data: themeData,
       child: Scaffold(
         appBar: AppBar(
+          titleSpacing: isNarrow ? 12 : 16,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -268,14 +372,17 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Flexible(
-                      child: Text(
-                        sheetState.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: themeData.colorScheme.primary,
+                      child: GestureDetector(
+                        onTap: handleEditName,
+                        child: Text(
+                          sheetState.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: themeData.colorScheme.primary,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -288,7 +395,7 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
                         minWidth: 28,
                         minHeight: 28,
                       ),
-                      onPressed: () => _startEditingName(sheetState.name),
+                      onPressed: handleEditName,
                     ),
                   ],
                 )
@@ -372,96 +479,226 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
             ],
           ),
           actions: [
-            IconButton(
-              visualDensity: VisualDensity.compact,
-              padding: const EdgeInsets.all(6),
-              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-              icon: Icon(icons.themeSelector),
-              tooltip: 'Character Theme (${effectiveThemeMode.displayName})',
-              color: themeData.colorScheme.primary,
-              onPressed: () {
-                ThemeSelectorDialog.show(
-                  context,
-                  title: 'THEME: ${sheetState.name.toUpperCase()}',
-                  currentSelectedMode: sheetState.customTheme,
-                  isCharacterLevel: true,
-                  onThemeSelected: (mode) {
-                    sheetNotifier.setTheme(mode);
-                  },
-                );
-              },
-            ),
-            IconButton(
-              visualDensity: VisualDensity.compact,
-              padding: const EdgeInsets.all(6),
-              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-              icon: const Icon(Icons.print_outlined),
-              tooltip: 'Print / Export PDF Sheet',
-              color: themeData.colorScheme.primary,
-              onPressed: () async {
-                final db = ref.read(databaseProvider);
-                final char = await db.getCharacter(widget.characterId);
-                final inventory = await db.getInventoryForCharacter(
-                  widget.characterId,
-                );
-                final conditions = await db.getConditionsForCharacter(
-                  widget.characterId,
-                );
-                if (char != null && context.mounted) {
-                  PdfPreviewScreen.show(
-                    context,
-                    character: char,
-                    inventory: inventory,
-                    conditions: conditions,
-                  );
-                }
-              },
-            ),
-            IconButton(
-              visualDensity: VisualDensity.compact,
-              padding: const EdgeInsets.all(6),
-              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-              icon: const Icon(Icons.file_download_outlined),
-              tooltip: 'Export Character (JSON)',
-              color: themeData.colorScheme.primary,
-              onPressed: () {
-                ExportCharacterDialog.show(
-                  context,
-                  characterId: widget.characterId,
-                  characterName: sheetState.name,
-                );
-              },
-            ),
-            IconButton(
-              visualDensity: VisualDensity.compact,
-              padding: const EdgeInsets.all(6),
-              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-              icon: Icon(icons.diceAction),
-              tooltip: 'Dice Roller (Quick Roll)',
-              color: themeData.colorScheme.primary,
-              onPressed: () {
-                ref.read(diceDrawerProvider.notifier).setQuickRoll();
-                FloatingDiceFab.openDiceRoller(context);
-              },
-            ),
-            if (combatState != null)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: ElevatedButton.icon(
+            if (isNarrow) ...[
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.all(6),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                icon: Icon(icons.diceAction),
+                tooltip: 'Dice Roller (Quick Roll)',
+                color: themeData.colorScheme.primary,
+                onPressed: () {
+                  ref.read(diceDrawerProvider.notifier).setQuickRoll();
+                  FloatingDiceFab.openDiceRoller(context);
+                },
+              ),
+              if (combatState != null)
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  padding: const EdgeInsets.all(6),
+                  constraints: const BoxConstraints(
+                    minWidth: 36,
+                    minHeight: 36,
+                  ),
+                  icon: Icon(icons.restAction),
+                  tooltip: 'Rest (Short or Long Rest)',
+                  color: themeData.colorScheme.primary,
                   onPressed: () => _showRestDialog(combatState, combatNotifier),
-                  icon: Icon(icons.restAction, size: 16),
-                  label: const Text('REST'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: themeData.colorScheme.surface,
-                    foregroundColor: themeData.colorScheme.primary,
-                    side: BorderSide(
-                      color: themeData.colorScheme.primary,
-                      width: 1,
+                ),
+              PopupMenuButton<String>(
+                padding: const EdgeInsets.all(6),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                icon: Icon(
+                  Icons.more_vert,
+                  color: themeData.colorScheme.primary,
+                ),
+                tooltip: 'More options',
+                onSelected: (value) async {
+                  switch (value) {
+                    case 'theme':
+                      ThemeSelectorDialog.show(
+                        context,
+                        title: 'THEME: ${sheetState.name.toUpperCase()}',
+                        currentSelectedMode: sheetState.customTheme,
+                        isCharacterLevel: true,
+                        onThemeSelected: (mode) {
+                          sheetNotifier.setTheme(mode);
+                        },
+                      );
+                      break;
+                    case 'pdf':
+                      final db = ref.read(databaseProvider);
+                      final char = await db.getCharacter(widget.characterId);
+                      final inventory = await db.getInventoryForCharacter(
+                        widget.characterId,
+                      );
+                      final conditions = await db.getConditionsForCharacter(
+                        widget.characterId,
+                      );
+                      if (char != null && context.mounted) {
+                        PdfPreviewScreen.show(
+                          context,
+                          character: char,
+                          inventory: inventory,
+                          conditions: conditions,
+                        );
+                      }
+                      break;
+                    case 'export':
+                      ExportCharacterDialog.show(
+                        context,
+                        characterId: widget.characterId,
+                        characterName: sheetState.name,
+                      );
+                      break;
+                  }
+                },
+                itemBuilder: (ctx) => [
+                  PopupMenuItem(
+                    value: 'theme',
+                    child: Row(
+                      children: [
+                        Icon(
+                          icons.themeSelector,
+                          size: 20,
+                          color: themeData.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Character Theme (${effectiveThemeMode.displayName})',
+                          ),
+                        ),
+                      ],
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                  ),
+                  PopupMenuItem(
+                    value: 'pdf',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.print_outlined,
+                          size: 20,
+                          color: themeData.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(child: Text('Print / Export PDF Sheet')),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'export',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.file_download_outlined,
+                          size: 20,
+                          color: themeData.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(child: Text('Export Character (JSON)')),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ] else ...[
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.all(6),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                icon: Icon(icons.themeSelector),
+                tooltip: 'Character Theme (${effectiveThemeMode.displayName})',
+                color: themeData.colorScheme.primary,
+                onPressed: () {
+                  ThemeSelectorDialog.show(
+                    context,
+                    title: 'THEME: ${sheetState.name.toUpperCase()}',
+                    currentSelectedMode: sheetState.customTheme,
+                    isCharacterLevel: true,
+                    onThemeSelected: (mode) {
+                      sheetNotifier.setTheme(mode);
+                    },
+                  );
+                },
+              ),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.all(6),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                icon: const Icon(Icons.print_outlined),
+                tooltip: 'Print / Export PDF Sheet',
+                color: themeData.colorScheme.primary,
+                onPressed: () async {
+                  final db = ref.read(databaseProvider);
+                  final char = await db.getCharacter(widget.characterId);
+                  final inventory = await db.getInventoryForCharacter(
+                    widget.characterId,
+                  );
+                  final conditions = await db.getConditionsForCharacter(
+                    widget.characterId,
+                  );
+                  if (char != null && context.mounted) {
+                    PdfPreviewScreen.show(
+                      context,
+                      character: char,
+                      inventory: inventory,
+                      conditions: conditions,
+                    );
+                  }
+                },
+              ),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.all(6),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                icon: const Icon(Icons.file_download_outlined),
+                tooltip: 'Export Character (JSON)',
+                color: themeData.colorScheme.primary,
+                onPressed: () {
+                  ExportCharacterDialog.show(
+                    context,
+                    characterId: widget.characterId,
+                    characterName: sheetState.name,
+                  );
+                },
+              ),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.all(6),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                icon: Icon(icons.diceAction),
+                tooltip: 'Dice Roller (Quick Roll)',
+                color: themeData.colorScheme.primary,
+                onPressed: () {
+                  ref.read(diceDrawerProvider.notifier).setQuickRoll();
+                  FloatingDiceFab.openDiceRoller(context);
+                },
+              ),
+              if (combatState != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 8,
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: () =>
+                        _showRestDialog(combatState, combatNotifier),
+                    icon: Icon(icons.restAction, size: 16),
+                    label: const Text('REST'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: themeData.colorScheme.surface,
+                      foregroundColor: themeData.colorScheme.primary,
+                      side: BorderSide(
+                        color: themeData.colorScheme.primary,
+                        width: 1,
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                    ),
                   ),
                 ),
-              ),
+            ],
+            const SizedBox(width: 8),
           ],
           bottom: bottomNav,
         ),

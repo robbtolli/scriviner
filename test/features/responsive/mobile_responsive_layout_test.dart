@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scrivener/core/database/app_database.dart';
 import 'package:scrivener/core/database/database_provider.dart';
+import 'package:scrivener/features/character_sheet/presentation/character_sheet_screen.dart';
 import 'package:scrivener/features/character_sheet/presentation/widgets/level_up_wizard_dialog.dart';
 import 'package:scrivener/features/character_sheet/providers/character_sheet_provider.dart';
 import 'package:scrivener/features/character_wizard/presentation/character_wizard_screen.dart';
@@ -35,12 +37,21 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Verify SCRIVENER title and action icons exist
+        // Verify SCRIVENER title, search, and more_vert overflow exist on narrow screens
         expect(find.text('SCRIVENER'), findsOneWidget);
-        expect(find.byIcon(Icons.palette_outlined), findsOneWidget);
-        expect(find.byIcon(Icons.extension_outlined), findsOneWidget);
-        expect(find.byIcon(Icons.info_outline), findsOneWidget);
         expect(find.byIcon(Icons.search), findsOneWidget);
+        expect(find.byIcon(Icons.more_vert), findsOneWidget);
+
+        // Tap overflow menu to verify secondary items are accessible
+        await tester.tap(find.byIcon(Icons.more_vert));
+        await tester.pumpAndSettle();
+        expect(find.text('App Theme'), findsOneWidget);
+        expect(find.text('Plugins & Compendiums'), findsOneWidget);
+        expect(find.text('About Scrivener'), findsOneWidget);
+
+        // Dismiss popup menu
+        Navigator.of(tester.element(find.text('App Theme'))).pop();
+        await tester.pumpAndSettle();
 
         // Verify "+ New Hero" / "NEW HERO" is absent from AppBar
         expect(find.widgetWithText(ElevatedButton, 'NEW HERO'), findsNothing);
@@ -59,6 +70,121 @@ void main() {
         await tester.pumpAndSettle();
 
         // Cleanly unmount and drain StreamQueryStore timers
+        await tester.pumpWidget(const SizedBox());
+        await tester.pump(const Duration(milliseconds: 50));
+      },
+    );
+
+    testWidgets(
+      'HomeScreen title bar shows all 5 action icons directly on desktop screen (1200px)',
+      (tester) async {
+        tester.view.physicalSize = const Size(1200, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final db = AppDatabase(NativeDatabase.memory());
+        addTearDown(() => db.close());
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [databaseProvider.overrideWithValue(db)],
+            child: const MaterialApp(home: HomeScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('SCRIVENER'), findsOneWidget);
+        expect(find.byIcon(Icons.palette_outlined), findsOneWidget);
+        expect(find.byIcon(Icons.extension_outlined), findsOneWidget);
+        expect(find.byIcon(Icons.info_outline), findsOneWidget);
+        expect(find.byIcon(Icons.search), findsOneWidget);
+        expect(find.byIcon(Icons.more_vert), findsNothing);
+
+        await tester.pumpWidget(const SizedBox());
+        await tester.pump(const Duration(milliseconds: 50));
+      },
+    );
+
+    testWidgets(
+      'CharacterSheetScreen title bar displays character name and uses overflow menu on 360px phone',
+      (tester) async {
+        tester.view.physicalSize = const Size(360, 640);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+
+        final db = AppDatabase(NativeDatabase.memory());
+        addTearDown(() => db.close());
+
+        final now = DateTime.now();
+        await db.upsertCharacter(
+          CharactersTableCompanion.insert(
+            id: 'char_mobile',
+            name: 'Thorin Ironforge',
+            systemId: const Value('dnd5e'),
+            createdAt: now,
+            lastPlayedAt: now,
+            rawPropertiesJson: jsonEncode({
+              'class': 'Fighter',
+              'race': 'Mountain Dwarf',
+              'level': 3,
+              'hp': {'current': 28, 'max': 28, 'temp': 0},
+              'abilities': {
+                'str': {'score': 16, 'mod': 3},
+              },
+            }),
+          ),
+        );
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [databaseProvider.overrideWithValue(db)],
+            child: const MaterialApp(
+              home: CharacterSheetScreen(characterId: 'char_mobile'),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Character Name is displayed and edit name button is present
+        expect(find.text('Thorin Ironforge'), findsOneWidget);
+        expect(find.byTooltip('Edit character name'), findsOneWidget);
+
+        // On mobile, more_vert overflow menu is present instead of 5 individual icons
+        expect(find.byIcon(Icons.more_vert), findsOneWidget);
+
+        // Open overflow menu
+        await tester.tap(find.byIcon(Icons.more_vert));
+        await tester.pumpAndSettle();
+
+        expect(find.textContaining('Character Theme'), findsOneWidget);
+        expect(find.text('Print / Export PDF Sheet'), findsOneWidget);
+        expect(find.text('Export Character (JSON)'), findsOneWidget);
+
+        // Dismiss popup menu
+        Navigator.of(
+          tester.element(find.text('Print / Export PDF Sheet')),
+        ).pop();
+        await tester.pumpAndSettle();
+
+        // Tapping pencil icon opens edit name modal on small screens
+        await tester.tap(find.byTooltip('Edit character name'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Edit Character Name'), findsOneWidget);
+        expect(find.byType(TextField), findsOneWidget);
+        expect(find.text('Cancel'), findsOneWidget);
+        expect(find.text('Save'), findsOneWidget);
+
+        // Enter new name and save
+        await tester.enterText(find.byType(TextField), 'Thorin Oakenshield');
+        await tester.tap(find.text('Save'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Thorin Oakenshield'), findsOneWidget);
+        expect(find.text('Edit Character Name'), findsNothing);
+
         await tester.pumpWidget(const SizedBox());
         await tester.pump(const Duration(milliseconds: 50));
       },

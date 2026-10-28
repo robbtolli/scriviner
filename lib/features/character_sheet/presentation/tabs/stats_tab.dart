@@ -477,13 +477,16 @@ class StatsTab extends ConsumerWidget {
               color: theme.colorScheme.primary,
             ),
             const SizedBox(width: 8),
-            Text(
-              'ABILITY SCORES & SAVING THROWS',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.1,
-                color: theme.colorScheme.primary,
+            Expanded(
+              child: Text(
+                'ABILITY SCORES & SAVING THROWS',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.1,
+                  color: theme.colorScheme.primary,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
