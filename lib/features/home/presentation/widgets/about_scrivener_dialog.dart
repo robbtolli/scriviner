@@ -22,7 +22,11 @@ class AboutScrivenerDialog extends StatelessWidget {
     return AlertDialog(
       title: Row(
         children: [
-          Icon(Icons.auto_stories, color: theme.colorScheme.primary),
+          Image.asset(
+            'assets/icons/app_icon_transparent.png',
+            width: 32,
+            height: 32,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Wrap(

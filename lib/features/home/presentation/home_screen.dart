@@ -308,19 +308,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             : Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.auto_stories, color: theme.colorScheme.primary),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      'SCRIVENER',
-                      style: TextStyle(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  Image.asset(
+                    'assets/icons/app_icon_transparent.png',
+                    width: 28,
+                    height: 28,
                   ),
+                  if (!isNarrow) ...[
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'SCRIVENER',
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ],
               ),
         actions: [

@@ -47,6 +47,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('SCRIVENER'), findsOneWidget);
+        expect(find.byType(Image), findsOneWidget);
         expect(find.text('v1.0.0'), findsOneWidget);
         expect(find.text('Robert Tolliver (tollitech.com)'), findsOneWidget);
         expect(find.text('What is a Scrivener?'), findsOneWidget);

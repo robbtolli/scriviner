@@ -37,8 +37,10 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Verify SCRIVENER title, search, and more_vert overflow exist on narrow screens
-        expect(find.text('SCRIVENER'), findsOneWidget);
+        // Verify app icon image, search, and more_vert overflow exist on narrow screens,
+        // and that SCRIVENER title text is hidden on narrow screens (phones)
+        expect(find.text('SCRIVENER'), findsNothing);
+        expect(find.byType(Image), findsWidgets);
         expect(find.byIcon(Icons.search), findsOneWidget);
         expect(find.byIcon(Icons.more_vert), findsOneWidget);
 
