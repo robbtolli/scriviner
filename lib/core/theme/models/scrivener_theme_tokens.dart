@@ -154,6 +154,22 @@ class ScrivenerIconography {
     checkAction: Icons.local_fire_department_outlined,
     saveAction: Icons.security_update_warning_outlined,
   );
+
+  /// Medieval scribe illuminated tome and quill iconography for Scrivener theme.
+  static const ScrivenerIconography scrivener = ScrivenerIconography(
+    tabStats: Icons.analytics_outlined,
+    tabSkills: Icons.history_edu,
+    tabCombat: Icons.shield_outlined,
+    tabSpells: Icons.auto_awesome,
+    tabFeatures: Icons.military_tech_outlined,
+    tabGear: Icons.backpack_outlined,
+    tabBio: Icons.draw_outlined,
+    diceAction: Icons.casino_outlined,
+    restAction: Icons.hotel_outlined,
+    themeSelector: Icons.palette_outlined,
+    checkAction: Icons.casino_outlined,
+    saveAction: Icons.security,
+  );
 }
 
 /// Rich multi-dimensional visual and layout tokens attached to [ThemeData.extensions].
@@ -207,6 +223,26 @@ class ScrivenerThemeTokens extends ThemeExtension<ScrivenerThemeTokens> {
 
   /// Default tokens for Ancient Tome.
   static const ScrivenerThemeTokens ancientTomeTokens = defaultTokens;
+
+  /// Default tokens for Scrivener (Illuminated Tome & Quill).
+  static const ScrivenerThemeTokens scrivenerTokens = ScrivenerThemeTokens(
+    cardGradient: LinearGradient(
+      colors: [Color(0xFF332240), Color(0xFF1E1428)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    cardBorder: BorderSide(color: Color(0xFFA855F7), width: 1.5),
+    cardRadius: 12.0,
+    cardPadding: EdgeInsets.all(16),
+    cardElevation: 2.5,
+    navigationStyle: CharacterNavigationStyle.horizontalTabs,
+    tabContentStyle: CharacterTabContentStyle.iconsAndText,
+    iconography: ScrivenerIconography.scrivener,
+    fontFamily: 'MedievalSharp',
+    accentColor: Color(0xFFF3C954),
+    badgeColor: Color(0xFFF3C954),
+    badgeTextColor: Colors.black,
+  );
 
   @override
   ScrivenerThemeTokens copyWith({

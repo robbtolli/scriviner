@@ -11,6 +11,7 @@ enum AppThemeMode {
   dungeonOled,
   emeraldEnclave,
   infernalBrimstone,
+  scrivener,
 }
 
 extension AppThemeModeX on AppThemeMode {
@@ -28,6 +29,8 @@ extension AppThemeModeX on AppThemeMode {
         return 'Emerald Enclave';
       case AppThemeMode.infernalBrimstone:
         return 'Infernal Brimstone';
+      case AppThemeMode.scrivener:
+        return 'Scrivener';
     }
   }
 
@@ -45,6 +48,8 @@ extension AppThemeModeX on AppThemeMode {
         return 'Deep moss green, rich bark brown, and vibrant radiant jade';
       case AppThemeMode.infernalBrimstone:
         return 'Obsidian ash, smoky charcoal, and molten hellfire orange';
+      case AppThemeMode.scrivener:
+        return 'Illuminated tome leather, mystical violet glow, and burnished gold accents';
     }
   }
 
@@ -62,6 +67,8 @@ extension AppThemeModeX on AppThemeMode {
         return Icons.forest_outlined;
       case AppThemeMode.infernalBrimstone:
         return Icons.local_fire_department;
+      case AppThemeMode.scrivener:
+        return Icons.history_edu;
     }
   }
 }
@@ -95,6 +102,8 @@ class AppTheme {
         return emeraldEnclaveTheme;
       case AppThemeMode.infernalBrimstone:
         return infernalBrimstoneTheme;
+      case AppThemeMode.scrivener:
+        return scrivenerTheme;
     }
   }
 
@@ -710,6 +719,94 @@ class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(6),
           borderSide: const BorderSide(color: hellfireOrange, width: 1.5),
+        ),
+      ),
+    );
+  }
+
+  /// Preset 7: Scrivener (Illuminated Tome Leather & Mystical Violet Glow)
+  static ThemeData get scrivenerTheme {
+    const tomeVoidBg = Color(0xFF130E1A);
+    const tomeSurface = Color(0xFF1D1627);
+    const tomeCard = Color(0xFF281E35);
+    const illuminatedGold = Color(0xFFF3C954);
+    const arcaneVioletGlow = Color(0xFFA855F7);
+    const tomeBorder = Color(0xFF5D3B78);
+    const parchmentText = Color(0xFFF4EEDF);
+
+    final colorScheme = ColorScheme.dark(
+      primary: illuminatedGold,
+      onPrimary: Colors.black,
+      secondary: arcaneVioletGlow,
+      onSecondary: Colors.white,
+      surface: tomeSurface,
+      onSurface: parchmentText,
+      error: const Color(0xFFCF6679),
+    );
+
+    const tokens = ScrivenerThemeTokens.scrivenerTokens;
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: tomeVoidBg,
+      textTheme: GoogleFonts.medievalSharpTextTheme(
+        ThemeData.dark().textTheme,
+      ).apply(
+        fontFamilyFallback: const ['serif'],
+        bodyColor: parchmentText,
+        displayColor: illuminatedGold,
+      ),
+      extensions: const [tokens],
+      cardTheme: CardThemeData(
+        color: tomeCard,
+        elevation: 2.5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: tomeBorder, width: 1.2),
+        ),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: tomeVoidBg,
+        foregroundColor: illuminatedGold,
+        elevation: 0,
+        centerTitle: false,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: illuminatedGold,
+          foregroundColor: Colors.black,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          textStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: illuminatedGold,
+          side: const BorderSide(color: illuminatedGold, width: 1.5),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: const Color(0xFF221A30),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: tomeBorder),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: tomeBorder),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: illuminatedGold, width: 1.5),
         ),
       ),
     );

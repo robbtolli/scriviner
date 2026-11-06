@@ -15,7 +15,7 @@ Scrivener is a high-performance, cross-platform tabletop roleplaying game (TTRPG
 - **TTRPG System Modularity**: Out-of-the-box D&D 5e / 2024 implementation with extensible contracts for Pathfinder 2e and homebrew systems.
 - **Character Management**: 4-step guided creation wizard, direct freeform creation ("Smart Paper"), in-sheet leveling wizard, and 7-tab character sheet.
 - **Interactive Dice Roller**: Full mathematical dice parser with drop-lowest/keep-highest, critical hit detection, roll history, and neutral title-bar quick-roller.
-- **Rich Theme Engine**: 6 built-in themes (Ancient Tome, Scholar's Desk, Midnight Arcana, Dungeon OLED, Emerald Enclave, Infernal Brimstone) with per-character theme overrides and responsive tab styles.
+- **Rich Theme Engine**: 7 built-in themes (Ancient Tome, Scholar's Desk, Midnight Arcana, Dungeon OLED, Emerald Enclave, Infernal Brimstone, Scrivener) with per-character theme overrides and responsive tab styles.
 - **Offline First**: Local Drift SQLite persistence with JSON backup/restore and 2-page printable character sheet PDF export.
 
 ---
@@ -41,7 +41,7 @@ lib/
 │   │   ├── property.dart      # Dynamic property models
 │   │   └── property_pipeline.dart # Pipeline applying priority-ordered modifiers
 │   └── theme/                 # Theme system & typography
-│       ├── app_theme.dart     # ThemeData generation for 6 AppThemeMode options
+│       ├── app_theme.dart     # ThemeData generation for 7 AppThemeMode options
 │       ├── theme_provider.dart# Active theme Riverpod state notifier
 │       └── models/            # ScrivenerThemeTokens, typography, iconography
 ├── systems/                   # Modular TTRPG rulesets

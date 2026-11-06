@@ -73,6 +73,16 @@ void main() {
         CharacterNavigationStyle.headerDropdown,
       );
       expect(brimstone.tabContentStyle, CharacterTabContentStyle.iconsOnly);
+
+      // 7. Scrivener: standard horizontal tabs, icons + text
+      final scrivener = AppTheme.getThemeData(
+        AppThemeMode.scrivener,
+      ).extension<ScrivenerThemeTokens>()!;
+      expect(
+        scrivener.navigationStyle,
+        CharacterNavigationStyle.horizontalTabs,
+      );
+      expect(scrivener.tabContentStyle, CharacterTabContentStyle.iconsAndText);
     });
 
     test('ScrivenerThemeTokens copyWith and lerp', () {

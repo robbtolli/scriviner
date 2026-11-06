@@ -35,10 +35,13 @@ void main() {
           .read(themeProvider.notifier)
           .setTheme(AppThemeMode.infernalBrimstone);
       expect(container.read(themeProvider), AppThemeMode.infernalBrimstone);
+
+      container.read(themeProvider.notifier).setTheme(AppThemeMode.scrivener);
+      expect(container.read(themeProvider), AppThemeMode.scrivener);
     });
 
     test('All AppThemeMode values produce valid ThemeData', () {
-      expect(AppThemeMode.values.length, 6);
+      expect(AppThemeMode.values.length, 7);
       for (final mode in AppThemeMode.values) {
         final theme = AppTheme.getThemeData(mode);
         expect(theme, isNotNull);
@@ -63,6 +66,10 @@ void main() {
 
       final brimstone = AppTheme.infernalBrimstoneTheme;
       expect(brimstone.colorScheme.primary, const Color(0xFFFF4500));
+
+      final scrivener = AppTheme.scrivenerTheme;
+      expect(scrivener.colorScheme.primary, const Color(0xFFF3C954));
+      expect(scrivener.colorScheme.secondary, const Color(0xFFA855F7));
     });
 
     testWidgets('ThemeSelectorDialog displays all themes and selects one', (
@@ -93,6 +100,7 @@ void main() {
       expect(find.text('High-Contrast Dungeon'), findsOneWidget);
       expect(find.text('Emerald Enclave'), findsOneWidget);
       expect(find.text('Infernal Brimstone'), findsOneWidget);
+      expect(find.text('Scrivener'), findsOneWidget);
 
       // Tap High-Contrast Dungeon
       await tester.tap(find.text('High-Contrast Dungeon'));
