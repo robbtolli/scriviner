@@ -29,7 +29,12 @@ class CombatDashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final effectiveTheme = ref.watch(characterThemeModeProvider(characterId));
-    final themeData = AppTheme.getThemeData(effectiveTheme);
+    final brightnessMode = ref.watch(themeBrightnessProvider);
+    final themeData = AppTheme.getThemeData(
+      effectiveTheme,
+      brightnessMode: brightnessMode,
+      systemBrightness: MediaQuery.platformBrightnessOf(context),
+    );
     final state = ref.watch(combatSessionProvider(characterId));
     final notifier = ref.read(combatSessionProvider(characterId).notifier);
 

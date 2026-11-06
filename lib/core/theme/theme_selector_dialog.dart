@@ -41,10 +41,16 @@ class ThemeSelectorDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final globalAppTheme = ref.watch(themeProvider);
+    final brightnessMode = ref.watch(themeBrightnessProvider);
+    final systemBrightness = MediaQuery.platformBrightnessOf(context);
     final themeData = Theme.of(context);
     final activeSelection = isCharacterLevel
         ? currentSelectedMode
         : globalAppTheme;
+
+    final visibleModes = AppThemeMode.values
+        .where((mode) => mode.isVisibleFor(brightnessMode))
+        .toList();
 
     return AlertDialog(
       title: Row(
@@ -61,6 +67,14 @@ class ThemeSelectorDialog extends ConsumerWidget {
               ),
               overflow: TextOverflow.ellipsis,
             ),
+          ),
+          IconButton(
+            icon: Icon(brightnessMode.icon),
+            tooltip: brightnessMode.tooltip,
+            visualDensity: VisualDensity.compact,
+            onPressed: () {
+              ref.read(themeBrightnessProvider.notifier).cycleNext();
+            },
           ),
         ],
       ),
@@ -141,9 +155,13 @@ class ThemeSelectorDialog extends ConsumerWidget {
                   child: Divider(),
                 ),
               ],
-              ...AppThemeMode.values.map((mode) {
+              ...visibleModes.map((mode) {
                 final isSelected = activeSelection == mode;
-                final previewTheme = AppTheme.getThemeData(mode);
+                final previewTheme = AppTheme.getThemeData(
+                  mode,
+                  brightnessMode: brightnessMode,
+                  systemBrightness: systemBrightness,
+                );
 
                 return InkWell(
                   onTap: () {

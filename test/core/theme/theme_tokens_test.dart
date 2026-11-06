@@ -83,6 +83,33 @@ void main() {
         CharacterNavigationStyle.horizontalTabs,
       );
       expect(scrivener.tabContentStyle, CharacterTabContentStyle.iconsAndText);
+
+      // Light variants
+      final scrivenerLight = AppTheme.getThemeData(
+        AppThemeMode.scrivener,
+        brightnessMode: ThemeBrightnessMode.light,
+      ).extension<ScrivenerThemeTokens>()!;
+      expect(
+        scrivenerLight.navigationStyle,
+        CharacterNavigationStyle.horizontalTabs,
+      );
+      expect(
+        scrivenerLight.tabContentStyle,
+        CharacterTabContentStyle.iconsAndText,
+      );
+
+      final enclaveLight = AppTheme.getThemeData(
+        AppThemeMode.emeraldEnclave,
+        brightnessMode: ThemeBrightnessMode.light,
+      ).extension<ScrivenerThemeTokens>()!;
+      expect(
+        enclaveLight.navigationStyle,
+        CharacterNavigationStyle.horizontalTabs,
+      );
+      expect(
+        enclaveLight.tabContentStyle,
+        CharacterTabContentStyle.iconsAndText,
+      );
     });
 
     test('ScrivenerThemeTokens copyWith and lerp', () {
@@ -106,7 +133,10 @@ void main() {
       (tester) async {
         late BuildContext capturedContext;
 
-        final theme = AppTheme.getThemeData(AppThemeMode.emeraldEnclave);
+        final theme = AppTheme.getThemeData(
+          AppThemeMode.emeraldEnclave,
+          brightnessMode: ThemeBrightnessMode.dark,
+        );
 
         await tester.pumpWidget(
           Theme(

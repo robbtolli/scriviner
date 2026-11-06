@@ -5,13 +5,51 @@ import 'models/scrivener_theme_tokens.dart';
 
 /// Supported visual theme presets for Scrivener.
 enum AppThemeMode {
+  scrivener,
   ancientTome,
   scholarsDesk,
   midnightArcana,
   dungeonOled,
   emeraldEnclave,
   infernalBrimstone,
-  scrivener,
+}
+
+/// The supported brightness variants for a theme.
+enum ThemeBrightnessVariant {
+  light,
+  dark,
+  both,
+}
+
+/// The active user brightness filter or preference.
+enum ThemeBrightnessMode {
+  dark,
+  light,
+  system,
+}
+
+extension ThemeBrightnessModeX on ThemeBrightnessMode {
+  IconData get icon {
+    switch (this) {
+      case ThemeBrightnessMode.dark:
+        return Icons.dark_mode;
+      case ThemeBrightnessMode.light:
+        return Icons.light_mode;
+      case ThemeBrightnessMode.system:
+        return Icons.brightness_medium;
+    }
+  }
+
+  String get tooltip {
+    switch (this) {
+      case ThemeBrightnessMode.dark:
+        return 'Dark themes only (tap to toggle)';
+      case ThemeBrightnessMode.light:
+        return 'Light themes only (tap to toggle)';
+      case ThemeBrightnessMode.system:
+        return 'All themes / System auto (tap to toggle)';
+    }
+  }
 }
 
 extension AppThemeModeX on AppThemeMode {
@@ -71,6 +109,38 @@ extension AppThemeModeX on AppThemeMode {
         return Icons.history_edu;
     }
   }
+
+  ThemeBrightnessVariant get supportedBrightness {
+    switch (this) {
+      case AppThemeMode.scholarsDesk:
+        return ThemeBrightnessVariant.light;
+      case AppThemeMode.ancientTome:
+      case AppThemeMode.midnightArcana:
+      case AppThemeMode.dungeonOled:
+      case AppThemeMode.infernalBrimstone:
+        return ThemeBrightnessVariant.dark;
+      case AppThemeMode.scrivener:
+      case AppThemeMode.emeraldEnclave:
+        return ThemeBrightnessVariant.both;
+    }
+  }
+
+  bool get isLight => supportedBrightness == ThemeBrightnessVariant.light;
+  bool get isDark => supportedBrightness == ThemeBrightnessVariant.dark;
+  bool get hasBothVariants => supportedBrightness == ThemeBrightnessVariant.both;
+
+  bool isVisibleFor(ThemeBrightnessMode mode) {
+    switch (mode) {
+      case ThemeBrightnessMode.system:
+        return true;
+      case ThemeBrightnessMode.light:
+        return supportedBrightness == ThemeBrightnessVariant.light ||
+            supportedBrightness == ThemeBrightnessVariant.both;
+      case ThemeBrightnessMode.dark:
+        return supportedBrightness == ThemeBrightnessVariant.dark ||
+            supportedBrightness == ThemeBrightnessVariant.both;
+    }
+  }
 }
 
 /// App-wide theme configurations with rich tabletop fantasy aesthetic and clean typography.
@@ -88,7 +158,17 @@ class AppTheme {
   static const Color accentEmerald = Color(0xFF2D8A4E);
 
   /// Resolves the corresponding [ThemeData] for a given [AppThemeMode].
-  static ThemeData getThemeData(AppThemeMode mode) {
+  static ThemeData getThemeData(
+    AppThemeMode mode, {
+    ThemeBrightnessMode brightnessMode = ThemeBrightnessMode.system,
+    Brightness? systemBrightness,
+  }) {
+    final effectiveBrightness = resolveEffectiveBrightness(
+      mode: mode,
+      brightnessMode: brightnessMode,
+      systemBrightness: systemBrightness,
+    );
+
     switch (mode) {
       case AppThemeMode.ancientTome:
         return ancientTomeTheme;
@@ -99,11 +179,40 @@ class AppTheme {
       case AppThemeMode.dungeonOled:
         return dungeonOledTheme;
       case AppThemeMode.emeraldEnclave:
-        return emeraldEnclaveTheme;
+        return effectiveBrightness == Brightness.light
+            ? emeraldEnclaveLightTheme
+            : emeraldEnclaveTheme;
       case AppThemeMode.infernalBrimstone:
         return infernalBrimstoneTheme;
       case AppThemeMode.scrivener:
-        return scrivenerTheme;
+        return effectiveBrightness == Brightness.light
+            ? scrivenerLightTheme
+            : scrivenerTheme;
+    }
+  }
+
+  /// Resolves the effective brightness ([Brightness.light] or [Brightness.dark])
+  /// for a given theme, brightness mode, and optional system brightness.
+  static Brightness resolveEffectiveBrightness({
+    required AppThemeMode mode,
+    ThemeBrightnessMode brightnessMode = ThemeBrightnessMode.system,
+    Brightness? systemBrightness,
+  }) {
+    if (mode.supportedBrightness == ThemeBrightnessVariant.light) {
+      return Brightness.light;
+    }
+    if (mode.supportedBrightness == ThemeBrightnessVariant.dark) {
+      return Brightness.dark;
+    }
+    // Theme supports both variants
+    switch (brightnessMode) {
+      case ThemeBrightnessMode.light:
+        return Brightness.light;
+      case ThemeBrightnessMode.dark:
+        return Brightness.dark;
+      case ThemeBrightnessMode.system:
+        return systemBrightness ??
+            WidgetsBinding.instance.platformDispatcher.platformBrightness;
     }
   }
 
@@ -807,6 +916,180 @@ class AppTheme {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: illuminatedGold, width: 1.5),
+        ),
+      ),
+    );
+  }
+
+  /// Preset 7 (Light): Scrivener (Warm Golden Vellum Background with Royal Violet Text & Buttons)
+  static ThemeData get scrivenerLightTheme {
+    const paperBg = Color(0xFFFAF6EE);
+    const cardLight = Color(0xFFFFFFFF);
+    const textInk = Color(0xFF1E1428);
+    const royalViolet = Color(0xFF6B21A8);
+    const brightViolet = Color(0xFF9333EA);
+    const borderViolet = Color(0xFFD6C2E8);
+
+    final colorScheme = ColorScheme.light(
+      primary: royalViolet,
+      onPrimary: Colors.white,
+      secondary: brightViolet,
+      onSecondary: Colors.white,
+      surface: cardLight,
+      onSurface: textInk,
+      error: const Color(0xFFB00020),
+    );
+
+    const tokens = ScrivenerThemeTokens.scrivenerLightTokens;
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: paperBg,
+      textTheme: GoogleFonts.medievalSharpTextTheme(
+        ThemeData.light().textTheme,
+      ).apply(
+        fontFamilyFallback: const ['serif'],
+        bodyColor: textInk,
+        displayColor: royalViolet,
+      ),
+      extensions: const [tokens],
+      cardTheme: CardThemeData(
+        color: cardLight,
+        elevation: 1.5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: borderViolet, width: 1.2),
+        ),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: paperBg,
+        foregroundColor: royalViolet,
+        elevation: 0,
+        centerTitle: false,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: royalViolet,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          textStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: royalViolet,
+          side: const BorderSide(color: royalViolet, width: 1.5),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: cardLight,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: borderViolet),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: borderViolet),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: royalViolet, width: 1.5),
+        ),
+      ),
+    );
+  }
+
+  /// Preset 5 (Light): Emerald Enclave (Morning Mist Meadow, Crisp White & Forest Jade)
+  static ThemeData get emeraldEnclaveLightTheme {
+    const meadowBg = Color(0xFFF1F8F4);
+    const cardLight = Color(0xFFFFFFFF);
+    const textForest = Color(0xFF0C1F14);
+    const deepJade = Color(0xFF1B5E20);
+    const radiantPine = Color(0xFF2E7D32);
+    const softMossBorder = Color(0xFFA5D6A7);
+
+    final colorScheme = ColorScheme.light(
+      primary: deepJade,
+      onPrimary: Colors.white,
+      secondary: radiantPine,
+      onSecondary: Colors.white,
+      surface: cardLight,
+      onSurface: textForest,
+      error: const Color(0xFFB00020),
+    );
+
+    const tokens = ScrivenerThemeTokens.emeraldEnclaveLightTokens;
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: meadowBg,
+      textTheme: GoogleFonts.cormorantGaramondTextTheme(
+        ThemeData.light().textTheme,
+      ).apply(
+        fontFamilyFallback: const ['serif'],
+        bodyColor: textForest,
+        displayColor: deepJade,
+      ),
+      extensions: const [tokens],
+      cardTheme: CardThemeData(
+        color: cardLight,
+        elevation: 1.5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: softMossBorder, width: 1.2),
+        ),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: meadowBg,
+        foregroundColor: deepJade,
+        elevation: 0,
+        centerTitle: false,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: deepJade,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          textStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: deepJade,
+          side: const BorderSide(color: deepJade, width: 1.5),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: cardLight,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: softMossBorder),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: softMossBorder),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: deepJade, width: 1.5),
         ),
       ),
     );

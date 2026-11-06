@@ -206,7 +206,12 @@ class _CharacterSheetScreenState extends ConsumerState<CharacterSheetScreen>
     final effectiveThemeMode = ref.watch(
       characterThemeModeProvider(widget.characterId),
     );
-    final themeData = AppTheme.getThemeData(effectiveThemeMode);
+    final brightnessMode = ref.watch(themeBrightnessProvider);
+    final themeData = AppTheme.getThemeData(
+      effectiveThemeMode,
+      brightnessMode: brightnessMode,
+      systemBrightness: MediaQuery.platformBrightnessOf(context),
+    );
     final tokens =
         themeData.extension<ScrivenerThemeTokens>() ??
         ScrivenerThemeTokens.defaultTokens;

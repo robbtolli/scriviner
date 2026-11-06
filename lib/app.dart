@@ -11,11 +11,18 @@ class ScrivenerApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
+    final brightnessMode = ref.watch(themeBrightnessProvider);
+    final systemBrightness = MediaQuery.maybePlatformBrightnessOf(context) ??
+        WidgetsBinding.instance.platformDispatcher.platformBrightness;
 
     return MaterialApp(
       title: 'Scrivener',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.getThemeData(themeMode),
+      theme: AppTheme.getThemeData(
+        themeMode,
+        brightnessMode: brightnessMode,
+        systemBrightness: systemBrightness,
+      ),
       home: const HomeScreen(),
     );
   }

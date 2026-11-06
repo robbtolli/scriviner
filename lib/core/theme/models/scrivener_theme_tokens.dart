@@ -224,7 +224,7 @@ class ScrivenerThemeTokens extends ThemeExtension<ScrivenerThemeTokens> {
   /// Default tokens for Ancient Tome.
   static const ScrivenerThemeTokens ancientTomeTokens = defaultTokens;
 
-  /// Default tokens for Scrivener (Illuminated Tome & Quill).
+  /// Default tokens for Scrivener (Illuminated Tome & Quill) - Dark Variant.
   static const ScrivenerThemeTokens scrivenerTokens = ScrivenerThemeTokens(
     cardGradient: LinearGradient(
       colors: [Color(0xFF332240), Color(0xFF1E1428)],
@@ -243,6 +243,47 @@ class ScrivenerThemeTokens extends ThemeExtension<ScrivenerThemeTokens> {
     badgeColor: Color(0xFFF3C954),
     badgeTextColor: Colors.black,
   );
+
+  /// Tokens for Scrivener - Light Gold & Violet Manuscript Variant.
+  static const ScrivenerThemeTokens scrivenerLightTokens = ScrivenerThemeTokens(
+    cardGradient: LinearGradient(
+      colors: [Color(0xFFFFFFFF), Color(0xFFF6F0E8)],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    ),
+    cardBorder: BorderSide(color: Color(0xFFD6C2E8), width: 1.2),
+    cardRadius: 12.0,
+    cardPadding: EdgeInsets.all(16),
+    cardElevation: 1.5,
+    navigationStyle: CharacterNavigationStyle.horizontalTabs,
+    tabContentStyle: CharacterTabContentStyle.iconsAndText,
+    iconography: ScrivenerIconography.scrivener,
+    fontFamily: 'MedievalSharp',
+    accentColor: Color(0xFF6B21A8),
+    badgeColor: Color(0xFF7E22CE),
+    badgeTextColor: Colors.white,
+  );
+
+  /// Tokens for Emerald Enclave - Light Meadow Variant.
+  static const ScrivenerThemeTokens emeraldEnclaveLightTokens =
+      ScrivenerThemeTokens(
+        cardGradient: LinearGradient(
+          colors: [Color(0xFFFFFFFF), Color(0xFFEAF5EE)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        cardBorder: BorderSide(color: Color(0xFFA5D6A7), width: 1.2),
+        cardRadius: 12.0,
+        cardPadding: EdgeInsets.all(16),
+        cardElevation: 1.5,
+        navigationStyle: CharacterNavigationStyle.horizontalTabs,
+        tabContentStyle: CharacterTabContentStyle.iconsAndText,
+        iconography: ScrivenerIconography.nature,
+        fontFamily: 'CormorantGaramond',
+        accentColor: Color(0xFF1B5E20),
+        badgeColor: Color(0xFF2E7D32),
+        badgeTextColor: Colors.white,
+      );
 
   @override
   ScrivenerThemeTokens copyWith({

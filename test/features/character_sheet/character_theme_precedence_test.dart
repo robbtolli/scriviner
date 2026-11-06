@@ -78,7 +78,7 @@ void main() {
         // Check effective theme resolution
         expect(
           container.read(characterThemeModeProvider('char_default')),
-          AppThemeMode.ancientTome,
+          AppThemeMode.scrivener,
         );
 
         // Change global app theme -> character theme automatically updates
@@ -116,8 +116,8 @@ void main() {
         final sheet = container.read(characterSheetProvider('char_arcana'));
         expect(sheet?.customTheme, AppThemeMode.midnightArcana);
 
-        // Character theme is Midnight Arcana even though global is Ancient Tome
-        expect(container.read(themeProvider), AppThemeMode.ancientTome);
+        // Character theme is Midnight Arcana even though global is Scrivener
+        expect(container.read(themeProvider), AppThemeMode.scrivener);
         expect(
           container.read(characterThemeModeProvider('char_arcana')),
           AppThemeMode.midnightArcana,

@@ -7,11 +7,11 @@ import 'package:scrivener/core/theme/theme_selector_dialog.dart';
 
 void main() {
   group('Theme Engine Tests', () {
-    test('themeProvider defaults to ancientTome and can switch themes', () {
+    test('themeProvider defaults to scrivener and can switch themes', () {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      expect(container.read(themeProvider), AppThemeMode.ancientTome);
+      expect(container.read(themeProvider), AppThemeMode.scrivener);
 
       container
           .read(themeProvider.notifier)
@@ -36,8 +36,8 @@ void main() {
           .setTheme(AppThemeMode.infernalBrimstone);
       expect(container.read(themeProvider), AppThemeMode.infernalBrimstone);
 
-      container.read(themeProvider.notifier).setTheme(AppThemeMode.scrivener);
-      expect(container.read(themeProvider), AppThemeMode.scrivener);
+      container.read(themeProvider.notifier).setTheme(AppThemeMode.ancientTome);
+      expect(container.read(themeProvider), AppThemeMode.ancientTome);
     });
 
     test('All AppThemeMode values produce valid ThemeData', () {
@@ -70,6 +70,176 @@ void main() {
       final scrivener = AppTheme.scrivenerTheme;
       expect(scrivener.colorScheme.primary, const Color(0xFFF3C954));
       expect(scrivener.colorScheme.secondary, const Color(0xFFA855F7));
+      expect(scrivener.brightness, Brightness.dark);
+
+      final scrivenerLight = AppTheme.scrivenerLightTheme;
+      expect(scrivenerLight.colorScheme.primary, const Color(0xFF6B21A8));
+      expect(scrivenerLight.colorScheme.secondary, const Color(0xFF9333EA));
+      expect(scrivenerLight.brightness, Brightness.light);
+
+      final enclaveLight = AppTheme.emeraldEnclaveLightTheme;
+      expect(enclaveLight.colorScheme.primary, const Color(0xFF1B5E20));
+      expect(enclaveLight.brightness, Brightness.light);
+    });
+
+    test('ThemeBrightnessVariant classifications and visibility filters', () {
+      expect(
+        AppThemeMode.scholarsDesk.supportedBrightness,
+        ThemeBrightnessVariant.light,
+      );
+      expect(
+        AppThemeMode.ancientTome.supportedBrightness,
+        ThemeBrightnessVariant.dark,
+      );
+      expect(
+        AppThemeMode.midnightArcana.supportedBrightness,
+        ThemeBrightnessVariant.dark,
+      );
+      expect(
+        AppThemeMode.dungeonOled.supportedBrightness,
+        ThemeBrightnessVariant.dark,
+      );
+      expect(
+        AppThemeMode.infernalBrimstone.supportedBrightness,
+        ThemeBrightnessVariant.dark,
+      );
+      expect(
+        AppThemeMode.emeraldEnclave.supportedBrightness,
+        ThemeBrightnessVariant.both,
+      );
+      expect(
+        AppThemeMode.scrivener.supportedBrightness,
+        ThemeBrightnessVariant.both,
+      );
+
+      // Light filter
+      expect(
+        AppThemeMode.scholarsDesk.isVisibleFor(ThemeBrightnessMode.light),
+        isTrue,
+      );
+      expect(
+        AppThemeMode.emeraldEnclave.isVisibleFor(ThemeBrightnessMode.light),
+        isTrue,
+      );
+      expect(
+        AppThemeMode.scrivener.isVisibleFor(ThemeBrightnessMode.light),
+        isTrue,
+      );
+      expect(
+        AppThemeMode.ancientTome.isVisibleFor(ThemeBrightnessMode.light),
+        isFalse,
+      );
+      expect(
+        AppThemeMode.midnightArcana.isVisibleFor(ThemeBrightnessMode.light),
+        isFalse,
+      );
+
+      // Dark filter
+      expect(
+        AppThemeMode.scholarsDesk.isVisibleFor(ThemeBrightnessMode.dark),
+        isFalse,
+      );
+      expect(
+        AppThemeMode.ancientTome.isVisibleFor(ThemeBrightnessMode.dark),
+        isTrue,
+      );
+      expect(
+        AppThemeMode.emeraldEnclave.isVisibleFor(ThemeBrightnessMode.dark),
+        isTrue,
+      );
+      expect(
+        AppThemeMode.scrivener.isVisibleFor(ThemeBrightnessMode.dark),
+        isTrue,
+      );
+
+      // System filter
+      for (final mode in AppThemeMode.values) {
+        expect(mode.isVisibleFor(ThemeBrightnessMode.system), isTrue);
+      }
+    });
+
+    test('Dynamic variant resolution for dual-variant themes', () {
+      // Scrivener
+      final scrivenerLight = AppTheme.getThemeData(
+        AppThemeMode.scrivener,
+        brightnessMode: ThemeBrightnessMode.light,
+      );
+      expect(scrivenerLight.brightness, Brightness.light);
+
+      final scrivenerDark = AppTheme.getThemeData(
+        AppThemeMode.scrivener,
+        brightnessMode: ThemeBrightnessMode.dark,
+      );
+      expect(scrivenerDark.brightness, Brightness.dark);
+
+      final scrivenerSysLight = AppTheme.getThemeData(
+        AppThemeMode.scrivener,
+        brightnessMode: ThemeBrightnessMode.system,
+        systemBrightness: Brightness.light,
+      );
+      expect(scrivenerSysLight.brightness, Brightness.light);
+
+      final scrivenerSysDark = AppTheme.getThemeData(
+        AppThemeMode.scrivener,
+        brightnessMode: ThemeBrightnessMode.system,
+        systemBrightness: Brightness.dark,
+      );
+      expect(scrivenerSysDark.brightness, Brightness.dark);
+
+      // Emerald Enclave
+      final enclaveLight = AppTheme.getThemeData(
+        AppThemeMode.emeraldEnclave,
+        brightnessMode: ThemeBrightnessMode.light,
+      );
+      expect(enclaveLight.brightness, Brightness.light);
+
+      final enclaveDark = AppTheme.getThemeData(
+        AppThemeMode.emeraldEnclave,
+        brightnessMode: ThemeBrightnessMode.dark,
+      );
+      expect(enclaveDark.brightness, Brightness.dark);
+
+      final enclaveSysLight = AppTheme.getThemeData(
+        AppThemeMode.emeraldEnclave,
+        brightnessMode: ThemeBrightnessMode.system,
+        systemBrightness: Brightness.light,
+      );
+      expect(enclaveSysLight.brightness, Brightness.light);
+
+      final enclaveSysDark = AppTheme.getThemeData(
+        AppThemeMode.emeraldEnclave,
+        brightnessMode: ThemeBrightnessMode.system,
+        systemBrightness: Brightness.dark,
+      );
+      expect(enclaveSysDark.brightness, Brightness.dark);
+    });
+
+    test('themeBrightnessProvider cycles between system, dark, and light', () {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      expect(
+        container.read(themeBrightnessProvider),
+        ThemeBrightnessMode.system,
+      );
+
+      container.read(themeBrightnessProvider.notifier).cycleNext();
+      expect(
+        container.read(themeBrightnessProvider),
+        ThemeBrightnessMode.dark,
+      );
+
+      container.read(themeBrightnessProvider.notifier).cycleNext();
+      expect(
+        container.read(themeBrightnessProvider),
+        ThemeBrightnessMode.light,
+      );
+
+      container.read(themeBrightnessProvider.notifier).cycleNext();
+      expect(
+        container.read(themeBrightnessProvider),
+        ThemeBrightnessMode.system,
+      );
     });
 
     testWidgets('ThemeSelectorDialog displays all themes and selects one', (
@@ -103,6 +273,7 @@ void main() {
       expect(find.text('Scrivener'), findsOneWidget);
 
       // Tap High-Contrast Dungeon
+      await tester.ensureVisible(find.text('High-Contrast Dungeon'));
       await tester.tap(find.text('High-Contrast Dungeon'));
       await tester.pumpAndSettle();
 
@@ -112,5 +283,70 @@ void main() {
 
       expect(find.text('SELECT APP THEME'), findsNothing);
     });
+
+    testWidgets(
+      'ThemeSelectorDialog brightness toggle filters themes dynamically',
+      (tester) async {
+        await tester.pumpWidget(
+          ProviderScope(
+            child: MaterialApp(
+              home: Scaffold(
+                body: Builder(
+                  builder: (context) => ElevatedButton(
+                    onPressed: () => ThemeSelectorDialog.show(context),
+                    child: const Text('Open Themes'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Open Themes'));
+        await tester.pumpAndSettle();
+
+        // Initial state: system mode (split circle icon) -> all 7 themes shown
+        expect(find.byIcon(Icons.brightness_medium), findsOneWidget);
+        expect(find.text("Scholar's Desk"), findsOneWidget);
+        expect(find.text('Ancient Tome'), findsOneWidget);
+        expect(find.text('Scrivener'), findsOneWidget);
+        expect(find.text('Emerald Enclave'), findsOneWidget);
+
+        // Tap toggle to switch to Dark mode (Moon icon)
+        await tester.tap(find.byIcon(Icons.brightness_medium));
+        await tester.pumpAndSettle();
+
+        expect(find.byIcon(Icons.dark_mode), findsOneWidget);
+        // Dark themes are visible
+        expect(find.text('Ancient Tome'), findsOneWidget);
+        expect(find.text('Emerald Enclave'), findsOneWidget);
+        expect(find.text('Scrivener'), findsOneWidget);
+        // Scholar's Desk (light-only) is filtered out
+        expect(find.text("Scholar's Desk"), findsNothing);
+
+        // Tap toggle to switch to Light mode (Sun icon)
+        await tester.tap(find.byIcon(Icons.dark_mode));
+        await tester.pumpAndSettle();
+
+        expect(find.byIcon(Icons.light_mode), findsOneWidget);
+        // Light and dual themes are visible
+        expect(find.text("Scholar's Desk"), findsOneWidget);
+        expect(find.text('Emerald Enclave'), findsOneWidget);
+        expect(find.text('Scrivener'), findsOneWidget);
+        // Dark-only themes are filtered out
+        expect(find.text('Ancient Tome'), findsNothing);
+        expect(find.text('Midnight Arcana'), findsNothing);
+        expect(find.text('High-Contrast Dungeon'), findsNothing);
+        expect(find.text('Infernal Brimstone'), findsNothing);
+
+        // Tap toggle to return to System mode (Split circle)
+        await tester.tap(find.byIcon(Icons.light_mode));
+        await tester.pumpAndSettle();
+
+        expect(find.byIcon(Icons.brightness_medium), findsOneWidget);
+        expect(find.text('Ancient Tome'), findsOneWidget);
+        expect(find.text("Scholar's Desk"), findsOneWidget);
+      },
+    );
   });
 }
