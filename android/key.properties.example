@@ -1,0 +1,7 @@
+# Android Release Signing Configuration Example
+# Copy this file to `android/key.properties` and fill in your keystore credentials.
+# NEVER commit `android/key.properties` to version control!
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=YOUR_KEY_ALIAS
+storeFile=app/scrivener-android-release-key.jks

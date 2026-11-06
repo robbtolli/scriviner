@@ -45,6 +45,11 @@ app.*.map.json
 /android/app/release
 
 # App store keys
+/android/*.jks
 /android/app/*.jks
+/android/key.properties
 /android/app/key.properties
+*.jks
+*.keystore
+key.properties
 
