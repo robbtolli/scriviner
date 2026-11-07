@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../dice3d/baked_die.dart';
+import '../dice3d/dice_sprite_atlas.dart';
+
 class PolyhedralDiceTray extends StatelessWidget {
   final Map<int, int> diceCounts;
   final int flatModifier;
   final void Function(int sides) onAddDie;
   final void Function(int sides) onRemoveDie;
   final void Function(int delta) onAdjustModifier;
+
+  /// Pre-rendered dice. When provided, each button shows that die's resting
+  /// frame with its label on top; otherwise an icon is used.
+  final DiceSpriteAtlas? atlas;
 
   const PolyhedralDiceTray({
     super.key,
@@ -14,9 +21,65 @@ class PolyhedralDiceTray extends StatelessWidget {
     required this.onAddDie,
     required this.onRemoveDie,
     required this.onAdjustModifier,
+    this.atlas,
   });
 
   static const List<int> standardSides = [4, 6, 8, 10, 12, 20, 100];
+
+  /// Resting die sprite with the `d<sides>` label written on top.
+  Widget _spriteFace(
+    ThemeData theme,
+    DiceAtlasClip clip,
+    int sides,
+    bool isSelected,
+  ) {
+    final tint = isSelected
+        ? Color.lerp(theme.colorScheme.primary, Colors.white, 0.3)!
+        : Colors.white;
+    final labelColor = tint.computeLuminance() > 0.45
+        ? Colors.black87
+        : Colors.white;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        DieSprite(clip: clip, size: 52, tint: tint),
+        Text(
+          'd$sides',
+          style: TextStyle(
+            fontSize: sides == 100 ? 11 : 13,
+            fontWeight: FontWeight.w800,
+            color: labelColor,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _iconFace(ThemeData theme, int sides, bool isSelected) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          sides == 20 ? Icons.casino : Icons.change_history,
+          size: 16,
+          color: isSelected
+              ? theme.colorScheme.primary
+              : theme.colorScheme.onSurface.withAlpha(180),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          'd$sides',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.onSurface,
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +95,7 @@ class PolyhedralDiceTray extends StatelessWidget {
             children: standardSides.map((sides) {
               final count = diceCounts[sides] ?? 0;
               final isSelected = count > 0;
+              final clip = atlas?.clipFor(sides);
 
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -57,29 +121,10 @@ class PolyhedralDiceTray extends StatelessWidget {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              sides == 20 ? Icons.casino : Icons.change_history,
-                              size: 16,
-                              color: isSelected
-                                  ? theme.colorScheme.primary
-                                  : theme.colorScheme.onSurface.withAlpha(180),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'd$sides',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: isSelected
-                                    ? theme.colorScheme.primary
-                                    : theme.colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
-                        ),
+                        if (clip != null)
+                          _spriteFace(theme, clip, sides, isSelected)
+                        else
+                          _iconFace(theme, sides, isSelected),
                         if (count > 0)
                           Positioned(
                             top: 2,

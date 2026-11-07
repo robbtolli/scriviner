@@ -42,6 +42,13 @@ class DiceDrawerState {
   final Set<String> activeBonusIds;
   final List<DiceRollRecord> history;
 
+  /// Most recent roll, shown by the animated dice stage.
+  final DiceRollRecord? lastRoll;
+
+  /// Incremented on every roll so the UI can restart its animation even when
+  /// the result is identical to the previous one.
+  final int rollSerial;
+
   const DiceDrawerState({
     this.contextTitle = 'Quick Roll',
     this.diceCounts = const {20: 1},
@@ -49,6 +56,8 @@ class DiceDrawerState {
     this.rollType = RollType.normal,
     this.activeBonusIds = const {},
     this.history = const [],
+    this.lastRoll,
+    this.rollSerial = 0,
   });
 
   /// Computes the complete readable formula string.
@@ -118,6 +127,8 @@ class DiceDrawerState {
     RollType? rollType,
     Set<String>? activeBonusIds,
     List<DiceRollRecord>? history,
+    DiceRollRecord? lastRoll,
+    int? rollSerial,
   }) {
     return DiceDrawerState(
       contextTitle: contextTitle ?? this.contextTitle,
@@ -126,6 +137,8 @@ class DiceDrawerState {
       rollType: rollType ?? this.rollType,
       activeBonusIds: activeBonusIds ?? this.activeBonusIds,
       history: history ?? this.history,
+      lastRoll: lastRoll ?? this.lastRoll,
+      rollSerial: rollSerial ?? this.rollSerial,
     );
   }
 }
@@ -253,7 +266,11 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
       timestamp: DateTime.now(),
     );
 
-    state = state.copyWith(history: [record, ...state.history]);
+    state = state.copyWith(
+      history: [record, ...state.history],
+      lastRoll: record,
+      rollSerial: state.rollSerial + 1,
+    );
 
     return record;
   }

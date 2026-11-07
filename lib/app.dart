@@ -12,7 +12,8 @@ class ScrivenerApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
     final brightnessMode = ref.watch(themeBrightnessProvider);
-    final systemBrightness = MediaQuery.maybePlatformBrightnessOf(context) ??
+    final systemBrightness =
+        MediaQuery.maybePlatformBrightnessOf(context) ??
         WidgetsBinding.instance.platformDispatcher.platformBrightness;
 
     return MaterialApp(

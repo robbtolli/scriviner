@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/dice_roll_record.dart';
 import '../providers/dice_drawer_provider.dart';
+import 'dice3d/dice_sprite_atlas.dart';
 import 'widgets/polyhedral_dice_tray.dart';
 import 'widgets/roll_history_list.dart';
+import 'widgets/rolling_dice_stage.dart';
 import 'widgets/situational_chips_row.dart';
 
 class DiceRollerDrawer extends ConsumerWidget {
@@ -177,10 +179,19 @@ class DiceRollerDrawer extends ConsumerWidget {
               ],
             ),
           ),
+          if (state.lastRoll != null) ...[
+            const SizedBox(height: 12),
+            RollingDiceStage(
+              record: state.lastRoll!,
+              serial: state.rollSerial,
+              atlas: ref.watch(diceSpriteAtlasProvider).value,
+            ),
+          ],
           const SizedBox(height: 12),
 
           // Polyhedral Tray
           PolyhedralDiceTray(
+            atlas: ref.watch(diceSpriteAtlasProvider).value,
             diceCounts: state.diceCounts,
             flatModifier: state.flatModifier,
             onAddDie: (sides) => notifier.addDie(sides),
@@ -254,23 +265,7 @@ class DiceRollerDrawer extends ConsumerWidget {
 
           // ROLL DICE CTA
           ElevatedButton.icon(
-            onPressed: () {
-              final record = notifier.roll();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    '${record.context}: Rolled ${record.total}! (${record.formula})',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  backgroundColor: record.isCriticalHit
-                      ? Colors.green
-                      : record.isCriticalMiss
-                      ? Colors.redAccent
-                      : theme.cardColor,
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            },
+            onPressed: () => notifier.roll(),
             icon: const Icon(Icons.casino, size: 20),
             label: Text(
               'ROLL DICE (${state.formula})',

@@ -1,0 +1,86 @@
+{
+  "d10": {
+    "atlas": "d10.png",
+    "columns": 8,
+    "faceCenter": [
+      0.5,
+      0.5707
+    ],
+    "faceRadius": 0.1434,
+    "frameSize": 160,
+    "frames": 24,
+    "rows": 6,
+    "sides": 10,
+    "variants": 2
+  },
+  "d12": {
+    "atlas": "d12.png",
+    "columns": 8,
+    "faceCenter": [
+      0.5,
+      0.5
+    ],
+    "faceRadius": 0.1513,
+    "frameSize": 160,
+    "frames": 24,
+    "rows": 6,
+    "sides": 12,
+    "variants": 2
+  },
+  "d20": {
+    "atlas": "d20.png",
+    "columns": 8,
+    "faceCenter": [
+      0.5,
+      0.5
+    ],
+    "faceRadius": 0.0935,
+    "frameSize": 160,
+    "frames": 24,
+    "rows": 6,
+    "sides": 20,
+    "variants": 2
+  },
+  "d4": {
+    "atlas": "d4.png",
+    "columns": 8,
+    "faceCenter": [
+      0.5,
+      0.5
+    ],
+    "faceRadius": 0.1383,
+    "frameSize": 160,
+    "frames": 24,
+    "rows": 6,
+    "sides": 4,
+    "variants": 2
+  },
+  "d6": {
+    "atlas": "d6.png",
+    "columns": 8,
+    "faceCenter": [
+      0.5,
+      0.5
+    ],
+    "faceRadius": 0.1737,
+    "frameSize": 160,
+    "frames": 24,
+    "rows": 6,
+    "sides": 6,
+    "variants": 2
+  },
+  "d8": {
+    "atlas": "d8.png",
+    "columns": 8,
+    "faceCenter": [
+      0.5,
+      0.5
+    ],
+    "faceRadius": 0.1229,
+    "frameSize": 160,
+    "frames": 24,
+    "rows": 6,
+    "sides": 8,
+    "variants": 2
+  }
+}

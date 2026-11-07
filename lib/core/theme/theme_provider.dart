@@ -51,8 +51,8 @@ class ThemeBrightnessNotifier extends Notifier<ThemeBrightnessMode> {
 /// Global provider for the theme brightness mode filter (dark, light, system).
 final themeBrightnessProvider =
     NotifierProvider<ThemeBrightnessNotifier, ThemeBrightnessMode>(
-  ThemeBrightnessNotifier.new,
-);
+      ThemeBrightnessNotifier.new,
+    );
 
 /// Provider family resolving the effective theme mode for a given character:
 /// returns character's custom theme if set, otherwise falls back to global app theme.

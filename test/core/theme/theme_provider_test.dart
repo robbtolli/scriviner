@@ -224,10 +224,7 @@ void main() {
       );
 
       container.read(themeBrightnessProvider.notifier).cycleNext();
-      expect(
-        container.read(themeBrightnessProvider),
-        ThemeBrightnessMode.dark,
-      );
+      expect(container.read(themeBrightnessProvider), ThemeBrightnessMode.dark);
 
       container.read(themeBrightnessProvider.notifier).cycleNext();
       expect(

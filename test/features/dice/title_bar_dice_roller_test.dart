@@ -10,6 +10,7 @@ import 'package:scrivener/features/character_sheet/presentation/character_sheet_
 import 'package:scrivener/features/character_sheet/providers/character_sheet_provider.dart';
 import 'package:scrivener/features/combat/providers/combat_session_provider.dart';
 import 'package:scrivener/features/dice/presentation/dice_roller_drawer.dart';
+import 'package:scrivener/features/dice/presentation/widgets/rolling_dice_stage.dart';
 import 'package:scrivener/features/home/presentation/home_screen.dart';
 
 void main() {
@@ -57,9 +58,8 @@ void main() {
         await tester.tap(find.text('ROLL DICE (1d20)'));
         await tester.pumpAndSettle();
 
-        // Verify roll result is displayed in SnackBar
-        expect(find.byType(SnackBar), findsOneWidget);
-        expect(find.textContaining('Rolled'), findsOneWidget);
+        // Verify roll result is displayed in the animated dice stage
+        expect(find.byType(RollingDiceStage), findsOneWidget);
 
         // Cleanly unmount and drain StreamQueryStore timers
         await tester.pumpWidget(const SizedBox());
@@ -152,8 +152,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Verify roll result is displayed to the user
-        expect(find.byType(SnackBar), findsOneWidget);
-        expect(find.textContaining('Rolled'), findsOneWidget);
+        expect(find.byType(RollingDiceStage), findsOneWidget);
 
         // Verify that after the roll, character attributes remain UNTOUCHED
         final afterState = container.read(

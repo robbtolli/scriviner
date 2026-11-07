@@ -15,18 +15,10 @@ enum AppThemeMode {
 }
 
 /// The supported brightness variants for a theme.
-enum ThemeBrightnessVariant {
-  light,
-  dark,
-  both,
-}
+enum ThemeBrightnessVariant { light, dark, both }
 
 /// The active user brightness filter or preference.
-enum ThemeBrightnessMode {
-  dark,
-  light,
-  system,
-}
+enum ThemeBrightnessMode { dark, light, system }
 
 extension ThemeBrightnessModeX on ThemeBrightnessMode {
   IconData get icon {
@@ -127,7 +119,8 @@ extension AppThemeModeX on AppThemeMode {
 
   bool get isLight => supportedBrightness == ThemeBrightnessVariant.light;
   bool get isDark => supportedBrightness == ThemeBrightnessVariant.dark;
-  bool get hasBothVariants => supportedBrightness == ThemeBrightnessVariant.both;
+  bool get hasBothVariants =>
+      supportedBrightness == ThemeBrightnessVariant.both;
 
   bool isVisibleFor(ThemeBrightnessMode mode) {
     switch (mode) {
@@ -860,13 +853,12 @@ class AppTheme {
       brightness: Brightness.dark,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: tomeVoidBg,
-      textTheme: GoogleFonts.medievalSharpTextTheme(
-        ThemeData.dark().textTheme,
-      ).apply(
-        fontFamilyFallback: const ['serif'],
-        bodyColor: parchmentText,
-        displayColor: illuminatedGold,
-      ),
+      textTheme: GoogleFonts.medievalSharpTextTheme(ThemeData.dark().textTheme)
+          .apply(
+            fontFamilyFallback: const ['serif'],
+            bodyColor: parchmentText,
+            displayColor: illuminatedGold,
+          ),
       extensions: const [tokens],
       cardTheme: CardThemeData(
         color: tomeCard,
@@ -947,13 +939,12 @@ class AppTheme {
       brightness: Brightness.light,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: paperBg,
-      textTheme: GoogleFonts.medievalSharpTextTheme(
-        ThemeData.light().textTheme,
-      ).apply(
-        fontFamilyFallback: const ['serif'],
-        bodyColor: textInk,
-        displayColor: royalViolet,
-      ),
+      textTheme: GoogleFonts.medievalSharpTextTheme(ThemeData.light().textTheme)
+          .apply(
+            fontFamilyFallback: const ['serif'],
+            bodyColor: textInk,
+            displayColor: royalViolet,
+          ),
       extensions: const [tokens],
       cardTheme: CardThemeData(
         color: cardLight,
@@ -1034,13 +1025,14 @@ class AppTheme {
       brightness: Brightness.light,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: meadowBg,
-      textTheme: GoogleFonts.cormorantGaramondTextTheme(
-        ThemeData.light().textTheme,
-      ).apply(
-        fontFamilyFallback: const ['serif'],
-        bodyColor: textForest,
-        displayColor: deepJade,
-      ),
+      textTheme:
+          GoogleFonts.cormorantGaramondTextTheme(
+            ThemeData.light().textTheme,
+          ).apply(
+            fontFamilyFallback: const ['serif'],
+            bodyColor: textForest,
+            displayColor: deepJade,
+          ),
       extensions: const [tokens],
       cardTheme: CardThemeData(
         color: cardLight,
