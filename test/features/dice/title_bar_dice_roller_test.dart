@@ -52,10 +52,10 @@ void main() {
         // Verify DiceRollerDrawer is visible
         expect(find.byType(DiceRollerDrawer), findsOneWidget);
         expect(find.text('DICE ROLLER'), findsOneWidget);
-        expect(find.text('ROLL DICE (1d20)'), findsOneWidget);
+        expect(find.text('ROLL'), findsOneWidget);
 
-        // Tap ROLL DICE
-        await tester.tap(find.text('ROLL DICE (1d20)'));
+        // Tap ROLL
+        await tester.tap(find.text('ROLL'));
         await tester.pumpAndSettle();
 
         // Verify roll result is displayed in the animated dice stage
@@ -148,7 +148,7 @@ void main() {
         expect(find.byType(DiceRollerDrawer), findsOneWidget);
 
         // Perform a roll
-        await tester.tap(find.text('ROLL DICE (1d20)'));
+        await tester.tap(find.text('ROLL'));
         await tester.pumpAndSettle();
 
         // Verify roll result is displayed to the user

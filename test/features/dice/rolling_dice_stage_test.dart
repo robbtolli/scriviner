@@ -193,7 +193,7 @@ void main() {
       ),
     );
     expect(find.byType(RollingDiceStage), findsNothing);
-    await tester.tap(find.textContaining('ROLL DICE'));
+    await tester.tap(find.text('ROLL'));
     await tester.pump();
     expect(find.byType(RollingDiceStage), findsOneWidget);
     expect(container.read(diceDrawerProvider).rollSerial, 1);

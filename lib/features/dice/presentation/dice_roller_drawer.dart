@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/dice_roll_record.dart';
 import '../providers/dice_drawer_provider.dart';
+import 'dice3d/baked_die.dart';
 import 'dice3d/dice_sprite_atlas.dart';
 import 'widgets/polyhedral_dice_tray.dart';
 import 'widgets/roll_history_list.dart';
@@ -106,76 +107,101 @@ class DiceRollerDrawer extends ConsumerWidget {
             ),
           const SizedBox(height: 8),
 
-          // Formula Display Box
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: theme.colorScheme.primary, width: 1.5),
-              boxShadow: [
-                BoxShadow(
-                  color: theme.colorScheme.primary.withAlpha(25),
-                  blurRadius: 8,
-                ),
-              ],
-            ),
+          // Formula Display & Roll Button Row
+          IntrinsicHeight(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Formula Display Box
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'FORMULA',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                          color: theme.colorScheme.onSurface.withAlpha(140),
-                        ),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: theme.colorScheme.primary,
+                        width: 1.5,
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        state.formula,
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.primary.withAlpha(25),
+                          blurRadius: 8,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'FORMULA',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1,
+                                  color: theme.colorScheme.onSurface.withAlpha(
+                                    140,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                state.formula,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (state.rollType != RollType.normal)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: state.rollType == RollType.advantage
+                                  ? Colors.green.withAlpha(40)
+                                  : Colors.red.withAlpha(40),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: state.rollType == RollType.advantage
+                                    ? Colors.greenAccent
+                                    : Colors.redAccent,
+                              ),
+                            ),
+                            child: Text(
+                              state.rollType == RollType.advantage
+                                  ? 'ADV'
+                                  : 'DIS',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                                color: state.rollType == RollType.advantage
+                                    ? Colors.greenAccent
+                                    : Colors.redAccent,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-                if (state.rollType != RollType.normal)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: state.rollType == RollType.advantage
-                          ? Colors.green.withAlpha(40)
-                          : Colors.red.withAlpha(40),
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(
-                        color: state.rollType == RollType.advantage
-                            ? Colors.greenAccent
-                            : Colors.redAccent,
-                      ),
-                    ),
-                    child: Text(
-                      state.rollType == RollType.advantage ? 'ADV' : 'DIS',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: state.rollType == RollType.advantage
-                            ? Colors.greenAccent
-                            : Colors.redAccent,
-                      ),
-                    ),
-                  ),
+                const SizedBox(width: 10),
+                // Roll Button with themed d12
+                _RollButton(
+                  onPressed: () => notifier.roll(),
+                  clip: ref.watch(diceSpriteAtlasProvider).value?.clipFor(12),
+                ),
               ],
             ),
           ),
@@ -262,25 +288,6 @@ class DiceRollerDrawer extends ConsumerWidget {
             onToggleBonus: (id) => notifier.toggleSituationalBonus(id),
           ),
           const SizedBox(height: 14),
-
-          // ROLL DICE CTA
-          ElevatedButton.icon(
-            onPressed: () => notifier.roll(),
-            icon: const Icon(Icons.casino, size: 20),
-            label: Text(
-              'ROLL DICE (${state.formula})',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.primary,
-              foregroundColor: theme.colorScheme.onPrimary,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
           Divider(color: theme.dividerColor),
           const SizedBox(height: 8),
 
@@ -312,6 +319,101 @@ class DiceRollerDrawer extends ConsumerWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       width: 380,
       child: SafeArea(child: content),
+    );
+  }
+}
+
+/// Compact, highly accessible action button placed beside the formula display.
+/// Displays a resting d12 themed sprite with "ROLL" overlaid on top.
+class _RollButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final DiceAtlasClip? clip;
+
+  const _RollButton({required this.onPressed, this.clip});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tint = Color.lerp(theme.colorScheme.primary, Colors.white, 0.25)!;
+    final labelColor = tint.computeLuminance() > 0.45
+        ? Colors.black87
+        : Colors.white;
+
+    return Semantics(
+      button: true,
+      label: 'Roll',
+      child: Tooltip(
+        message: 'Roll dice',
+        child: Container(
+          width: 76,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: theme.colorScheme.primary, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.primary.withAlpha(35),
+                blurRadius: 8,
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onPressed,
+              borderRadius: BorderRadius.circular(12),
+              child: Center(
+                child: clip != null
+                    ? Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          DieSprite(clip: clip!, size: 54, tint: tint),
+                          Text(
+                            'ROLL',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.1,
+                              color: labelColor,
+                              shadows: [
+                                Shadow(
+                                  color: labelColor == Colors.white
+                                      ? Colors.black54
+                                      : Colors.white70,
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.casino,
+                            size: 22,
+                            color: theme.colorScheme.primary,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'ROLL',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.1,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

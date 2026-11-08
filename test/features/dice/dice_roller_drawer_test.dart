@@ -79,7 +79,7 @@ void main() {
     },
   );
 
-  testWidgets('ROLL DICE button executes roll and records to history', (
+  testWidgets('ROLL button executes roll and records to history', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(800, 1200);
@@ -89,8 +89,8 @@ void main() {
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
 
-    // Tap ROLL DICE button
-    await tester.tap(find.textContaining('ROLL DICE'));
+    // Tap ROLL button
+    await tester.tap(find.text('ROLL'));
     await tester.pumpAndSettle();
 
     // History section should now have RECENT ROLLS (1)
@@ -130,6 +130,6 @@ void main() {
 
     // Verify Dice Roller drawer sheet opened
     expect(find.text('DICE ROLLER'), findsOneWidget);
-    expect(find.textContaining('ROLL DICE'), findsOneWidget);
+    expect(find.text('ROLL'), findsOneWidget);
   });
 }
