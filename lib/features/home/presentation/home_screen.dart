@@ -7,7 +7,9 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/database/app_database.dart';
 import '../../../../core/database/database_provider.dart';
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/models/scrivener_theme_tokens.dart';
+import '../../../../core/theme/theme_provider.dart';
 import '../../../../core/theme/theme_selector_dialog.dart';
 import '../../character_sheet/presentation/character_sheet_screen.dart';
 import '../../character_wizard/presentation/character_wizard_screen.dart';
@@ -19,6 +21,8 @@ import '../../export_import/presentation/export_character_dialog.dart';
 import '../../export_import/presentation/import_character_dialog.dart';
 import '../../pdf_export/presentation/pdf_preview_screen.dart';
 import '../../plugins/presentation/plugins_dialog.dart';
+import '../../widgets/character_widget_sync_service.dart';
+import '../../widgets/widget_launch_handler.dart';
 import '../providers/home_providers.dart';
 import 'widgets/about_scrivener_dialog.dart';
 import 'widgets/character_card.dart';
@@ -38,6 +42,8 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
+  final WidgetLaunchController _widgetLaunchController =
+      WidgetLaunchController();
   bool _isSearching = false;
 
   @override
@@ -45,6 +51,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _handleDemoUrl();
+      _widgetLaunchController.initialize(
+        context: context,
+        ref: ref,
+        onOpenCharacter: (characterId) async {
+          final db = ref.read(databaseProvider);
+          final char = await db.getCharacter(characterId);
+          if (char != null && mounted) {
+            _openCharacter(char);
+          }
+        },
+      );
     });
   }
 
@@ -52,9 +69,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final uri = Uri.base;
     final db = ref.read(databaseProvider);
 
+    final themeParam = uri.queryParameters['theme'];
+    if (themeParam != null) {
+      for (final mode in AppThemeMode.values) {
+        if (mode.name.toLowerCase() == themeParam.toLowerCase()) {
+          ref.read(themeProvider.notifier).setTheme(mode);
+          break;
+        }
+      }
+    }
+
+    if (uri.queryParameters['clear'] == 'true') {
+      final chars = await db.getRecentCharacters();
+      for (final c in chars) {
+        await db.deleteCharacter(c.id);
+      }
+    }
+
     if (uri.queryParameters['seed'] == 'true') {
       final chars = await db.getRecentCharacters();
-      if (chars.isEmpty) {
+      if (chars.isEmpty || uri.queryParameters['force'] == 'true') {
+        for (final c in chars) {
+          await db.deleteCharacter(c.id);
+        }
         await seedSampleCharacters(db);
       }
     }
@@ -88,7 +125,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     if (uri.queryParameters['openDice'] == 'true' && mounted) {
       ref.read(diceDrawerProvider.notifier).setQuickRoll();
-      _scaffoldKey.currentState?.openEndDrawer();
+      ref.read(diceDrawerProvider.notifier).roll();
+      FloatingDiceFab.openFullScreenDiceRoller(context);
+    } else if (uri.queryParameters['openWizardScreen'] == 'true' && mounted) {
+      ref.read(characterWizardProvider.notifier).reset();
+      final stepParam = int.tryParse(uri.queryParameters['step'] ?? '0') ?? 0;
+      if (stepParam > 0) {
+        ref.read(characterWizardProvider.notifier).goToStep(stepParam);
+      }
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CharacterWizardScreen(
+            onCharacterCreated: (newId) async {
+              final c = await db.getCharacter(newId);
+              if (c != null && mounted) _openCharacter(c);
+            },
+          ),
+        ),
+      );
     } else if (uri.queryParameters['openTheme'] == 'true' && mounted) {
       ThemeSelectorDialog.show(context);
     } else if (uri.queryParameters['openPlugins'] == 'true' && mounted) {
@@ -108,6 +162,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void dispose() {
+    _widgetLaunchController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -278,6 +333,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<List<CharactersTableData>>>(
+      recentCharactersStreamProvider,
+      (_, next) {
+        next.whenData((characters) {
+          CharacterWidgetSyncService.syncAll(characters);
+        });
+      },
+    );
+
     final theme = Theme.of(context);
     final tokens = context.tokens;
     final charactersAsync = ref.watch(filteredCharactersProvider);
@@ -356,7 +420,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             tooltip: 'Dice Roller (Quick Roll)',
             onPressed: () {
               ref.read(diceDrawerProvider.notifier).setQuickRoll();
-              FloatingDiceFab.openDiceRoller(context);
+              FloatingDiceFab.openFullScreenDiceRoller(context);
             },
           ),
           if (isNarrow)

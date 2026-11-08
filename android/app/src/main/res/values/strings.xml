@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Scrivener</string>
+    <string name="character_widget_name">Character Quick-Launch</string>
+    <string name="character_widget_description">Quickly open a character sheet and check current HP.</string>
+    <string name="dice_widget_name">Quick Dice Roller</string>
+    <string name="dice_widget_description">Instant access to the Scrivener quick dice roller.</string>
+    <string name="choose_character_title">Select a Hero</string>
+    <string name="no_characters_found">No heroes found in Scrivener.\nOpen the app to create your first character!</string>
+    <string name="open_app_button">Open Scrivener</string>
+</resources>

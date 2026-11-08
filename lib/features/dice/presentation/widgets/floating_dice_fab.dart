@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 
 import '../dice_roller_drawer.dart';
+import '../dice_roller_screen.dart';
 
 class FloatingDiceFab extends StatelessWidget {
   const FloatingDiceFab({super.key});
 
+  /// Opens the dice roller as a modal bottom sheet (used on the character screen).
   static void openDiceRoller(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final scaffold = Scaffold.maybeOf(context);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.75,
+        minChildSize: 0.4,
+        maxChildSize: 0.95,
+        builder: (_, scrollController) =>
+            const DiceRollerDrawer(isBottomSheet: true),
+      ),
+    );
+  }
 
-    if (width >= 700 && scaffold != null && scaffold.hasEndDrawer) {
-      scaffold.openEndDrawer();
-    } else {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (ctx) => DraggableScrollableSheet(
-          initialChildSize: 0.75,
-          minChildSize: 0.4,
-          maxChildSize: 0.95,
-          builder: (_, scrollController) =>
-              const DiceRollerDrawer(isBottomSheet: true),
-        ),
-      );
-    }
+  /// Opens the full-screen dice roller (used on the home screen and Android widget).
+  static void openFullScreenDiceRoller(BuildContext context) {
+    DiceRollerScreen.show(context);
   }
 
   @override

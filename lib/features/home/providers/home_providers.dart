@@ -99,6 +99,7 @@ Future<void> seedSampleCharacters(AppDatabase db) async {
       },
     ],
     'deathSaves': {'successes': 0, 'failures': 0},
+    'theme': 'ancientTome',
   };
 
   final wizardProps = {
@@ -189,6 +190,7 @@ Future<void> seedSampleCharacters(AppDatabase db) async {
     ],
     'currency': {'cp': 0, 'sp': 18, 'ep': 0, 'gp': 85, 'pp': 5},
     'deathSaves': {'successes': 0, 'failures': 0},
+    'theme': 'midnightArcana',
   };
 
   final rogueProps = {
@@ -235,6 +237,7 @@ Future<void> seedSampleCharacters(AppDatabase db) async {
       },
     ],
     'deathSaves': {'successes': 0, 'failures': 0},
+    'theme': 'scholarsDesk',
   };
 
   // Upsert characters

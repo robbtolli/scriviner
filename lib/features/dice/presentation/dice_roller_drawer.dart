@@ -12,8 +12,13 @@ import 'widgets/situational_chips_row.dart';
 
 class DiceRollerDrawer extends ConsumerWidget {
   final bool isBottomSheet;
+  final bool isFullScreen;
 
-  const DiceRollerDrawer({super.key, this.isBottomSheet = false});
+  const DiceRollerDrawer({
+    super.key,
+    this.isBottomSheet = false,
+    this.isFullScreen = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,48 +32,52 @@ class DiceRollerDrawer extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Header Bar
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.casino,
-                    color: theme.colorScheme.primary,
-                    size: 22,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'DICE ROLLER',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      letterSpacing: 1.2,
+          if (!isFullScreen)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.casino,
                       color: theme.colorScheme.primary,
+                      size: 22,
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  TextButton.icon(
-                    onPressed: () => notifier.clearDice(),
-                    icon: const Icon(Icons.restart_alt, size: 14),
-                    label: const Text('Reset', style: TextStyle(fontSize: 11)),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.grey,
-                      visualDensity: VisualDensity.compact,
+                    const SizedBox(width: 8),
+                    Text(
+                      'DICE ROLLER',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        letterSpacing: 1.2,
+                        color: theme.colorScheme.primary,
+                      ),
                     ),
-                  ),
-                  if (isBottomSheet || Navigator.of(context).canPop())
-                    IconButton(
-                      icon: const Icon(Icons.close, size: 20),
-                      onPressed: () => Navigator.of(context).pop(),
+                  ],
+                ),
+                Row(
+                  children: [
+                    TextButton.icon(
+                      onPressed: () => notifier.clearDice(),
+                      icon: const Icon(Icons.restart_alt, size: 14),
+                      label: const Text(
+                        'Reset',
+                        style: TextStyle(fontSize: 11),
+                      ),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.grey,
+                        visualDensity: VisualDensity.compact,
+                      ),
                     ),
-                ],
-              ),
-            ],
-          ),
+                    if (isBottomSheet || Navigator.of(context).canPop())
+                      IconButton(
+                        icon: const Icon(Icons.close, size: 20),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                  ],
+                ),
+              ],
+            ),
 
           // Context Badge
           if (state.contextTitle != 'Quick Roll')
@@ -304,6 +313,10 @@ class DiceRollerDrawer extends ConsumerWidget {
         ],
       ),
     );
+
+    if (isFullScreen) {
+      return content;
+    }
 
     if (isBottomSheet) {
       return Container(
