@@ -21,11 +21,12 @@ docs/
 │   ├── authoring-compendiums.md   # Writing custom spells, items, and features
 │   ├── authoring-systems.md       # Implementing modular TTRPG rulesets
 │   └── packaging-and-distribution.md # Bundling and sharing homebrew packs
-└── themes/                        # Theme Customization & Visual Tokens
-    ├── theme-architecture.md      # ScrivenerThemeTokens, iconography, and Riverpod
-    ├── builtin-themes.md          # Visual profile of all 6 built-in themes
-    ├── authoring-custom-themes.md # Guide to creating new themes and palettes
-    └── per-character-theming.md   # Per-hero theme overrides and navigation styles
+├── themes/                        # Theme Customization & Visual Tokens
+│   ├── theme-architecture.md      # ScrivenerThemeTokens, iconography, and Riverpod
+│   ├── builtin-themes.md          # Visual profile of all 6 built-in themes
+│   ├── authoring-custom-themes.md # Guide to creating new themes and palettes
+│   └── per-character-theming.md   # Per-hero theme overrides and navigation styles
+└── privacy-policy.md              # Official Privacy Policy (local storage only)
 ```
 
 ---
@@ -68,3 +69,9 @@ For UI designers and developers creating atmospheric visual aesthetics:
 
 For developers contributing code directly to the Scrivener codebase:
 - See [**AGENTS.md**](../AGENTS.md) at the repository root for strict coding rules, responsive mobile layout rules (320px–360px support, SafeAreas), `PropertyPipeline` conventions, and automated testing requirements.
+
+---
+
+## 5. Legal & Privacy
+
+- [**Privacy Policy**](privacy-policy.md): Scrivener's local-storage only privacy commitments.
