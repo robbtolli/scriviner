@@ -434,4 +434,37 @@ void main() {
     expect(dies.every((d) => !d.showNumber), isTrue);
     expect(find.byType(Text), findsNothing); // No numbers on dice and no total
   });
+
+  testWidgets(
+    'preview mode with 41+ dice shows an ellipsis where the total will go, then shows total on roll',
+    (tester) async {
+      final atlas = await buildTestAtlas(tester);
+      await tester.pumpWidget(
+        stageHost(
+          RollingDiceStage(
+            previewTerms: const [DiceTerm(count: 41, sides: 6)],
+            atlas: atlas,
+          ),
+          disableAnimations: true,
+        ),
+      );
+      expect(find.byType(BakedDie), findsNothing);
+      expect(find.text('...'), findsOneWidget);
+
+      // Now pass a rolled record for 41 dice
+      await tester.pumpWidget(
+        stageHost(
+          RollingDiceStage(
+            record: testRecord(List.filled(41, 2)),
+            previewTerms: const [DiceTerm(count: 41, sides: 6)],
+            serial: 1,
+            atlas: atlas,
+          ),
+          disableAnimations: true,
+        ),
+      );
+      expect(find.text('...'), findsNothing);
+      expect(find.text('82'), findsOneWidget);
+    },
+  );
 }

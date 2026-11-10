@@ -302,7 +302,9 @@ class _RollingDiceStageState extends State<RollingDiceStage>
                         runSpacing: baseSpacing,
                         children: stageChildren,
                       ),
-                    if (!isPreview) ...[
+                    if (isPreview && totalOnly)
+                      Text('...', style: totalStyle)
+                    else if (!isPreview) ...[
                       if (stageChildren.isNotEmpty) const SizedBox(height: 8),
                       if (totalOnly)
                         Text(
