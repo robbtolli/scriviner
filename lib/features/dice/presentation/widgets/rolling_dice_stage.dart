@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/dice/dice_ast.dart';
 import '../../models/dice_roll_record.dart';
 import '../dice3d/baked_die.dart';
 import '../dice3d/dice_sprite_atlas.dart';
@@ -11,10 +12,14 @@ import '../dice3d/dice_stage_layout.dart';
 /// the real rolled values. Purely cosmetic: values come from the
 /// already-resolved record. Changing [serial] restarts the animation.
 ///
+/// When [record] is null and [previewTerms] is provided, displays the resting
+/// dice for the current formula with blank faces (no numbers) and no total.
+///
 /// Large rolls degrade gracefully (see [DiceStageLayout]): dice shrink, then
 /// lose their numbers, then are replaced by just the animated total.
 class RollingDiceStage extends StatefulWidget {
-  final DiceRollRecord record;
+  final DiceRollRecord? record;
+  final List<DiceTerm> previewTerms;
   final int serial;
 
   /// Pre-rendered 3D dice. While null (still loading) only the total is shown.
@@ -22,8 +27,9 @@ class RollingDiceStage extends StatefulWidget {
 
   const RollingDiceStage({
     super.key,
-    required this.record,
-    required this.serial,
+    this.record,
+    this.previewTerms = const [],
+    this.serial = 0,
     this.atlas,
   });
 
@@ -39,9 +45,47 @@ class _RollingDiceStageState extends State<RollingDiceStage>
   late final AnimationController _controller = AnimationController(vsync: this);
   bool _started = false;
 
+  bool get _isPreview => widget.record == null;
+
   List<_VisualDie> get _dice {
     final list = <_VisualDie>[];
-    for (final group in widget.record.groups) {
+    if (_isPreview) {
+      for (final term in widget.previewTerms) {
+        for (var i = 0; i < term.count; i++) {
+          if (term.sides == 100) {
+            list.add(
+              const _VisualDie(
+                sides: 10,
+                value: 0,
+                displayText: '',
+                isDropped: false,
+                isPercentileTens: true,
+              ),
+            );
+            list.add(
+              const _VisualDie(
+                sides: 10,
+                value: 0,
+                displayText: '',
+                isDropped: false,
+              ),
+            );
+          } else {
+            list.add(
+              _VisualDie(
+                sides: term.sides,
+                value: 0,
+                displayText: '',
+                isDropped: false,
+              ),
+            );
+          }
+        }
+      }
+      return list;
+    }
+
+    for (final group in widget.record!.groups) {
       for (final die in group.dice) {
         if (die.sides == 100) {
           // Physical percentile pair: tens die (00-90) and ones die (0-9).
@@ -84,7 +128,9 @@ class _RollingDiceStageState extends State<RollingDiceStage>
   }
 
   DiceStageLayout get _layout => (widget.atlas == null || widget.atlas!.isEmpty)
-      ? const DiceStageLayout(DiceDisplayMode.totalOnly, 0)
+      ? (_isPreview
+            ? DiceStageLayout.forCount(_dice.length)
+            : const DiceStageLayout(DiceDisplayMode.totalOnly, 0))
       : DiceStageLayout.forCount(_dice.length);
 
   double get _staggerMs => math.min(80, 900 / math.max(1, _dice.length));
@@ -94,14 +140,16 @@ class _RollingDiceStageState extends State<RollingDiceStage>
     super.didChangeDependencies();
     if (!_started) {
       _started = true;
-      _play();
+      if (!_isPreview) _play();
     }
   }
 
   @override
   void didUpdateWidget(RollingDiceStage old) {
     super.didUpdateWidget(old);
-    if (old.serial != widget.serial) _play();
+    if (!_isPreview && (old.serial != widget.serial || old.record == null)) {
+      _play();
+    }
   }
 
   void _play() {
@@ -127,29 +175,33 @@ class _RollingDiceStageState extends State<RollingDiceStage>
     final theme = Theme.of(context);
     final dice = _dice;
     final r = widget.record;
+    final isPreview = _isPreview;
     final layout = _layout;
+    final hasAtlas = widget.atlas != null && !widget.atlas!.isEmpty;
     final totalOnly = layout.mode == DiceDisplayMode.totalOnly;
 
-    final totalColor = r.isCriticalHit
-        ? Colors.greenAccent
-        : r.isCriticalMiss
-        ? Colors.redAccent
+    final totalColor = r != null
+        ? (r.isCriticalHit
+              ? Colors.greenAccent
+              : r.isCriticalMiss
+              ? Colors.redAccent
+              : theme.colorScheme.primary)
         : theme.colorScheme.primary;
-    final modifierText = r.modifier == 0
+    final modifierText = (r == null || r.modifier == 0)
         ? ''
         : '  (${r.modifier > 0 ? '+' : '−'}${r.modifier.abs()})';
 
     return Semantics(
-      liveRegion: true,
-      label: 'Rolled ${r.total}',
+      liveRegion: !isPreview,
+      label: isPreview ? 'Selected dice preview' : 'Rolled ${r!.total}',
       child: ExcludeSemantics(
         child: RepaintBoundary(
           child: AnimatedBuilder(
             animation: _controller,
             builder: (context, _) {
-              final elapsed =
-                  _controller.value * (_controller.duration!.inMilliseconds);
-              final settled = _controller.isCompleted;
+              final durationMs = _controller.duration?.inMilliseconds ?? 0;
+              final elapsed = _controller.value * durationMs;
+              final settled = isPreview || _controller.isCompleted;
               final totalStyle = TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -166,17 +218,17 @@ class _RollingDiceStageState extends State<RollingDiceStage>
                   layout.dieSize * 2 - percentileOverlap;
 
               final stageChildren = <Widget>[];
-              if (!totalOnly) {
+              if (!totalOnly && hasAtlas) {
                 Widget animatedDie(int i) => _AnimatedDie(
                   clip: widget.atlas!.clipFor(dice[i].sides)!,
                   dieSize: layout.dieSize,
-                  showNumber: layout.mode == DiceDisplayMode.numbered,
+                  showNumber:
+                      !isPreview && layout.mode == DiceDisplayMode.numbered,
                   die: dice[i],
                   index: i,
-                  progress: ((elapsed - i * _staggerMs) / _dieMs).clamp(
-                    0.0,
-                    1.0,
-                  ),
+                  progress: isPreview
+                      ? 1.0
+                      : ((elapsed - i * _staggerMs) / _dieMs).clamp(0.0, 1.0),
                 );
 
                 for (var i = 0; i < dice.length; i++) {
@@ -213,6 +265,25 @@ class _RollingDiceStageState extends State<RollingDiceStage>
                     stageChildren.add(animatedDie(i));
                   }
                 }
+              } else if (!totalOnly && isPreview && !hasAtlas) {
+                // Fallback icon dice in preview mode when atlas is not loaded
+                for (var i = 0; i < dice.length; i++) {
+                  stageChildren.add(
+                    SizedBox(
+                      width: layout.dieSize,
+                      height: layout.dieSize,
+                      child: Center(
+                        child: Icon(
+                          dice[i].sides == 20
+                              ? Icons.casino
+                              : Icons.change_history,
+                          size: layout.dieSize * 0.5,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  );
+                }
               }
 
               return Container(
@@ -224,33 +295,35 @@ class _RollingDiceStageState extends State<RollingDiceStage>
                 ),
                 child: Column(
                   children: [
-                    if (!totalOnly)
+                    if (stageChildren.isNotEmpty)
                       Wrap(
                         alignment: WrapAlignment.center,
                         spacing: baseSpacing,
                         runSpacing: baseSpacing,
                         children: stageChildren,
                       ),
-                    if (!totalOnly) const SizedBox(height: 8),
-                    if (totalOnly)
-                      Text(
-                        '${(r.total * _controller.value).round()}$modifierText',
-                        style: totalStyle,
-                      )
-                    else
-                      AnimatedOpacity(
-                        opacity: settled ? 1 : 0,
-                        duration: const Duration(milliseconds: 250),
-                        child: AnimatedScale(
-                          scale: settled ? 1 : 0.6,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOutBack,
-                          child: Text(
-                            '${r.total}$modifierText',
-                            style: totalStyle,
+                    if (!isPreview) ...[
+                      if (stageChildren.isNotEmpty) const SizedBox(height: 8),
+                      if (totalOnly)
+                        Text(
+                          '${(r!.total * _controller.value).round()}$modifierText',
+                          style: totalStyle,
+                        )
+                      else
+                        AnimatedOpacity(
+                          opacity: settled ? 1 : 0,
+                          duration: const Duration(milliseconds: 250),
+                          child: AnimatedScale(
+                            scale: settled ? 1 : 0.6,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOutBack,
+                            child: Text(
+                              '${r!.total}$modifierText',
+                              style: totalStyle,
+                            ),
                           ),
                         ),
-                      ),
+                    ],
                   ],
                 ),
               );

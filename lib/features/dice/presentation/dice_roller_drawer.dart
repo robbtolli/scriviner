@@ -205,10 +205,11 @@ class DiceRollerDrawer extends ConsumerWidget {
               ],
             ),
           ),
-          if (state.lastRoll != null) ...[
+          if (state.lastRoll != null || state.previewDiceTerms.isNotEmpty) ...[
             const SizedBox(height: 12),
             RollingDiceStage(
-              record: state.lastRoll!,
+              record: state.lastRoll,
+              previewTerms: state.previewDiceTerms,
               serial: state.rollSerial,
               atlas: ref.watch(diceSpriteAtlasProvider).value,
             ),

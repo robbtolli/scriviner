@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:scrivener/core/dice/dice_ast.dart';
 import 'package:scrivener/features/dice/presentation/dice3d/baked_die.dart';
+import 'package:scrivener/features/dice/presentation/dice3d/dice_sprite_atlas.dart';
 import 'package:scrivener/features/dice/presentation/dice3d/dice_stage_layout.dart';
 import 'package:scrivener/features/dice/presentation/dice_roller_drawer.dart';
 import 'package:scrivener/features/dice/presentation/widgets/rolling_dice_stage.dart';
@@ -341,29 +343,95 @@ void main() {
     }
   }
 
-  testWidgets('roll button shows the stage and bumps rollSerial', (
+  testWidgets(
+    'preview mode shows resting dice with no numbers and no total as dice are added, then rolls on tap',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      final atlas = await buildTestAtlas(tester);
+      final container = ProviderContainer(
+        overrides: [diceSpriteAtlasProvider.overrideWith((ref) async => atlas)],
+      );
+      addTearDown(container.dispose);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(
+            home: Scaffold(body: DiceRollerDrawer(isBottomSheet: true)),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Initially no dice selected -> stage is hidden
+      expect(find.byType(RollingDiceStage), findsNothing);
+
+      // Tap d20 and d6 -> stage immediately shows 2 preview dice with no numbers and no total
+      await tester.tap(find.text('d20'));
+      await tester.tap(find.text('d6'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(RollingDiceStage), findsOneWidget);
+      final previewStage = tester.widget<RollingDiceStage>(
+        find.byType(RollingDiceStage),
+      );
+      expect(previewStage.record, isNull);
+      expect(previewStage.previewTerms.length, 2);
+
+      final previewDice = tester
+          .widgetList<BakedDie>(find.byType(BakedDie))
+          .toList();
+      expect(previewDice.length, 2);
+      expect(previewDice.every((d) => !d.showNumber), isTrue);
+
+      // Now tap ROLL button -> record is created, serial bumps, and numbers + total appear
+      await tester.tap(find.text('ROLL'));
+      await tester.pump();
+      expect(container.read(diceDrawerProvider).rollSerial, 1);
+      await tester.pumpAndSettle();
+
+      final rolledStage = tester.widget<RollingDiceStage>(
+        find.byType(RollingDiceStage),
+      );
+      expect(rolledStage.record, isNotNull);
+      final rolledDice = tester
+          .widgetList<BakedDie>(find.byType(BakedDie))
+          .toList();
+      expect(rolledDice.length, 2);
+      expect(rolledDice.every((d) => d.showNumber), isTrue);
+
+      // Adding another die returns the stage to unrolled preview mode with 3 blank dice
+      await tester.tap(find.text('d8'));
+      await tester.pumpAndSettle();
+      final updatedStage = tester.widget<RollingDiceStage>(
+        find.byType(RollingDiceStage),
+      );
+      expect(updatedStage.record, isNull);
+      final updatedDice = tester
+          .widgetList<BakedDie>(find.byType(BakedDie))
+          .toList();
+      expect(updatedDice.length, 3);
+      expect(updatedDice.every((d) => !d.showNumber), isTrue);
+    },
+  );
+
+  testWidgets('preview mode renders d100 as physical pair of blank d10 dice', (
     tester,
   ) async {
-    tester.view.physicalSize = const Size(800, 1400);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
-    final container = ProviderContainer();
-    addTearDown(container.dispose);
+    final atlas = await buildTestAtlas(tester);
     await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: const MaterialApp(
-          home: Scaffold(body: DiceRollerDrawer(isBottomSheet: true)),
+      stageHost(
+        RollingDiceStage(
+          previewTerms: const [DiceTerm(count: 1, sides: 100)],
+          atlas: atlas,
         ),
+        disableAnimations: true,
       ),
     );
-    expect(find.byType(RollingDiceStage), findsNothing);
-    await tester.tap(find.text('d20'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('ROLL'));
-    await tester.pump();
-    expect(find.byType(RollingDiceStage), findsOneWidget);
-    expect(container.read(diceDrawerProvider).rollSerial, 1);
-    await tester.pumpAndSettle();
+    expect(find.byType(BakedDie), findsNWidgets(2));
+    final dies = tester.widgetList<BakedDie>(find.byType(BakedDie)).toList();
+    expect(dies.every((d) => !d.showNumber), isTrue);
+    expect(find.byType(Text), findsNothing); // No numbers on dice and no total
   });
 }

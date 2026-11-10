@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../core/dice/dice_ast.dart';
+import '../../../core/dice/dice_parser.dart';
 import '../../../core/dice/dice_roller.dart';
 import '../models/dice_roll_record.dart';
 
@@ -65,6 +67,13 @@ class DiceDrawerState {
 
   /// True if the formula has at least one die or modifier to roll.
   bool get hasFormula => formula.isNotEmpty;
+
+  /// Parsed dice terms for the current formula, used to render the unrolled
+  /// blank-face dice preview in the stage before rolling.
+  List<DiceTerm> get previewDiceTerms {
+    if (formula.trim().isEmpty) return const [];
+    return DiceParser.parse(formula).diceTerms;
+  }
 
   /// Computes the complete readable formula string.
   String get formula {
@@ -167,7 +176,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
   void addDie(int sides) {
     final updated = Map<int, int>.from(state.diceCounts);
     updated[sides] = (updated[sides] ?? 0) + 1;
-    state = state.copyWith(diceCounts: updated);
+    state = state.copyWith(diceCounts: updated, clearLastRoll: true);
   }
 
   void removeDie(int sides) {
@@ -183,6 +192,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
       rollType: (sides == 20 && !updated.containsKey(20))
           ? RollType.normal
           : null,
+      clearLastRoll: true,
     );
   }
 
@@ -194,6 +204,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
     state = state.copyWith(
       diceCounts: updated,
       rollType: sides == 20 ? RollType.normal : null,
+      clearLastRoll: true,
     );
   }
 
@@ -227,7 +238,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
     } else {
       updated[sides] = count;
     }
-    state = state.copyWith(diceCounts: updated);
+    state = state.copyWith(diceCounts: updated, clearLastRoll: true);
   }
 
   void setRollTitle(String title) {
@@ -235,15 +246,18 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
   }
 
   void setFlatModifier(int mod) {
-    state = state.copyWith(flatModifier: mod);
+    state = state.copyWith(flatModifier: mod, clearLastRoll: true);
   }
 
   void adjustFlatModifier(int delta) {
-    state = state.copyWith(flatModifier: state.flatModifier + delta);
+    state = state.copyWith(
+      flatModifier: state.flatModifier + delta,
+      clearLastRoll: true,
+    );
   }
 
   void setRollType(RollType type) {
-    state = state.copyWith(rollType: type);
+    state = state.copyWith(rollType: type, clearLastRoll: true);
   }
 
   void toggleSituationalBonus(String bonusId) {
@@ -253,7 +267,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
     } else {
       updated.add(bonusId);
     }
-    state = state.copyWith(activeBonusIds: updated);
+    state = state.copyWith(activeBonusIds: updated, clearLastRoll: true);
   }
 
   /// Sets context from character sheet action (e.g. Weapon attack or Ability Check)
@@ -269,6 +283,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
       flatModifier: flatModifier,
       rollType: rollType,
       activeBonusIds: {},
+      clearLastRoll: true,
     );
   }
 
