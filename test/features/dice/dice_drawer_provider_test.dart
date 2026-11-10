@@ -76,23 +76,39 @@ void main() {
     test('advantage and disadvantage convert 1d20 to 2d20kh1 and 2d20kl1', () {
       final notifier = container.read(diceDrawerProvider.notifier);
 
+      // Without d20, setRollType is ignored
+      notifier.addDie(6);
+      notifier.setRollType(RollType.advantage);
+      expect(
+        container.read(diceDrawerProvider).rollType,
+        equals(RollType.normal),
+      );
+
       // Add a d20
       notifier.addDie(20);
 
       // Switch to Advantage
       notifier.setRollType(RollType.advantage);
       var state = container.read(diceDrawerProvider);
-      expect(state.formula, equals('2d20kh1'));
+      expect(state.formula, equals('2d20kh1 + 1d6'));
+      expect(state.rollType, equals(RollType.advantage));
 
       // Switch to Disadvantage
       notifier.setRollType(RollType.disadvantage);
       state = container.read(diceDrawerProvider);
-      expect(state.formula, equals('2d20kl1'));
+      expect(state.formula, equals('2d20kl1 + 1d6'));
+
+      // Removing the d20 resets rollType to normal
+      notifier.clearDieType(20);
+      state = container.read(diceDrawerProvider);
+      expect(state.rollType, equals(RollType.normal));
+      expect(state.hasD20, isFalse);
 
       // Return to Normal
+      notifier.addDie(20);
       notifier.setRollType(RollType.normal);
       state = container.read(diceDrawerProvider);
-      expect(state.formula, equals('1d20'));
+      expect(state.formula, equals('1d20 + 1d6'));
     });
 
     test('situational bonuses append dice and flat values', () {

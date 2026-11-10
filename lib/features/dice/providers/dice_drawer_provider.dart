@@ -87,6 +87,15 @@ class DiceDrawerState {
     return DiceParser.parse(formula).diceTerms;
   }
 
+  /// True if there is at least one d20 die in the formula.
+  bool get hasD20 {
+    if (customFormula != null) {
+      if (!isFormulaValid) return false;
+      return DiceParser.parse(formula).diceTerms.any((t) => t.sides == 20);
+    }
+    return (diceCounts[20] ?? 0) > 0;
+  }
+
   /// Computes the complete readable formula string.
   String get formula {
     if (customFormula != null) {
@@ -346,6 +355,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
   }
 
   void setRollType(RollType type) {
+    if (!state.hasD20 && type != RollType.normal) return;
     state = state.copyWith(
       rollType: type,
       clearCustomFormula: true,

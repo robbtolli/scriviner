@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:scrivener/features/dice/models/dice_roll_record.dart';
 import 'package:scrivener/features/dice/presentation/dice_roller_drawer.dart';
 import 'package:scrivener/features/dice/presentation/widgets/floating_dice_fab.dart';
 
@@ -36,7 +37,8 @@ void main() {
     expect(find.text('d20'), findsOneWidget);
     expect(find.text('d100'), findsOneWidget);
 
-    // Verify Roll Types
+    // Verify Roll Types & label
+    expect(find.text('ROLL TYPE (d20 ONLY)'), findsOneWidget);
     expect(find.text('Normal'), findsOneWidget);
     expect(find.text('Advantage'), findsOneWidget);
     expect(find.text('Disadvantage'), findsOneWidget);
@@ -83,6 +85,69 @@ void main() {
 
       // Formula should now be "2d20kh1 + 1d6 + 1d4"
       expect(find.text('2d20kh1 + 1d6 + 1d4'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Roll Type segmented button is disabled without d20 and enabled with d20',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pumpAndSettle();
+
+      final segmentedBtnFinder = find.byType(SegmentedButton<RollType>);
+      expect(segmentedBtnFinder, findsOneWidget);
+
+      // Without d20, onSelectionChanged is null (disabled)
+      var segmentedBtn = tester.widget<SegmentedButton<RollType>>(
+        segmentedBtnFinder,
+      );
+      expect(segmentedBtn.onSelectionChanged, isNull);
+
+      // Tapping Advantage does nothing
+      await tester.tap(find.text('Advantage'));
+      await tester.pumpAndSettle();
+      segmentedBtn = tester.widget<SegmentedButton<RollType>>(
+        segmentedBtnFinder,
+      );
+      expect(segmentedBtn.selected, equals({RollType.normal}));
+
+      // Add a d6 -> still no d20 -> still disabled
+      await tester.tap(find.text('d6'));
+      await tester.pumpAndSettle();
+      segmentedBtn = tester.widget<SegmentedButton<RollType>>(
+        segmentedBtnFinder,
+      );
+      expect(segmentedBtn.onSelectionChanged, isNull);
+
+      // Add a d20 -> now enabled
+      await tester.tap(find.text('d20'));
+      await tester.pumpAndSettle();
+      segmentedBtn = tester.widget<SegmentedButton<RollType>>(
+        segmentedBtnFinder,
+      );
+      expect(segmentedBtn.onSelectionChanged, isNotNull);
+
+      // Now tapping Advantage selects Advantage
+      await tester.tap(find.text('Advantage'));
+      await tester.pumpAndSettle();
+      segmentedBtn = tester.widget<SegmentedButton<RollType>>(
+        segmentedBtnFinder,
+      );
+      expect(segmentedBtn.selected, equals({RollType.advantage}));
+      expect(find.text('2d20kh1 + 1d6'), findsOneWidget);
+
+      // Clearing the d20 resets selection back to normal and disables the button
+      await tester.tap(find.byKey(const ValueKey('clear_die_d20')));
+      await tester.pumpAndSettle();
+      segmentedBtn = tester.widget<SegmentedButton<RollType>>(
+        segmentedBtnFinder,
+      );
+      expect(segmentedBtn.selected, equals({RollType.normal}));
+      expect(segmentedBtn.onSelectionChanged, isNull);
     },
   );
 

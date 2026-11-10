@@ -292,13 +292,13 @@ class _DiceRollerDrawerState extends ConsumerState<DiceRollerDrawer> {
           const SizedBox(height: 12),
 
           // Advantage / Disadvantage Segments
-          const Text(
-            'ROLL TYPE',
+          Text(
+            'ROLL TYPE (d20 ONLY)',
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               letterSpacing: 1,
-              color: Colors.grey,
+              color: state.hasD20 ? Colors.grey : theme.disabledColor,
             ),
           ),
           const SizedBox(height: 6),
@@ -318,16 +318,24 @@ class _DiceRollerDrawerState extends ConsumerState<DiceRollerDrawer> {
               ),
             ],
             selected: {state.rollType},
-            onSelectionChanged: (set) => notifier.setRollType(set.first),
+            onSelectionChanged: state.hasD20
+                ? (set) => notifier.setRollType(set.first)
+                : null,
             style: ButtonStyle(
               visualDensity: VisualDensity.compact,
               backgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return theme.colorScheme.surface.withAlpha(80);
+                }
                 if (states.contains(WidgetState.selected)) {
                   return theme.colorScheme.primary.withAlpha(60);
                 }
                 return theme.colorScheme.surface;
               }),
               foregroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return theme.disabledColor;
+                }
                 if (states.contains(WidgetState.selected)) {
                   return theme.colorScheme.primary;
                 }
