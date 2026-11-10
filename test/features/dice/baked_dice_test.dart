@@ -94,6 +94,94 @@ void main() {
     expect(find.text('d100'), findsOneWidget);
   });
 
+  testWidgets(
+    'PolyhedralDiceTray tints inactive dice with active button background color in light theme',
+    (tester) async {
+      final atlas = await buildTestAtlas(tester);
+      final lightTheme = ThemeData.light().copyWith(
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF6B21A8),
+          surface: Colors.white,
+        ),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: lightTheme,
+          home: Scaffold(
+            body: PolyhedralDiceTray(
+              diceCounts: const {6: 1}, // d6 is active, d4/d8/etc. are inactive
+              flatModifier: 0,
+              onAddDie: (_) {},
+              onRemoveDie: (_) {},
+              onAdjustModifier: (_) {},
+              atlas: atlas,
+            ),
+          ),
+        ),
+      );
+
+      final sprites = tester
+          .widgetList<DieSprite>(find.byType(DieSprite))
+          .toList();
+      // standardSides: [4, 6, 8, 10, 12, 20, 100]
+      // index 0 is d4 (inactive), index 1 is d6 (active)
+      final d4Sprite = sprites[0];
+      final d6Sprite = sprites[1];
+
+      // Inactive die in light theme should match the adjusted opacity primary tint
+      final expectedInactiveColor = lightTheme.colorScheme.primary.withAlpha(
+        90,
+      );
+      expect(d4Sprite.tint, equals(expectedInactiveColor));
+
+      // Active die should use the lerped primary color
+      final expectedActiveColor = Color.lerp(
+        lightTheme.colorScheme.primary,
+        Colors.white,
+        0.3,
+      )!;
+      expect(d6Sprite.tint, equals(expectedActiveColor));
+    },
+  );
+
+  testWidgets('PolyhedralDiceTray keeps inactive dice white in dark theme', (
+    tester,
+  ) async {
+    final atlas = await buildTestAtlas(tester);
+    final darkTheme = ThemeData.dark();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: darkTheme,
+        home: Scaffold(
+          body: PolyhedralDiceTray(
+            diceCounts: const {6: 1}, // d6 is active, d4 is inactive
+            flatModifier: 0,
+            onAddDie: (_) {},
+            onRemoveDie: (_) {},
+            onAdjustModifier: (_) {},
+            atlas: atlas,
+          ),
+        ),
+      ),
+    );
+
+    final sprites = tester
+        .widgetList<DieSprite>(find.byType(DieSprite))
+        .toList();
+    final d4Sprite = sprites[0];
+    final d6Sprite = sprites[1];
+
+    expect(d4Sprite.tint, equals(Colors.white));
+    final expectedActiveColor = Color.lerp(
+      darkTheme.colorScheme.primary,
+      Colors.white,
+      0.3,
+    )!;
+    expect(d6Sprite.tint, equals(expectedActiveColor));
+  });
+
   testWidgets('PolyhedralDiceTray falls back to icons when atlas is null', (
     tester,
   ) async {

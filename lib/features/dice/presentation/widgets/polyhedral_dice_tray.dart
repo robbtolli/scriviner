@@ -33,12 +33,16 @@ class PolyhedralDiceTray extends StatelessWidget {
     int sides,
     bool isSelected,
   ) {
+    final isLight = theme.brightness == Brightness.light;
+    // For light themes, use increased opacity (~35%) on the primary tint so the inactive die
+    // appears saturated and defined against light surfaces without washing out.
+    final inactiveDieColor = theme.colorScheme.primary.withAlpha(90);
     final tint = isSelected
         ? Color.lerp(theme.colorScheme.primary, Colors.white, 0.3)!
-        : Colors.white;
-    final labelColor = tint.computeLuminance() > 0.45
-        ? Colors.black87
-        : Colors.white;
+        : (isLight ? inactiveDieColor : Colors.white);
+    final labelColor = isSelected
+        ? (tint.computeLuminance() > 0.45 ? Colors.black87 : Colors.white)
+        : (isLight ? theme.colorScheme.onSurface : Colors.black87);
     return Stack(
       alignment: Alignment.center,
       children: [
