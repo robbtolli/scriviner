@@ -54,7 +54,9 @@ void main() {
         expect(find.text('DICE ROLLER'), findsOneWidget);
         expect(find.text('ROLL'), findsOneWidget);
 
-        // Tap ROLL
+        // Select d20 and tap ROLL
+        await tester.tap(find.text('d20'));
+        await tester.pumpAndSettle();
         await tester.tap(find.text('ROLL'));
         await tester.pumpAndSettle();
 
@@ -147,7 +149,9 @@ void main() {
         // Verify DiceRollerDrawer is opened in Quick Roll mode
         expect(find.byType(DiceRollerDrawer), findsOneWidget);
 
-        // Perform a roll
+        // Select a die and perform a roll
+        await tester.tap(find.text('d20'));
+        await tester.pumpAndSettle();
         await tester.tap(find.text('ROLL'));
         await tester.pumpAndSettle();
 

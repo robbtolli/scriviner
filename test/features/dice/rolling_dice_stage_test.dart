@@ -358,6 +358,8 @@ void main() {
       ),
     );
     expect(find.byType(RollingDiceStage), findsNothing);
+    await tester.tap(find.text('d20'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('ROLL'));
     await tester.pump();
     expect(find.byType(RollingDiceStage), findsOneWidget);

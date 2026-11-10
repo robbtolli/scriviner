@@ -129,15 +129,19 @@ class DiceRollerDrawer extends ConsumerWidget {
                       color: theme.colorScheme.surface,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: theme.colorScheme.primary,
+                        color: state.hasFormula
+                            ? theme.colorScheme.primary
+                            : theme.dividerColor,
                         width: 1.5,
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: theme.colorScheme.primary.withAlpha(25),
-                          blurRadius: 8,
-                        ),
-                      ],
+                      boxShadow: state.hasFormula
+                          ? [
+                              BoxShadow(
+                                color: theme.colorScheme.primary.withAlpha(25),
+                                blurRadius: 8,
+                              ),
+                            ]
+                          : null,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -160,11 +164,22 @@ class DiceRollerDrawer extends ConsumerWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                state.formula,
+                                state.formula.isEmpty
+                                    ? 'Select dice'
+                                    : state.formula,
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: theme.colorScheme.onSurface,
+                                  fontSize: state.formula.isEmpty ? 16 : 20,
+                                  fontStyle: state.formula.isEmpty
+                                      ? FontStyle.italic
+                                      : FontStyle.normal,
+                                  fontWeight: state.formula.isEmpty
+                                      ? FontWeight.normal
+                                      : FontWeight.bold,
+                                  color: state.formula.isEmpty
+                                      ? theme.colorScheme.onSurface.withAlpha(
+                                          120,
+                                        )
+                                      : theme.colorScheme.onSurface,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -208,7 +223,7 @@ class DiceRollerDrawer extends ConsumerWidget {
                 const SizedBox(width: 10),
                 // Roll Button with themed d12
                 _RollButton(
-                  onPressed: () => notifier.roll(),
+                  onPressed: state.hasFormula ? () => notifier.roll() : null,
                   clip: ref.watch(diceSpriteAtlasProvider).value?.clipFor(12),
                 ),
               ],
@@ -339,7 +354,7 @@ class DiceRollerDrawer extends ConsumerWidget {
 /// Compact, highly accessible action button placed beside the formula display.
 /// Displays a resting d12 themed sprite with "ROLL" overlaid on top.
 class _RollButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final DiceAtlasClip? clip;
 
   const _RollButton({required this.onPressed, this.clip});
@@ -347,81 +362,103 @@ class _RollButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final tint = Color.lerp(theme.colorScheme.primary, Colors.white, 0.25)!;
-    final labelColor = tint.computeLuminance() > 0.45
-        ? Colors.black87
-        : Colors.white;
+    final isEnabled = onPressed != null;
+    final baseTint = Color.lerp(theme.colorScheme.primary, Colors.white, 0.25)!;
+    final tint = isEnabled
+        ? baseTint
+        : Color.lerp(theme.disabledColor, Colors.white, 0.2)!;
+    final labelColor = isEnabled
+        ? (tint.computeLuminance() > 0.45 ? Colors.black87 : Colors.white)
+        : theme.disabledColor;
 
     return Semantics(
       button: true,
+      enabled: isEnabled,
       label: 'Roll',
       child: Tooltip(
-        message: 'Roll dice',
-        child: Container(
-          width: 76,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: theme.colorScheme.primary, width: 1.5),
-            boxShadow: [
-              BoxShadow(
-                color: theme.colorScheme.primary.withAlpha(35),
-                blurRadius: 8,
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: onPressed,
+        message: isEnabled ? 'Roll dice' : 'Formula is empty',
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: isEnabled ? 1.0 : 0.4,
+          child: Container(
+            width: 76,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              child: Center(
-                child: clip != null
-                    ? Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          DieSprite(clip: clip!, size: 54, tint: tint),
-                          Text(
-                            'ROLL',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1.1,
-                              color: labelColor,
-                              shadows: [
-                                Shadow(
-                                  color: labelColor == Colors.white
-                                      ? Colors.black54
-                                      : Colors.white70,
-                                  blurRadius: 4,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.casino,
-                            size: 22,
-                            color: theme.colorScheme.primary,
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'ROLL',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1.1,
-                              color: theme.colorScheme.primary,
-                            ),
-                          ),
-                        ],
+              border: Border.all(
+                color: isEnabled
+                    ? theme.colorScheme.primary
+                    : theme.dividerColor,
+                width: 1.5,
+              ),
+              boxShadow: isEnabled
+                  ? [
+                      BoxShadow(
+                        color: theme.colorScheme.primary.withAlpha(35),
+                        blurRadius: 8,
                       ),
+                    ]
+                  : null,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: onPressed,
+                borderRadius: BorderRadius.circular(12),
+                child: Center(
+                  child: clip != null
+                      ? Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            DieSprite(clip: clip!, size: 54, tint: tint),
+                            Text(
+                              'ROLL',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.1,
+                                color: labelColor,
+                                shadows: isEnabled
+                                    ? [
+                                        Shadow(
+                                          color: labelColor == Colors.white
+                                              ? Colors.black54
+                                              : Colors.white70,
+                                          blurRadius: 4,
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.casino,
+                              size: 22,
+                              color: isEnabled
+                                  ? theme.colorScheme.primary
+                                  : theme.disabledColor,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'ROLL',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.1,
+                                color: isEnabled
+                                    ? theme.colorScheme.primary
+                                    : theme.disabledColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
               ),
             ),
           ),

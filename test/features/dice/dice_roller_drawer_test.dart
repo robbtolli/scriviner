@@ -23,9 +23,9 @@ void main() {
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
 
-    // Verify Title & Default Formula
+    // Verify Title & Default Formula (starts empty)
     expect(find.text('DICE ROLLER'), findsOneWidget);
-    expect(find.text('1d20'), findsOneWidget);
+    expect(find.text('Select dice'), findsOneWidget);
 
     // Verify Polyhedral dice buttons
     expect(find.text('d4'), findsOneWidget);
@@ -60,6 +60,13 @@ void main() {
       await tester.tap(find.text('d6'));
       await tester.pumpAndSettle();
 
+      // Formula should now be "1d6"
+      expect(find.text('1d6'), findsOneWidget);
+
+      // Tap d20 button
+      await tester.tap(find.text('d20'));
+      await tester.pumpAndSettle();
+
       // Formula should now be "1d20 + 1d6"
       expect(find.text('1d20 + 1d6'), findsOneWidget);
 
@@ -79,7 +86,7 @@ void main() {
     },
   );
 
-  testWidgets('ROLL button executes roll and records to history', (
+  testWidgets('ROLL button is disabled when empty, rolls when dice selected', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(800, 1200);
@@ -89,7 +96,16 @@ void main() {
     await tester.pumpWidget(createWidgetUnderTest());
     await tester.pumpAndSettle();
 
-    // Tap ROLL button
+    // Tap ROLL button while empty - should not roll
+    await tester.tap(find.text('ROLL'));
+    await tester.pumpAndSettle();
+    expect(find.text('No rolls yet this session'), findsOneWidget);
+
+    // Add a d20
+    await tester.tap(find.text('d20'));
+    await tester.pumpAndSettle();
+
+    // Now tap ROLL button
     await tester.tap(find.text('ROLL'));
     await tester.pumpAndSettle();
 
@@ -103,6 +119,40 @@ void main() {
 
     // History is now empty
     expect(find.text('No rolls yet this session'), findsOneWidget);
+  });
+
+  testWidgets('Reset button clears formula and hides dice result', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    await tester.pumpWidget(createWidgetUnderTest());
+    await tester.pumpAndSettle();
+
+    // Add d20 and roll
+    await tester.tap(find.text('d20'));
+    await tester.pumpAndSettle();
+    expect(find.text('1d20'), findsOneWidget);
+
+    await tester.tap(find.text('ROLL'));
+    await tester.pumpAndSettle();
+
+    // Roll result is visible
+    expect(find.text('Select dice'), findsNothing);
+
+    // Tap Reset
+    await tester.tap(find.text('Reset'));
+    await tester.pumpAndSettle();
+
+    // Formula is cleared back to placeholder
+    expect(find.text('Select dice'), findsOneWidget);
+    // Tapping ROLL does nothing because it's disabled
+    await tester.tap(find.text('ROLL'));
+    await tester.pumpAndSettle();
+    // No new roll was added
+    expect(find.text('RECENT ROLLS (1)'), findsOneWidget);
   });
 
   testWidgets('FloatingDiceFab opens dice roller bottom sheet on tap', (

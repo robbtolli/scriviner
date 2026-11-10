@@ -51,7 +51,7 @@ class DiceDrawerState {
 
   const DiceDrawerState({
     this.contextTitle = 'Quick Roll',
-    this.diceCounts = const {20: 1},
+    this.diceCounts = const {},
     this.flatModifier = 0,
     this.rollType = RollType.normal,
     this.activeBonusIds = const {},
@@ -59,6 +59,12 @@ class DiceDrawerState {
     this.lastRoll,
     this.rollSerial = 0,
   });
+
+  /// True if no dice or modifiers are in the formula.
+  bool get isFormulaEmpty => formula.isEmpty;
+
+  /// True if the formula has at least one die or modifier to roll.
+  bool get hasFormula => formula.isNotEmpty;
 
   /// Computes the complete readable formula string.
   String get formula {
@@ -106,8 +112,9 @@ class DiceDrawerState {
     }
 
     if (terms.isEmpty) {
-      if (totalFlat != 0) return '$totalFlat';
-      return '1d20';
+      if (totalFlat > 0) return '+$totalFlat';
+      if (totalFlat < 0) return '$totalFlat';
+      return '';
     }
 
     var result = terms.join(' + ');
@@ -128,6 +135,7 @@ class DiceDrawerState {
     Set<String>? activeBonusIds,
     List<DiceRollRecord>? history,
     DiceRollRecord? lastRoll,
+    bool clearLastRoll = false,
     int? rollSerial,
   }) {
     return DiceDrawerState(
@@ -137,7 +145,7 @@ class DiceDrawerState {
       rollType: rollType ?? this.rollType,
       activeBonusIds: activeBonusIds ?? this.activeBonusIds,
       history: history ?? this.history,
-      lastRoll: lastRoll ?? this.lastRoll,
+      lastRoll: clearLastRoll ? null : (lastRoll ?? this.lastRoll),
       rollSerial: rollSerial ?? this.rollSerial,
     );
   }
@@ -180,6 +188,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
       activeBonusIds: {},
       rollType: RollType.normal,
       contextTitle: 'Quick Roll',
+      clearLastRoll: true,
     );
   }
 
@@ -190,7 +199,6 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
   void setQuickRoll() {
     state = state.copyWith(
       contextTitle: 'Quick Roll',
-      diceCounts: state.diceCounts.isEmpty ? const {20: 1} : state.diceCounts,
       rollType: RollType.normal,
       activeBonusIds: {},
     );
@@ -241,7 +249,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
   }) {
     state = state.copyWith(
       contextTitle: title,
-      diceCounts: diceCounts ?? {20: 1},
+      diceCounts: diceCounts ?? {},
       flatModifier: flatModifier,
       rollType: rollType,
       activeBonusIds: {},
@@ -250,7 +258,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
 
   /// Executes the roll using DiceRoller and saves it to history.
   DiceRollRecord roll() {
-    final formulaToRoll = state.formula;
+    final formulaToRoll = state.formula.isEmpty ? '1d20' : state.formula;
     final result = _roller.rollFormula(formulaToRoll);
 
     final record = DiceRollRecord(

@@ -26,7 +26,9 @@ void main() {
       expect(find.text('d6'), findsOneWidget);
       expect(find.text('ROLL'), findsOneWidget);
 
-      // Tap ROLL button
+      // Select d20 and tap ROLL button
+      await tester.tap(find.text('d20'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('ROLL'));
       await tester.pumpAndSettle();
 
