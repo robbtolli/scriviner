@@ -2,7 +2,7 @@
 
 > **Project**: Scrivener — Modern TTRPG Character Manager & Rules Engine  
 > **Author & Copyright**: Robert Tolliver (tollitech.com)  
-> **Bundle Identifier**: `com.tollitech.scrivener`  
+> **Bundle Identifiers**: `com.tollitech.scrivener` (Scrivener), `com.tollitech.dicecaster` (Dice Caster)  
 > **License**: Mozilla Public License 2.0 (MPL-2.0)  
 > **Tech Stack**: Flutter 3.x, Dart 3.x, Riverpod 2.x, Drift / SQLite, Google Fonts, PDF / Printing
 
@@ -24,8 +24,10 @@ Scrivener is a high-performance, cross-platform tabletop roleplaying game (TTRPG
 
 ```
 lib/
-├── app.dart                   # Root MaterialApp with theme listener
-├── main.dart                  # Application entry point with ProviderScope
+├── app.dart                   # Root MaterialApp with theme listener (Scrivener)
+├── dice_app.dart              # Root MaterialApp for standalone Dice Caster
+├── main.dart                  # Scrivener application entry point
+├── main_dice.dart             # Dice Caster application entry point
 ├── core/
 │   ├── database/              # Drift SQLite database, tables, and migrations
 │   │   ├── app_database.dart  # Database schema definition
@@ -56,6 +58,7 @@ lib/
     ├── combat/                # Combat dashboard, HP, death saves, conditions
     ├── compendium/            # Searchable SRD compendium & filters
     ├── dice/                  # Interactive dice tray, drawer, & neutral quick-roller
+    │   ├── presentation/      # 3D stage, tray, drawer, & dice_standalone_screen.dart
     ├── export_import/         # JSON character backup/restore & QR sharing
     ├── home/                  # Character roster, hero cards, responsive app bar
     ├── pdf_export/            # 2-page printable PDF generator & preview
@@ -92,10 +95,20 @@ dart run build_runner build --delete-conflicting-outputs
 dart format lib test
 ```
 
-### Running the Application
+### Running the Applications
+
+#### Scrivener (Full Character Manager)
 ```bash
 flutter run -d chrome
 flutter run -d linux
+flutter run --flavor scrivener
+```
+
+#### Dice Caster (Standalone Dice Roller)
+```bash
+flutter run -t lib/main_dice.dart -d chrome
+flutter run -t lib/main_dice.dart -d linux
+flutter run -t lib/main_dice.dart --flavor dice
 ```
 
 ---
@@ -144,6 +157,14 @@ Scrivener runs on phones, tablets, and desktops. Follow these strict UI safety r
 - The dice roller supports notation such as `1d20+5`, `2d20kh1+3` (advantage), `2d20kl1+3` (disadvantage), `4d6dl1` (drop lowest), and complex compound formulas.
 - **Title-Bar Quick Roller**: The global dice drawer opened from the AppBar operates in a neutral roll mode (`setQuickRoll()`). It displays visual roll results but does **not** mutate any character sheet attributes or logs.
 
+### F. Multi-App Architecture (Scrivener & Dice Caster)
+- The codebase produces two distinct applications via Flutter multi-entrypoint targets:
+  1. **Scrivener** (`lib/main.dart` -> `lib/app.dart`): Full TTRPG companion app (`com.tollitech.scrivener`).
+  2. **Dice Caster** (`lib/main_dice.dart` -> `lib/dice_app.dart`): Focused standalone polyhedral dice roller (`com.tollitech.dicecaster`).
+- **Shared Code**: Both apps share `lib/core/dice/`, `lib/features/dice/`, and the 7-theme design system in `lib/core/theme/`.
+- **Dice Caster Screen**: `lib/features/dice/presentation/dice_standalone_screen.dart` provides an AppBar with theme selection (`ThemeSelectorDialog`) and full-screen dice tray.
+- **Flavors**: Configured in `android/app/build.gradle.kts` as `scrivener` and `dice` product flavors with independent application IDs. Roll history in Dice Caster is kept in-memory.
+
 ---
 
 ## 5. Testing Requirements & Conventions
@@ -161,6 +182,6 @@ Scrivener runs on phones, tablets, and desktops. Follow these strict UI safety r
 ## 6. Codebase Hygiene & Documentation Integrity
 
 - **Comments & Docstrings**: Preserve existing comments, explanatory notes, and copyright headers.
-- **Copyright & Author**: Robert Tolliver (tollitech.com) (`com.tollitech.scrivener`).
+- **Copyright & Author**: Robert Tolliver (tollitech.com) (`com.tollitech.scrivener`, `com.tollitech.dicecaster`).
 - **License**: Mozilla Public License 2.0 (MPL-2.0) with D&D 5e SRD 5.1 under Creative Commons Attribution 4.0 International (CC-BY-4.0).
 - **Static Analysis**: Never commit code that causes `flutter analyze` warnings or errors.

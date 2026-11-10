@@ -28,6 +28,11 @@ In medieval and early modern history, a **scrivener** was a master scribe, clerk
 
 This app is named **Scrivener** because it serves as your personal digital scribe: faithfully recording, calculating, and safeguarding every attribute, ability score, spell, and heroic deed for your tabletop characters.
 
+### What is Dice Caster?
+Sharing the same codebase, **Dice Caster** is a standalone, focused polyhedral dice roller app tailored for players and DMs who want Scrivener's dynamic dice engine without the full character sheet overhead.
+
+In medieval games of *Hazard* (the historical ancestor of craps), the player rolling the dice was formally known as **the caster**. In tabletop gaming, a *caster* also channels arcane might. **Dice Caster** bridges both traditions: featuring polyhedral dice sets (d4–d100), mathematical formula parsing (`2d20kh1+5`, `4d6dl1`), 3D animated dice physics, situational bonus modifiers (Bless, Guidance, Cover), in-memory roll logs, and instant access to all 7 of Scrivener's atmospheric visual themes via an AppBar theme picker.
+
 ### Core Philosophy
 - **Mathematical Accuracy Without Clutter**: Derived statistics (Armor Class, spell save DCs, attack bonuses, and skill proficiencies) evaluate through a dedicated modifier pipeline (`PropertyPipeline`) with stacking bonuses, hard overrides, and formula parsing.
 - **Offline First & Private**: Your characters, homebrew packs, and roll logs live locally in SQLite via Drift. No forced cloud accounts, no subscriptions, and zero external network dependency required.
@@ -200,6 +205,8 @@ flowchart TD
    ```
 
 4. **Launch the application**:
+   
+   **Scrivener (Full App)**:
    ```bash
    # Desktop Linux
    flutter run -d linux
@@ -207,8 +214,20 @@ flowchart TD
    # Web browser
    flutter run -d chrome
 
-   # Mobile (Android or iOS simulator)
-   flutter run
+   # Mobile with flavor
+   flutter run --flavor scrivener
+   ```
+
+   **Dice Caster (Standalone App)**:
+   ```bash
+   # Desktop Linux
+   flutter run -t lib/main_dice.dart -d linux
+
+   # Web browser
+   flutter run -t lib/main_dice.dart -d chrome
+
+   # Mobile with flavor
+   flutter run -t lib/main_dice.dart --flavor dice
    ```
 
 ---
@@ -263,7 +282,9 @@ For AI coding agents and human contributors, see [`AGENTS.md`](AGENTS.md) for ar
 
 - **Author**: Robert Tolliver
 - **Website**: [tollitech.com](https://tollitech.com)
-- **Bundle Identifier**: `com.tollitech.scrivener`
+- **Bundle Identifiers**:
+  - Scrivener: `com.tollitech.scrivener`
+  - Dice Caster: `com.tollitech.dicecaster`
 - **Copyright**: © 2026 Robert Tolliver (tollitech.com).
 
 ---

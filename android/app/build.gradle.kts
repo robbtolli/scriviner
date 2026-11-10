@@ -32,6 +32,21 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["appName"] = "Scrivener"
+    }
+
+    flavorDimensions += "app"
+    productFlavors {
+        create("scrivener") {
+            dimension = "app"
+            applicationId = "com.tollitech.scrivener"
+            manifestPlaceholders["appName"] = "Scrivener"
+        }
+        create("dice") {
+            dimension = "app"
+            applicationId = "com.tollitech.dicecaster"
+            manifestPlaceholders["appName"] = "Dice Caster"
+        }
     }
 
     signingConfigs {

@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Scrivener",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart"
+    },
+    {
+      "name": "Scrivener (Flavored)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--flavor", "scrivener"]
+    },
+    {
+      "name": "Dice Caster",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dice.dart"
+    },
+    {
+      "name": "Dice Caster (Flavored)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dice.dart",
+      "args": ["--flavor", "dice"]
+    }
+  ]
+}
