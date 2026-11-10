@@ -26,8 +26,8 @@ class DiceRollerDrawer extends ConsumerWidget {
     final state = ref.watch(diceDrawerProvider);
     final notifier = ref.read(diceDrawerProvider.notifier);
 
-    final content = SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    final scrollableContent = SingleChildScrollView(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -116,116 +116,92 @@ class DiceRollerDrawer extends ConsumerWidget {
             ),
           const SizedBox(height: 8),
 
-          // Formula Display & Roll Button Row
-          IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Formula Display Box
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surface,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: state.hasFormula
-                            ? theme.colorScheme.primary
-                            : theme.dividerColor,
-                        width: 1.5,
+          // Formula Display Box (full width)
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: state.hasFormula
+                    ? theme.colorScheme.primary
+                    : theme.dividerColor,
+                width: 1.5,
+              ),
+              boxShadow: state.hasFormula
+                  ? [
+                      BoxShadow(
+                        color: theme.colorScheme.primary.withAlpha(25),
+                        blurRadius: 8,
                       ),
-                      boxShadow: state.hasFormula
-                          ? [
-                              BoxShadow(
-                                color: theme.colorScheme.primary.withAlpha(25),
-                                blurRadius: 8,
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'FORMULA',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1,
-                                  color: theme.colorScheme.onSurface.withAlpha(
-                                    140,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                state.formula.isEmpty
-                                    ? 'Select dice'
-                                    : state.formula,
-                                style: TextStyle(
-                                  fontSize: state.formula.isEmpty ? 16 : 20,
-                                  fontStyle: state.formula.isEmpty
-                                      ? FontStyle.italic
-                                      : FontStyle.normal,
-                                  fontWeight: state.formula.isEmpty
-                                      ? FontWeight.normal
-                                      : FontWeight.bold,
-                                  color: state.formula.isEmpty
-                                      ? theme.colorScheme.onSurface.withAlpha(
-                                          120,
-                                        )
-                                      : theme.colorScheme.onSurface,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
+                    ]
+                  : null,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'FORMULA',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                          color: theme.colorScheme.onSurface.withAlpha(140),
                         ),
-                        if (state.rollType != RollType.normal)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: state.rollType == RollType.advantage
-                                  ? Colors.green.withAlpha(40)
-                                  : Colors.red.withAlpha(40),
-                              borderRadius: BorderRadius.circular(6),
-                              border: Border.all(
-                                color: state.rollType == RollType.advantage
-                                    ? Colors.greenAccent
-                                    : Colors.redAccent,
-                              ),
-                            ),
-                            child: Text(
-                              state.rollType == RollType.advantage
-                                  ? 'ADV'
-                                  : 'DIS',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 11,
-                                color: state.rollType == RollType.advantage
-                                    ? Colors.greenAccent
-                                    : Colors.redAccent,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        state.formula.isEmpty ? 'Select dice' : state.formula,
+                        style: TextStyle(
+                          fontSize: state.formula.isEmpty ? 16 : 20,
+                          fontStyle: state.formula.isEmpty
+                              ? FontStyle.italic
+                              : FontStyle.normal,
+                          fontWeight: state.formula.isEmpty
+                              ? FontWeight.normal
+                              : FontWeight.bold,
+                          color: state.formula.isEmpty
+                              ? theme.colorScheme.onSurface.withAlpha(120)
+                              : theme.colorScheme.onSurface,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 10),
-                // Roll Button with themed d12
-                _RollButton(
-                  onPressed: state.hasFormula ? () => notifier.roll() : null,
-                  clip: ref.watch(diceSpriteAtlasProvider).value?.clipFor(12),
-                ),
+                if (state.rollType != RollType.normal)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: state.rollType == RollType.advantage
+                          ? Colors.green.withAlpha(40)
+                          : Colors.red.withAlpha(40),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: state.rollType == RollType.advantage
+                            ? Colors.greenAccent
+                            : Colors.redAccent,
+                      ),
+                    ),
+                    child: Text(
+                      state.rollType == RollType.advantage ? 'ADV' : 'DIS',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                        color: state.rollType == RollType.advantage
+                            ? Colors.greenAccent
+                            : Colors.redAccent,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -329,6 +305,22 @@ class DiceRollerDrawer extends ConsumerWidget {
       ),
     );
 
+    final rollFab = Positioned(
+      right: 16,
+      bottom: 16,
+      child: SafeArea(
+        child: _RollButton(
+          onPressed: state.hasFormula ? () => notifier.roll() : null,
+          clip: ref.watch(diceSpriteAtlasProvider).value?.clipFor(12),
+        ),
+      ),
+    );
+
+    final content = Stack(
+      fit: StackFit.expand,
+      children: [scrollableContent, rollFab],
+    );
+
     if (isFullScreen) {
       return content;
     }
@@ -351,18 +343,60 @@ class DiceRollerDrawer extends ConsumerWidget {
   }
 }
 
-/// Compact, highly accessible action button placed beside the formula display.
-/// Displays a resting d12 themed sprite with "ROLL" overlaid on top.
-class _RollButton extends StatelessWidget {
+/// Floating action button placed near the bottom of the drawer / screen.
+/// Displays a resting d12 themed sprite with "ROLL" overlaid on top, with a
+/// completely transparent background and no border. When tapped, the d12
+/// executes the authentic 3D tumble simulation from the atlas (matching
+/// [RollingDiceStage]), while the word "ROLL" disappears during the tumble
+/// and smoothly reappears once the die settles face-up.
+class _RollButton extends StatefulWidget {
   final VoidCallback? onPressed;
   final DiceAtlasClip? clip;
 
   const _RollButton({required this.onPressed, this.clip});
 
   @override
+  State<_RollButton> createState() => _RollButtonState();
+}
+
+class _RollButtonState extends State<_RollButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animController;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 850),
+    );
+    _animation = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
+
+  void _handlePress() {
+    if (widget.onPressed == null || _animController.isAnimating) return;
+    if (MediaQuery.of(context).disableAnimations) {
+      _animController.value = 1.0;
+    } else {
+      _animController.forward(from: 0.0);
+    }
+    widget.onPressed!();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isEnabled = onPressed != null;
+    final isEnabled = widget.onPressed != null;
     final baseTint = Color.lerp(theme.colorScheme.primary, Colors.white, 0.25)!;
     final tint = isEnabled
         ? baseTint
@@ -371,99 +405,136 @@ class _RollButton extends StatelessWidget {
         ? (tint.computeLuminance() > 0.45 ? Colors.black87 : Colors.white)
         : theme.disabledColor;
 
-    return Semantics(
-      button: true,
-      enabled: isEnabled,
-      label: 'Roll',
-      child: Tooltip(
-        message: isEnabled ? 'Roll dice' : 'Formula is empty',
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 200),
-          opacity: isEnabled ? 1.0 : 0.4,
-          child: Container(
-            width: 76,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isEnabled
-                    ? theme.colorScheme.primary
-                    : theme.dividerColor,
-                width: 1.5,
-              ),
-              boxShadow: isEnabled
-                  ? [
-                      BoxShadow(
-                        color: theme.colorScheme.primary.withAlpha(35),
-                        blurRadius: 8,
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Material(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: onPressed,
-                borderRadius: BorderRadius.circular(12),
-                child: Center(
-                  child: clip != null
-                      ? Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            DieSprite(clip: clip!, size: 54, tint: tint),
-                            Text(
-                              'ROLL',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 1.1,
-                                color: labelColor,
-                                shadows: isEnabled
-                                    ? [
-                                        Shadow(
-                                          color: labelColor == Colors.white
-                                              ? Colors.black54
-                                              : Colors.white70,
-                                          blurRadius: 4,
-                                        ),
-                                      ]
-                                    : null,
-                              ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.casino,
-                              size: 22,
-                              color: isEnabled
-                                  ? theme.colorScheme.primary
-                                  : theme.disabledColor,
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'ROLL',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 1.1,
-                                color: isEnabled
-                                    ? theme.colorScheme.primary
-                                    : theme.disabledColor,
-                              ),
-                            ),
-                          ],
-                        ),
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, _) {
+        final isRolling = _animController.isAnimating;
+        final canPress = isEnabled && !isRolling;
+
+        return Semantics(
+          button: true,
+          enabled: canPress,
+          label: 'Roll',
+          child: Tooltip(
+            message: isRolling
+                ? 'Rolling...'
+                : (isEnabled ? 'Roll dice' : 'Formula is empty'),
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: isEnabled ? 1.0 : 0.4,
+              child: SizedBox(
+                width: 84,
+                height: 84,
+                child: FloatingActionButton(
+                  heroTag: null,
+                  elevation: 0,
+                  focusElevation: 0,
+                  hoverElevation: 0,
+                  highlightElevation: 0,
+                  disabledElevation: 0,
+                  backgroundColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  shape: const CircleBorder(side: BorderSide.none),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  onPressed: canPress ? _handlePress : null,
+                  child: Builder(
+                    builder: (context) {
+                      final progress = isRolling ? _animation.value : 1.0;
+
+                      // In authentic 3D simulation, the text disappears during tumble
+                      // and fades/scales in when settling on the final face (progress >= 0.85)
+                      final textOpacity = isRolling
+                          ? ((progress - 0.85) / 0.15).clamp(0.0, 1.0)
+                          : 1.0;
+                      final textScale = isRolling
+                          ? 0.7 + 0.3 * textOpacity
+                          : 1.0;
+
+                      final clip = widget.clip;
+                      final frame = clip != null
+                          ? (isRolling
+                                ? clip.frameForProgress(progress)
+                                : clip.frames - 1)
+                          : null;
+
+                      return clip != null
+                          ? Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                DieSprite(
+                                  clip: clip,
+                                  frame: frame,
+                                  size: 81,
+                                  tint: tint,
+                                ),
+                                Opacity(
+                                  opacity: textOpacity,
+                                  child: Transform.scale(
+                                    scale: textScale,
+                                    child: Text(
+                                      'ROLL',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 1.1,
+                                        color: labelColor,
+                                        shadows: isEnabled
+                                            ? [
+                                                Shadow(
+                                                  color:
+                                                      labelColor == Colors.white
+                                                      ? Colors.black54
+                                                      : Colors.white70,
+                                                  blurRadius: 4,
+                                                ),
+                                              ]
+                                            : null,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.casino,
+                                  size: 36,
+                                  color: isEnabled
+                                      ? theme.colorScheme.primary
+                                      : theme.disabledColor,
+                                ),
+                                const SizedBox(height: 2),
+                                Opacity(
+                                  opacity: textOpacity,
+                                  child: Transform.scale(
+                                    scale: textScale,
+                                    child: Text(
+                                      'ROLL',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 1.1,
+                                        color: isEnabled
+                                            ? theme.colorScheme.primary
+                                            : theme.disabledColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                    },
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

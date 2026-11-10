@@ -121,6 +121,69 @@ void main() {
     expect(find.text('No rolls yet this session'), findsOneWidget);
   });
 
+  testWidgets(
+    'ROLL button is a bottom floating action button where ROLL text disappears during 3D roll',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pumpAndSettle();
+
+      // Find the FloatingActionButton containing ROLL
+      final rollFabFinder = find.ancestor(
+        of: find.text('ROLL'),
+        matching: find.byType(FloatingActionButton),
+      );
+      expect(rollFabFinder, findsOneWidget);
+
+      final fab = tester.widget<FloatingActionButton>(rollFabFinder);
+      expect(fab.backgroundColor, Colors.transparent);
+      expect(fab.elevation, 0);
+      expect(fab.splashColor, Colors.transparent);
+
+      // Verify FAB is positioned near the bottom of the screen
+      final fabCenter = tester.getCenter(rollFabFinder);
+      expect(
+        fabCenter.dy,
+        greaterThan(1000),
+      ); // Near bottom of 1200 height screen
+
+      // Verify 1.5x size (84x84)
+      expect(tester.getSize(rollFabFinder), const Size(84, 84));
+
+      // Select d20
+      await tester.tap(find.text('d20'));
+      await tester.pumpAndSettle();
+
+      // Tap ROLL button and pump mid-tumble animation (200ms)
+      await tester.tap(rollFabFinder);
+      await tester.pump(const Duration(milliseconds: 200));
+
+      // The button is disabled while animating
+      final fabDuringAnim = tester.widget<FloatingActionButton>(rollFabFinder);
+      expect(fabDuringAnim.onPressed, isNull);
+
+      // The word "ROLL" text is hidden (opacity 0) while die is tumbling
+      final rollOpacityFinder = find
+          .ancestor(of: find.text('ROLL'), matching: find.byType(Opacity))
+          .first;
+      final rollOpacity = tester.widget<Opacity>(rollOpacityFinder);
+      expect(rollOpacity.opacity, 0.0);
+
+      // Settle animation
+      await tester.pumpAndSettle();
+
+      // After settling, button is re-enabled and ROLL text is fully visible (opacity 1.0)
+      final fabAfterAnim = tester.widget<FloatingActionButton>(rollFabFinder);
+      expect(fabAfterAnim.onPressed, isNotNull);
+      final settledOpacity = tester.widget<Opacity>(rollOpacityFinder);
+      expect(settledOpacity.opacity, 1.0);
+      expect(find.text('RECENT ROLLS (1)'), findsOneWidget);
+    },
+  );
+
   testWidgets('Reset button clears formula and hides dice result', (
     tester,
   ) async {
