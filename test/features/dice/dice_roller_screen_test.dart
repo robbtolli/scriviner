@@ -15,10 +15,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Verify AppBar with title and reset action
+      // Verify AppBar with title and always-visible formula clear button (no header Reset button)
       expect(find.byType(AppBar), findsOneWidget);
       expect(find.text('DICE ROLLER'), findsOneWidget);
-      expect(find.text('Reset'), findsOneWidget);
+      expect(find.text('Reset'), findsNothing);
+      expect(
+        find.byKey(const ValueKey('clear_formula_button')),
+        findsOneWidget,
+      );
 
       // Verify dice tray controls
       expect(find.text('d20'), findsOneWidget);

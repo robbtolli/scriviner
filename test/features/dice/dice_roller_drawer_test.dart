@@ -237,39 +237,102 @@ void main() {
     },
   );
 
-  testWidgets('Reset button clears formula and hides dice result', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(800, 1200);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
+  testWidgets(
+    'Formula x clear button is always visible, clears formula, and hides dice result',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pumpAndSettle();
 
-    // Add d20 and roll
-    await tester.tap(find.text('d20'));
-    await tester.pumpAndSettle();
-    expect(find.text('1d20'), findsOneWidget);
+      // Header Reset button is replaced by the always-visible formula x button
+      expect(find.text('Reset'), findsNothing);
+      final clearBtnFinder = find.byKey(const ValueKey('clear_formula_button'));
+      expect(clearBtnFinder, findsOneWidget);
 
-    await tester.tap(find.text('ROLL'));
-    await tester.pumpAndSettle();
+      // Add d20 and roll
+      await tester.tap(find.text('d20'));
+      await tester.pumpAndSettle();
+      expect(find.text('1d20'), findsOneWidget);
 
-    // Roll result is visible
-    expect(find.text('Select dice'), findsNothing);
+      await tester.tap(find.text('ROLL'));
+      await tester.pumpAndSettle();
 
-    // Tap Reset
-    await tester.tap(find.text('Reset'));
-    await tester.pumpAndSettle();
+      // Tap formula 'x' button
+      await tester.tap(clearBtnFinder);
+      await tester.pumpAndSettle();
 
-    // Formula is cleared back to placeholder
-    expect(find.text('Select dice'), findsOneWidget);
-    // Tapping ROLL does nothing because it's disabled
-    await tester.tap(find.text('ROLL'));
-    await tester.pumpAndSettle();
-    // No new roll was added
-    expect(find.text('RECENT ROLLS (1)'), findsOneWidget);
-  });
+      // Formula is cleared back to empty and clear button remains visible
+      final textField = tester.widget<TextField>(
+        find.byKey(const ValueKey('formula_text_field')),
+      );
+      expect(textField.controller?.text, isEmpty);
+      expect(clearBtnFinder, findsOneWidget);
+
+      // Tapping ROLL does nothing because it's disabled
+      await tester.tap(find.text('ROLL'));
+      await tester.pumpAndSettle();
+      // No new roll was added
+      expect(find.text('RECENT ROLLS (1)'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'User can tap formula to type a custom formula with live validation and ROLL gating',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pumpAndSettle();
+
+      final formulaField = find.byKey(const ValueKey('formula_text_field'));
+      final rollFabFinder = find.ancestor(
+        of: find.text('ROLL'),
+        matching: find.byType(FloatingActionButton),
+      );
+      final clearBtnFinder = find.byKey(const ValueKey('clear_formula_button'));
+
+      // Initially ROLL is disabled
+      expect(
+        tester.widget<FloatingActionButton>(rollFabFinder).onPressed,
+        isNull,
+      );
+
+      // Tap formula field and type an invalid formula
+      await tester.tap(formulaField);
+      await tester.enterText(formulaField, '2d6 + invalid');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Invalid formula'), findsOneWidget);
+      expect(
+        tester.widget<FloatingActionButton>(rollFabFinder).onPressed,
+        isNull,
+      );
+      // Clear 'x' button is still visible while editing
+      expect(clearBtnFinder, findsOneWidget);
+
+      // Now type a valid formula
+      await tester.enterText(formulaField, '2d6 + 3');
+      await tester.pumpAndSettle();
+
+      expect(find.text('Invalid formula'), findsNothing);
+      expect(
+        tester.widget<FloatingActionButton>(rollFabFinder).onPressed,
+        isNotNull,
+      );
+      // d6 button is synced and active (shows clear_die_d6 badge)
+      expect(find.byKey(const ValueKey('clear_die_d6')), findsOneWidget);
+
+      // Roll the typed formula
+      await tester.tap(rollFabFinder);
+      await tester.pumpAndSettle();
+      expect(find.text('RECENT ROLLS (1)'), findsOneWidget);
+    },
+  );
 
   testWidgets('FloatingDiceFab opens dice roller bottom sheet on tap', (
     tester,

@@ -10,7 +10,7 @@ import 'widgets/roll_history_list.dart';
 import 'widgets/rolling_dice_stage.dart';
 import 'widgets/situational_chips_row.dart';
 
-class DiceRollerDrawer extends ConsumerWidget {
+class DiceRollerDrawer extends ConsumerStatefulWidget {
   final bool isBottomSheet;
   final bool isFullScreen;
 
@@ -21,10 +21,41 @@ class DiceRollerDrawer extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DiceRollerDrawer> createState() => _DiceRollerDrawerState();
+}
+
+class _DiceRollerDrawerState extends ConsumerState<DiceRollerDrawer> {
+  late final TextEditingController _formulaController;
+  late final FocusNode _formulaFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    final initialFormula = ref.read(diceDrawerProvider).formula;
+    _formulaController = TextEditingController(text: initialFormula);
+    _formulaFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _formulaController.dispose();
+    _formulaFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final state = ref.watch(diceDrawerProvider);
     final notifier = ref.read(diceDrawerProvider.notifier);
+
+    // Keep controller text in sync with provider state when updated externally (e.g., via dice buttons)
+    if (_formulaController.text != state.formula) {
+      _formulaController.value = TextEditingValue(
+        text: state.formula,
+        selection: TextSelection.collapsed(offset: state.formula.length),
+      );
+    }
 
     final scrollableContent = SingleChildScrollView(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 120),
@@ -32,7 +63,7 @@ class DiceRollerDrawer extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Header Bar
-          if (!isFullScreen)
+          if (!widget.isFullScreen)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -55,27 +86,11 @@ class DiceRollerDrawer extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Row(
-                  children: [
-                    TextButton.icon(
-                      onPressed: () => notifier.clearDice(),
-                      icon: const Icon(Icons.restart_alt, size: 14),
-                      label: const Text(
-                        'Reset',
-                        style: TextStyle(fontSize: 11),
-                      ),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.grey,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ),
-                    if (isBottomSheet || Navigator.of(context).canPop())
-                      IconButton(
-                        icon: const Icon(Icons.close, size: 20),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                  ],
-                ),
+                if (widget.isBottomSheet || Navigator.of(context).canPop())
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 20),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
               ],
             ),
 
@@ -116,93 +131,141 @@ class DiceRollerDrawer extends ConsumerWidget {
             ),
           const SizedBox(height: 8),
 
-          // Formula Display Box (full width)
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: state.hasFormula
-                    ? theme.colorScheme.primary
-                    : theme.dividerColor,
-                width: 1.5,
-              ),
-              boxShadow: state.hasFormula
-                  ? [
-                      BoxShadow(
-                        color: theme.colorScheme.primary.withAlpha(25),
-                        blurRadius: 8,
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'FORMULA',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                          color: theme.colorScheme.onSurface.withAlpha(140),
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        state.formula.isEmpty ? 'Select dice' : state.formula,
-                        style: TextStyle(
-                          fontSize: state.formula.isEmpty ? 16 : 20,
-                          fontStyle: state.formula.isEmpty
-                              ? FontStyle.italic
-                              : FontStyle.normal,
-                          fontWeight: state.formula.isEmpty
-                              ? FontWeight.normal
-                              : FontWeight.bold,
-                          color: state.formula.isEmpty
-                              ? theme.colorScheme.onSurface.withAlpha(120)
-                              : theme.colorScheme.onSurface,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+          // Formula Display Box (full width, tappable to edit)
+          GestureDetector(
+            onTap: () => _formulaFocusNode.requestFocus(),
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: state.hasInvalidFormula
+                      ? theme.colorScheme.error
+                      : state.isFormulaValid
+                      ? theme.colorScheme.primary
+                      : theme.dividerColor,
+                  width: 1.5,
                 ),
-                if (state.rollType != RollType.normal)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: state.rollType == RollType.advantage
-                          ? Colors.green.withAlpha(40)
-                          : Colors.red.withAlpha(40),
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(
-                        color: state.rollType == RollType.advantage
-                            ? Colors.greenAccent
-                            : Colors.redAccent,
-                      ),
-                    ),
-                    child: Text(
-                      state.rollType == RollType.advantage ? 'ADV' : 'DIS',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 11,
-                        color: state.rollType == RollType.advantage
-                            ? Colors.greenAccent
-                            : Colors.redAccent,
-                      ),
+                boxShadow: state.isFormulaValid
+                    ? [
+                        BoxShadow(
+                          color: theme.colorScheme.primary.withAlpha(25),
+                          blurRadius: 8,
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'FORMULA',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                                color: state.hasInvalidFormula
+                                    ? theme.colorScheme.error
+                                    : theme.colorScheme.onSurface.withAlpha(
+                                        140,
+                                      ),
+                              ),
+                            ),
+                            if (state.hasInvalidFormula) ...[
+                              const SizedBox(width: 8),
+                              Text(
+                                'Invalid formula',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.error,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        TextField(
+                          key: const ValueKey('formula_text_field'),
+                          controller: _formulaController,
+                          focusNode: _formulaFocusNode,
+                          onChanged: (value) =>
+                              notifier.setCustomFormula(value),
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: state.hasInvalidFormula
+                                ? theme.colorScheme.error
+                                : theme.colorScheme.onSurface,
+                          ),
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                            border: InputBorder.none,
+                            hintText: 'Select dice',
+                            hintStyle: TextStyle(
+                              fontSize: 16,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.normal,
+                              color: theme.colorScheme.onSurface.withAlpha(120),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-              ],
+                  if (state.rollType != RollType.normal) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: state.rollType == RollType.advantage
+                            ? Colors.green.withAlpha(40)
+                            : Colors.red.withAlpha(40),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: state.rollType == RollType.advantage
+                              ? Colors.greenAccent
+                              : Colors.redAccent,
+                        ),
+                      ),
+                      child: Text(
+                        state.rollType == RollType.advantage ? 'ADV' : 'DIS',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                          color: state.rollType == RollType.advantage
+                              ? Colors.greenAccent
+                              : Colors.redAccent,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                  IconButton(
+                    key: const ValueKey('clear_formula_button'),
+                    tooltip: 'Clear formula',
+                    icon: const Icon(Icons.close, size: 20),
+                    visualDensity: VisualDensity.compact,
+                    color: theme.colorScheme.onSurface.withAlpha(180),
+                    onPressed: () {
+                      _formulaController.clear();
+                      notifier.clearDice();
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           if (state.lastRoll != null || state.previewDiceTerms.isNotEmpty) ...[
@@ -312,7 +375,12 @@ class DiceRollerDrawer extends ConsumerWidget {
       bottom: 16,
       child: SafeArea(
         child: _RollButton(
-          onPressed: state.hasFormula ? () => notifier.roll() : null,
+          onPressed: state.isFormulaValid
+              ? () {
+                  _formulaFocusNode.unfocus();
+                  notifier.roll();
+                }
+              : null,
           clip: ref.watch(diceSpriteAtlasProvider).value?.clipFor(12),
         ),
       ),
@@ -323,11 +391,11 @@ class DiceRollerDrawer extends ConsumerWidget {
       children: [scrollableContent, rollFab],
     );
 
-    if (isFullScreen) {
+    if (widget.isFullScreen) {
       return content;
     }
 
-    if (isBottomSheet) {
+    if (widget.isBottomSheet) {
       return Container(
         decoration: BoxDecoration(
           color: theme.scaffoldBackgroundColor,

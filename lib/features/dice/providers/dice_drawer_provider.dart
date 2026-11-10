@@ -44,6 +44,9 @@ class DiceDrawerState {
   final Set<String> activeBonusIds;
   final List<DiceRollRecord> history;
 
+  /// Optional manually-typed formula string when the user edits the formula box.
+  final String? customFormula;
+
   /// Most recent roll, shown by the animated dice stage.
   final DiceRollRecord? lastRoll;
 
@@ -58,25 +61,41 @@ class DiceDrawerState {
     this.rollType = RollType.normal,
     this.activeBonusIds = const {},
     this.history = const [],
+    this.customFormula,
     this.lastRoll,
     this.rollSerial = 0,
   });
 
   /// True if no dice or modifiers are in the formula.
-  bool get isFormulaEmpty => formula.isEmpty;
+  bool get isFormulaEmpty => formula.trim().isEmpty;
 
-  /// True if the formula has at least one die or modifier to roll.
-  bool get hasFormula => formula.isNotEmpty;
+  /// True if the formula has at least one character/term.
+  bool get hasFormula => formula.trim().isNotEmpty;
+
+  /// True if the current formula is non-empty and passes [DiceParser.isValid].
+  bool get isFormulaValid =>
+      formula.trim().isNotEmpty && DiceParser.isValid(formula);
+
+  /// True if the user has typed a non-empty formula that is invalid.
+  bool get hasInvalidFormula =>
+      formula.trim().isNotEmpty && !DiceParser.isValid(formula);
 
   /// Parsed dice terms for the current formula, used to render the unrolled
   /// blank-face dice preview in the stage before rolling.
   List<DiceTerm> get previewDiceTerms {
-    if (formula.trim().isEmpty) return const [];
+    if (!isFormulaValid) return const [];
     return DiceParser.parse(formula).diceTerms;
   }
 
   /// Computes the complete readable formula string.
   String get formula {
+    if (customFormula != null) {
+      return customFormula!;
+    }
+    return _structuredFormula;
+  }
+
+  String get _structuredFormula {
     final terms = <String>[];
 
     // 1. Polyhedral dice
@@ -143,6 +162,8 @@ class DiceDrawerState {
     RollType? rollType,
     Set<String>? activeBonusIds,
     List<DiceRollRecord>? history,
+    String? customFormula,
+    bool clearCustomFormula = false,
     DiceRollRecord? lastRoll,
     bool clearLastRoll = false,
     int? rollSerial,
@@ -154,6 +175,9 @@ class DiceDrawerState {
       rollType: rollType ?? this.rollType,
       activeBonusIds: activeBonusIds ?? this.activeBonusIds,
       history: history ?? this.history,
+      customFormula: clearCustomFormula
+          ? null
+          : (customFormula ?? this.customFormula),
       lastRoll: clearLastRoll ? null : (lastRoll ?? this.lastRoll),
       rollSerial: rollSerial ?? this.rollSerial,
     );
@@ -173,10 +197,63 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
     _roller = roller;
   }
 
+  /// Updates the formula from user text input in the editable formula box.
+  /// If the text is a valid dice formula, syncs [diceCounts], [flatModifier],
+  /// and [rollType] so the polyhedral dice buttons reflect the typed formula.
+  void setCustomFormula(String text) {
+    if (text.trim().isEmpty) {
+      state = state.copyWith(
+        diceCounts: {},
+        flatModifier: 0,
+        activeBonusIds: {},
+        rollType: RollType.normal,
+        clearCustomFormula: true,
+        clearLastRoll: true,
+      );
+      return;
+    }
+
+    if (DiceParser.isValid(text)) {
+      final parsed = DiceParser.parse(text);
+      final syncedCounts = <int, int>{};
+      var syncedRollType = RollType.normal;
+
+      for (final term in parsed.diceTerms) {
+        if (!term.isNegative) {
+          if (term.isAdvantage) {
+            syncedRollType = RollType.advantage;
+            syncedCounts[20] = (syncedCounts[20] ?? 0) + 1;
+          } else if (term.isDisadvantage) {
+            syncedRollType = RollType.disadvantage;
+            syncedCounts[20] = (syncedCounts[20] ?? 0) + 1;
+          } else {
+            syncedCounts[term.sides] =
+                (syncedCounts[term.sides] ?? 0) + term.count;
+          }
+        }
+      }
+
+      state = state.copyWith(
+        customFormula: text,
+        diceCounts: syncedCounts,
+        flatModifier: parsed.totalFlatModifier,
+        rollType: syncedRollType,
+        activeBonusIds: {},
+        clearLastRoll: true,
+      );
+    } else {
+      state = state.copyWith(customFormula: text, clearLastRoll: true);
+    }
+  }
+
   void addDie(int sides) {
     final updated = Map<int, int>.from(state.diceCounts);
     updated[sides] = (updated[sides] ?? 0) + 1;
-    state = state.copyWith(diceCounts: updated, clearLastRoll: true);
+    state = state.copyWith(
+      diceCounts: updated,
+      clearCustomFormula: true,
+      clearLastRoll: true,
+    );
   }
 
   void removeDie(int sides) {
@@ -192,6 +269,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
       rollType: (sides == 20 && !updated.containsKey(20))
           ? RollType.normal
           : null,
+      clearCustomFormula: true,
       clearLastRoll: true,
     );
   }
@@ -204,6 +282,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
     state = state.copyWith(
       diceCounts: updated,
       rollType: sides == 20 ? RollType.normal : null,
+      clearCustomFormula: true,
       clearLastRoll: true,
     );
   }
@@ -215,6 +294,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
       activeBonusIds: {},
       rollType: RollType.normal,
       contextTitle: 'Quick Roll',
+      clearCustomFormula: true,
       clearLastRoll: true,
     );
   }
@@ -238,7 +318,11 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
     } else {
       updated[sides] = count;
     }
-    state = state.copyWith(diceCounts: updated, clearLastRoll: true);
+    state = state.copyWith(
+      diceCounts: updated,
+      clearCustomFormula: true,
+      clearLastRoll: true,
+    );
   }
 
   void setRollTitle(String title) {
@@ -246,18 +330,27 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
   }
 
   void setFlatModifier(int mod) {
-    state = state.copyWith(flatModifier: mod, clearLastRoll: true);
+    state = state.copyWith(
+      flatModifier: mod,
+      clearCustomFormula: true,
+      clearLastRoll: true,
+    );
   }
 
   void adjustFlatModifier(int delta) {
     state = state.copyWith(
       flatModifier: state.flatModifier + delta,
+      clearCustomFormula: true,
       clearLastRoll: true,
     );
   }
 
   void setRollType(RollType type) {
-    state = state.copyWith(rollType: type, clearLastRoll: true);
+    state = state.copyWith(
+      rollType: type,
+      clearCustomFormula: true,
+      clearLastRoll: true,
+    );
   }
 
   void toggleSituationalBonus(String bonusId) {
@@ -267,7 +360,11 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
     } else {
       updated.add(bonusId);
     }
-    state = state.copyWith(activeBonusIds: updated, clearLastRoll: true);
+    state = state.copyWith(
+      activeBonusIds: updated,
+      clearCustomFormula: true,
+      clearLastRoll: true,
+    );
   }
 
   /// Sets context from character sheet action (e.g. Weapon attack or Ability Check)
@@ -283,6 +380,7 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
       flatModifier: flatModifier,
       rollType: rollType,
       activeBonusIds: {},
+      clearCustomFormula: true,
       clearLastRoll: true,
     );
   }

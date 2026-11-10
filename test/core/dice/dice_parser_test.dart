@@ -65,6 +65,30 @@ void main() {
       expect(parsed.diceTerms[1].sides, equals(4));
       expect(parsed.totalFlatModifier, equals(3));
     });
+
+    test('isValid validates well-formed formulas and rejects invalid ones', () {
+      // Valid formulas
+      expect(DiceParser.isValid('1d20'), isTrue);
+      expect(DiceParser.isValid('d20'), isTrue);
+      expect(DiceParser.isValid('2d6 + 3'), isTrue);
+      expect(DiceParser.isValid('4d6dl1'), isTrue);
+      expect(DiceParser.isValid('2d20kh1 + 1d4 - 2'), isTrue);
+      expect(DiceParser.isValid('1d20adv + 5'), isTrue);
+      expect(DiceParser.isValid('1d100'), isTrue);
+
+      // Invalid formulas
+      expect(DiceParser.isValid(''), isFalse);
+      expect(DiceParser.isValid('   '), isFalse);
+      expect(DiceParser.isValid('abc'), isFalse);
+      expect(DiceParser.isValid('1d20 +'), isFalse);
+      expect(DiceParser.isValid('1d20 + abc'), isFalse);
+      expect(DiceParser.isValid('2d'), isFalse);
+      expect(DiceParser.isValid('0d6'), isFalse);
+      expect(DiceParser.isValid('1d7'), isFalse); // Unsupported die size
+      expect(DiceParser.isValid('2d6kh5'), isFalse); // Keep > count
+      expect(DiceParser.isValid('2d6dl2'), isFalse); // Drop >= count
+      expect(DiceParser.isValid('1d6 1d8'), isFalse); // Missing operator
+    });
   });
 
   group('DiceRoller', () {
