@@ -38,6 +38,171 @@ void main() {
     expect(find.text('8'), findsOneWidget); // total
   });
 
+  group('d100 percentile dice rolling', () {
+    testWidgets('rolls as physical pair: tens die (00-90) and ones die (0-9)', (
+      tester,
+    ) async {
+      final atlas = await buildTestAtlas(tester);
+      await tester.pumpWidget(
+        stageHost(
+          RollingDiceStage(
+            record: testRecord([84], sides: 100),
+            serial: 1,
+            atlas: atlas,
+          ),
+          disableAnimations: true,
+        ),
+      );
+      // Two d10s tumbling for 1d100.
+      expect(find.byType(BakedDie), findsNWidgets(2));
+      expect(find.text('80'), findsOneWidget); // Tens die
+      expect(find.text('4'), findsOneWidget); // Ones die
+      expect(find.text('84'), findsOneWidget); // Total
+    });
+
+    testWidgets(
+      'tens die and ones die are closer together with half the normal visible distance',
+      (tester) async {
+        final atlas = await buildTestAtlas(tester);
+
+        // 1. Measure normal dice spacing
+        await tester.pumpWidget(
+          stageHost(
+            RollingDiceStage(
+              record: testRecord([3, 5], sides: 6),
+              serial: 1,
+              atlas: atlas,
+            ),
+            disableAnimations: true,
+          ),
+        );
+        final normalDies = tester
+            .widgetList<BakedDie>(find.byType(BakedDie))
+            .toList();
+        final normal0Rect = tester.getRect(find.byWidget(normalDies[0]));
+        final normal1Rect = tester.getRect(find.byWidget(normalDies[1]));
+        final normalCenterDistance =
+            normal1Rect.center.dx - normal0Rect.center.dx;
+        expect(normalCenterDistance, 108.0); // 96px die + 12px normal spacing
+
+        // 2. Measure percentile pair spacing
+        await tester.pumpWidget(
+          stageHost(
+            RollingDiceStage(
+              record: testRecord([84], sides: 100),
+              serial: 2,
+              atlas: atlas,
+            ),
+            disableAnimations: true,
+          ),
+        );
+        final percentileDies = tester
+            .widgetList<BakedDie>(find.byType(BakedDie))
+            .toList();
+        expect(percentileDies.length, 2);
+        expect(percentileDies[0].size, 96.0);
+
+        final tensRect = tester.getRect(find.byWidget(percentileDies[0]));
+        final onesRect = tester.getRect(find.byWidget(percentileDies[1]));
+        final percentileCenterDistance =
+            onesRect.center.dx - tensRect.center.dx;
+
+        // Percentile dice overlap transparent margins (18px) to reduce physical gap by half:
+        // 78px center distance vs 108px normal center distance.
+        expect(percentileCenterDistance, 78.0);
+        expect(percentileCenterDistance < normalCenterDistance, isTrue);
+      },
+    );
+
+    testWidgets('roll of 100 displays 00 on tens die and 0 on ones die', (
+      tester,
+    ) async {
+      final atlas = await buildTestAtlas(tester);
+      await tester.pumpWidget(
+        stageHost(
+          RollingDiceStage(
+            record: testRecord([100], sides: 100),
+            serial: 1,
+            atlas: atlas,
+          ),
+          disableAnimations: true,
+        ),
+      );
+      expect(find.byType(BakedDie), findsNWidgets(2));
+      expect(find.text('00'), findsOneWidget); // Tens die
+      expect(find.text('0'), findsOneWidget); // Ones die
+      expect(find.text('100'), findsOneWidget); // Total
+    });
+
+    testWidgets('single-digit roll displays 00 on tens die', (tester) async {
+      final atlas = await buildTestAtlas(tester);
+      await tester.pumpWidget(
+        stageHost(
+          RollingDiceStage(
+            record: testRecord([7], sides: 100),
+            serial: 1,
+            atlas: atlas,
+          ),
+          disableAnimations: true,
+        ),
+      );
+      expect(find.byType(BakedDie), findsNWidgets(2));
+      expect(find.text('00'), findsOneWidget); // Tens die
+      expect(find.text('7'), findsNWidgets(2)); // Ones die + Total (7)
+    });
+
+    testWidgets('multiple of 10 displays tens and 0 on ones die', (
+      tester,
+    ) async {
+      final atlas = await buildTestAtlas(tester);
+      await tester.pumpWidget(
+        stageHost(
+          RollingDiceStage(
+            record: testRecord([40], sides: 100),
+            serial: 1,
+            atlas: atlas,
+          ),
+          disableAnimations: true,
+        ),
+      );
+      expect(find.byType(BakedDie), findsNWidgets(2));
+      expect(find.text('40'), findsNWidgets(2)); // Tens die + Total (40)
+      expect(find.text('0'), findsOneWidget); // Ones die
+    });
+
+    testWidgets('dropped d100 dims both dice in the percentile pair', (
+      tester,
+    ) async {
+      final atlas = await buildTestAtlas(tester);
+      await tester.pumpWidget(
+        stageHost(
+          RollingDiceStage(
+            record: testRecord([35, 72], sides: 100, dropIndex: 0),
+            serial: 1,
+            atlas: atlas,
+          ),
+          disableAnimations: true,
+        ),
+      );
+      // 2d100 = 4 physical dice (2 pairs)
+      expect(find.byType(BakedDie), findsNWidgets(4));
+
+      final opacities = tester
+          .widgetList<Opacity>(
+            find.ancestor(
+              of: find.byType(BakedDie),
+              matching: find.byType(Opacity),
+            ),
+          )
+          .map((o) => o.opacity)
+          .toList();
+
+      // First two dice (the dropped d100 pair) are dimmed at 0.35 opacity.
+      expect(opacities.where((o) => o == 0.35).length, 2);
+      expect(opacities.where((o) => o == 1.0).length, 2);
+    });
+  });
+
   testWidgets('disableAnimations shows final state immediately', (
     tester,
   ) async {

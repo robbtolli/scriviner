@@ -20,6 +20,10 @@ class BakedDie extends StatelessWidget {
   /// When false (many small dice) the die tumbles with blank faces throughout.
   final bool showNumber;
 
+  /// Optional text to render on the settled face (e.g. '00', '70' for percentile dice).
+  /// If null, ['$value'] is displayed.
+  final String? displayText;
+
   const BakedDie({
     super.key,
     required this.clip,
@@ -30,6 +34,7 @@ class BakedDie extends StatelessWidget {
     required this.tint,
     required this.numberColor,
     this.showNumber = true,
+    this.displayText,
   });
 
   /// Progress after which the number starts to fade in.
@@ -47,7 +52,8 @@ class BakedDie extends StatelessWidget {
       1.0,
     );
     final cx = mirrored ? 1 - clip.faceCenter.dx : clip.faceCenter.dx;
-    final digits = '$value'.length;
+    final text = displayText ?? '$value';
+    final digits = text.length;
     final fontSize = math.max(
       10.0,
       clip.faceRadius *
@@ -90,7 +96,7 @@ class BakedDie extends StatelessWidget {
                     child: Transform.scale(
                       scale: 0.7 + 0.3 * numberOpacity,
                       child: Text(
-                        '$value',
+                        text,
                         style: TextStyle(
                           fontSize: fontSize,
                           fontWeight: FontWeight.w800,

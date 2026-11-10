@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/dice/dice_ast.dart';
 import '../../models/dice_roll_record.dart';
 import '../dice3d/baked_die.dart';
 import '../dice3d/dice_sprite_atlas.dart';
@@ -40,9 +39,49 @@ class _RollingDiceStageState extends State<RollingDiceStage>
   late final AnimationController _controller = AnimationController(vsync: this);
   bool _started = false;
 
-  List<SingleDieResult> get _dice => [
-    for (final g in widget.record.groups) ...g.dice,
-  ];
+  List<_VisualDie> get _dice {
+    final list = <_VisualDie>[];
+    for (final group in widget.record.groups) {
+      for (final die in group.dice) {
+        if (die.sides == 100) {
+          // Physical percentile pair: tens die (00-90) and ones die (0-9).
+          // In standard D&D 5e percentile rules, 100 is represented by 00 and 0.
+          final tensVal = (die.value == 100 ? 0 : (die.value ~/ 10) * 10);
+          final onesVal = (die.value == 100 ? 0 : die.value % 10);
+          final tensText = tensVal == 0 ? '00' : '$tensVal';
+          final onesText = '$onesVal';
+
+          list.add(
+            _VisualDie(
+              sides: 10,
+              value: tensVal,
+              displayText: tensText,
+              isDropped: die.isDropped,
+              isPercentileTens: true,
+            ),
+          );
+          list.add(
+            _VisualDie(
+              sides: 10,
+              value: onesVal,
+              displayText: onesText,
+              isDropped: die.isDropped,
+            ),
+          );
+        } else {
+          list.add(
+            _VisualDie(
+              sides: die.sides,
+              value: die.value,
+              displayText: '${die.value}',
+              isDropped: die.isDropped,
+            ),
+          );
+        }
+      }
+    }
+    return list;
+  }
 
   DiceStageLayout get _layout => (widget.atlas == null || widget.atlas!.isEmpty)
       ? const DiceStageLayout(DiceDisplayMode.totalOnly, 0)
@@ -117,6 +156,65 @@ class _RollingDiceStageState extends State<RollingDiceStage>
                 color: totalColor,
               );
 
+              final baseSpacing = layout.dieSize >= 64 ? 12.0 : 6.0;
+              // Pre-rendered 3D frames include ~23% transparent tumble padding on each side
+              // (~44% between two frames). To ensure the visible distance between the physical
+              // tens and ones dice is genuinely half of the normal distance between dice, the
+              // frames overlap their transparent margins by ~19% of dieSize.
+              final percentileOverlap = (layout.dieSize * 0.19).roundToDouble();
+              final percentilePairWidth =
+                  layout.dieSize * 2 - percentileOverlap;
+
+              final stageChildren = <Widget>[];
+              if (!totalOnly) {
+                Widget animatedDie(int i) => _AnimatedDie(
+                  clip: widget.atlas!.clipFor(dice[i].sides)!,
+                  dieSize: layout.dieSize,
+                  showNumber: layout.mode == DiceDisplayMode.numbered,
+                  die: dice[i],
+                  index: i,
+                  progress: ((elapsed - i * _staggerMs) / _dieMs).clamp(
+                    0.0,
+                    1.0,
+                  ),
+                );
+
+                for (var i = 0; i < dice.length; i++) {
+                  if (dice[i].isPercentileTens && i + 1 < dice.length) {
+                    final tensIndex = i;
+                    final onesIndex = i + 1;
+                    stageChildren.add(
+                      SizedBox(
+                        width: percentilePairWidth,
+                        height: layout.dieSize,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Positioned(
+                              left: 0,
+                              top: 0,
+                              width: layout.dieSize,
+                              height: layout.dieSize,
+                              child: animatedDie(tensIndex),
+                            ),
+                            Positioned(
+                              left: layout.dieSize - percentileOverlap,
+                              top: 0,
+                              width: layout.dieSize,
+                              height: layout.dieSize,
+                              child: animatedDie(onesIndex),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                    i++; // Pair with ones die
+                  } else {
+                    stageChildren.add(animatedDie(i));
+                  }
+                }
+              }
+
               return Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -129,21 +227,9 @@ class _RollingDiceStageState extends State<RollingDiceStage>
                     if (!totalOnly)
                       Wrap(
                         alignment: WrapAlignment.center,
-                        spacing: layout.dieSize >= 64 ? 8 : 4,
-                        runSpacing: layout.dieSize >= 64 ? 8 : 4,
-                        children: [
-                          for (var i = 0; i < dice.length; i++)
-                            _AnimatedDie(
-                              clip: widget.atlas!.clipFor(dice[i].sides)!,
-                              dieSize: layout.dieSize,
-                              showNumber:
-                                  layout.mode == DiceDisplayMode.numbered,
-                              die: dice[i],
-                              index: i,
-                              progress: ((elapsed - i * _staggerMs) / _dieMs)
-                                  .clamp(0.0, 1.0),
-                            ),
-                        ],
+                        spacing: baseSpacing,
+                        runSpacing: baseSpacing,
+                        children: stageChildren,
                       ),
                     if (!totalOnly) const SizedBox(height: 8),
                     if (totalOnly)
@@ -176,11 +262,27 @@ class _RollingDiceStageState extends State<RollingDiceStage>
   }
 }
 
+class _VisualDie {
+  final int sides;
+  final int value;
+  final String displayText;
+  final bool isDropped;
+  final bool isPercentileTens;
+
+  const _VisualDie({
+    required this.sides,
+    required this.value,
+    required this.displayText,
+    required this.isDropped,
+    this.isPercentileTens = false,
+  });
+}
+
 class _AnimatedDie extends StatelessWidget {
   final DiceAtlasClip clip;
   final double dieSize;
   final bool showNumber;
-  final SingleDieResult die;
+  final _VisualDie die;
   final int index;
 
   /// 0 = not yet thrown, 1 = settled.
@@ -234,6 +336,7 @@ class _AnimatedDie extends StatelessWidget {
           child: BakedDie(
             clip: clip,
             value: die.value,
+            displayText: die.displayText,
             index: index,
             progress: progress,
             size: dieSize,

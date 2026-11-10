@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -103,6 +104,65 @@ void main() {
 
         expect(find.byType(DiceRollerScreen), findsOneWidget);
         expect(find.text('DICE ROLLER'), findsOneWidget);
+      },
+    );
+
+    test('isSupported and isLaunchChannelSupported on various platforms', () {
+      try {
+        debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+        expect(WidgetLaunchController.isSupported, isFalse);
+        expect(WidgetLaunchController.isLaunchChannelSupported, isFalse);
+
+        debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+        expect(WidgetLaunchController.isSupported, isFalse);
+        expect(WidgetLaunchController.isLaunchChannelSupported, isFalse);
+
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        expect(WidgetLaunchController.isSupported, isTrue);
+        expect(WidgetLaunchController.isLaunchChannelSupported, isFalse);
+
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        expect(WidgetLaunchController.isSupported, isTrue);
+        expect(WidgetLaunchController.isLaunchChannelSupported, isTrue);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
+    testWidgets(
+      'WidgetLaunchController.initialize safely does nothing on Linux without error',
+      (tester) async {
+        try {
+          debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+
+          final controller = WidgetLaunchController();
+          addTearDown(controller.dispose);
+
+          await tester.pumpWidget(
+            ProviderScope(
+              child: MaterialApp(
+                home: Consumer(
+                  builder: (context, ref, _) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      controller.initialize(
+                        context: context,
+                        ref: ref,
+                        onOpenCharacter: (_) {},
+                      );
+                    });
+                    return const Scaffold(body: Text('Home'));
+                  },
+                ),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(find.text('Home'), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
       },
     );
   });

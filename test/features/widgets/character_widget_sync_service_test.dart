@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scrivener/core/database/app_database.dart';
 import 'package:scrivener/features/widgets/character_widget_sync_service.dart';
@@ -128,5 +129,26 @@ void main() {
         await CharacterWidgetSyncService.syncAll([character]);
       },
     );
+
+    test('isSupported is false on desktop platforms like Linux', () {
+      try {
+        debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+        expect(CharacterWidgetSyncService.isSupported, isFalse);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
+    test('isSupported is true on mobile platforms like Android and iOS', () {
+      try {
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        expect(CharacterWidgetSyncService.isSupported, isTrue);
+
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        expect(CharacterWidgetSyncService.isSupported, isTrue);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
   });
 }

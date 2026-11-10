@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
 
 import '../../core/database/app_database.dart';
@@ -98,8 +99,16 @@ class CharacterWidgetSyncService {
   static const String characterSummaryKey = 'character_summary_list';
   static const String characterWidgetProvider = 'CharacterWidgetProvider';
 
+  /// Whether home screen widget syncing is supported on the current platform.
+  /// Android and iOS are supported; Linux, Windows, and Web are not.
+  static bool get isSupported =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS);
+
   /// Synchronizes a list of characters to widget shared storage and requests a widget update.
   static Future<void> syncAll(List<CharactersTableData> characters) async {
+    if (!isSupported) return;
     try {
       final summaries = characters
           .map(CharacterWidgetSummary.fromCharacterData)
@@ -113,6 +122,8 @@ class CharacterWidgetSyncService {
       }
 
       await HomeWidget.updateWidget(name: characterWidgetProvider);
+    } on MissingPluginException {
+      // Ignored if plugin channel is not registered on this platform.
     } catch (e) {
       debugPrint('CharacterWidgetSyncService.syncAll error: $e');
     }
@@ -120,10 +131,13 @@ class CharacterWidgetSyncService {
 
   /// Synchronizes a single character's data to widget shared storage.
   static Future<void> syncCharacter(CharactersTableData character) async {
+    if (!isSupported) return;
     try {
       final summary = CharacterWidgetSummary.fromCharacterData(character);
       await _saveCharacterFields(summary);
       await HomeWidget.updateWidget(name: characterWidgetProvider);
+    } on MissingPluginException {
+      // Ignored if plugin channel is not registered on this platform.
     } catch (e) {
       debugPrint('CharacterWidgetSyncService.syncCharacter error: $e');
     }

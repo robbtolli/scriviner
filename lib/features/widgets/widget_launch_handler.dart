@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -70,6 +71,17 @@ class WidgetLaunchController {
     'com.tollitech.scrivener/widget_launch',
   );
 
+  /// Whether home screen widget integration is supported on the current platform.
+  /// Android and iOS are supported; Linux, Windows, and Web are not.
+  static bool get isSupported =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS);
+
+  /// Whether the custom Android native launch channel is supported.
+  static bool get isLaunchChannelSupported =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
   StreamSubscription<Uri?>? _subscription;
   String? _lastDispatchedUri;
   DateTime? _lastDispatchedTime;
@@ -79,28 +91,34 @@ class WidgetLaunchController {
     required WidgetRef ref,
     required void Function(String characterId) onOpenCharacter,
   }) {
-    // 1. Direct native MethodChannel for cold-start and warm-start intents
-    _launchChannel.setMethodCallHandler((call) async {
-      if (call.method == 'onWidgetLaunch') {
-        final rawUri = call.arguments as String?;
-        final uri = rawUri != null ? Uri.tryParse(rawUri) : null;
-        if (uri != null && context.mounted) {
-          _dispatch(uri, context, ref, onOpenCharacter);
-        }
-      }
-    });
+    if (!isSupported) return;
 
-    _launchChannel
-        .invokeMethod<String>('getInitialLaunchUri')
-        .then((String? rawUri) {
+    // 1. Direct native MethodChannel for cold-start and warm-start intents (Android only)
+    if (isLaunchChannelSupported) {
+      _launchChannel.setMethodCallHandler((call) async {
+        if (call.method == 'onWidgetLaunch') {
+          final rawUri = call.arguments as String?;
           final uri = rawUri != null ? Uri.tryParse(rawUri) : null;
           if (uri != null && context.mounted) {
             _dispatch(uri, context, ref, onOpenCharacter);
           }
-        })
-        .catchError((e) {
-          debugPrint('getInitialLaunchUri error: $e');
-        });
+        }
+      });
+
+      _launchChannel
+          .invokeMethod<String>('getInitialLaunchUri')
+          .then((String? rawUri) {
+            final uri = rawUri != null ? Uri.tryParse(rawUri) : null;
+            if (uri != null && context.mounted) {
+              _dispatch(uri, context, ref, onOpenCharacter);
+            }
+          })
+          .catchError((e) {
+            if (e is! MissingPluginException) {
+              debugPrint('getInitialLaunchUri error: $e');
+            }
+          });
+    }
 
     // 2. Fallback: HomeWidget plugin cold-start and warm-start listeners
     HomeWidget.initiallyLaunchedFromHomeWidget()
@@ -110,20 +128,30 @@ class WidgetLaunchController {
           }
         })
         .catchError((e) {
-          debugPrint('initiallyLaunchedFromHomeWidget error: $e');
+          if (e is! MissingPluginException) {
+            debugPrint('initiallyLaunchedFromHomeWidget error: $e');
+          }
         });
 
     _subscription?.cancel();
-    _subscription = HomeWidget.widgetClicked.listen(
-      (Uri? uri) {
-        if (uri != null && context.mounted) {
-          _dispatch(uri, context, ref, onOpenCharacter);
-        }
-      },
-      onError: (e) {
-        debugPrint('HomeWidget.widgetClicked error: $e');
-      },
-    );
+    try {
+      _subscription = HomeWidget.widgetClicked.listen(
+        (Uri? uri) {
+          if (uri != null && context.mounted) {
+            _dispatch(uri, context, ref, onOpenCharacter);
+          }
+        },
+        onError: (e) {
+          if (e is! MissingPluginException) {
+            debugPrint('HomeWidget.widgetClicked error: $e');
+          }
+        },
+      );
+    } on MissingPluginException {
+      // Platform does not support home_widget stream.
+    } catch (e) {
+      debugPrint('HomeWidget.widgetClicked stream error: $e');
+    }
   }
 
   void _dispatch(
