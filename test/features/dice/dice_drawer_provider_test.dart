@@ -52,6 +52,27 @@ void main() {
       expect(state.formula, equals('1d8 + 1d6 + 4'));
     });
 
+    test('clearDieType removes all dice of that side at once', () {
+      final notifier = container.read(diceDrawerProvider.notifier);
+
+      // Add 3d6 and 2d8
+      notifier.addDie(6);
+      notifier.addDie(6);
+      notifier.addDie(6);
+      notifier.addDie(8);
+      notifier.addDie(8);
+
+      var state = container.read(diceDrawerProvider);
+      expect(state.formula, equals('2d8 + 3d6'));
+      expect(state.diceCounts[6], equals(3));
+
+      // Clear all d6s at once
+      notifier.clearDieType(6);
+      state = container.read(diceDrawerProvider);
+      expect(state.diceCounts.containsKey(6), isFalse);
+      expect(state.formula, equals('2d8'));
+    });
+
     test('advantage and disadvantage convert 1d20 to 2d20kh1 and 2d20kl1', () {
       final notifier = container.read(diceDrawerProvider.notifier);
 

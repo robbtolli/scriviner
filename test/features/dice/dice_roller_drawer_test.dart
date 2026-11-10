@@ -86,6 +86,59 @@ void main() {
     },
   );
 
+  testWidgets(
+    'active polyhedral dice show top-left x badge that removes that dice type on tap',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pumpAndSettle();
+
+      // Initially no clear_die_d6 badge is shown
+      expect(find.byKey(const ValueKey('clear_die_d6')), findsNothing);
+      expect(find.byKey(const ValueKey('clear_die_d8')), findsNothing);
+
+      // Tap d6 three times -> 3d6, and d8 once -> 1d8
+      await tester.tap(find.text('d6'));
+      await tester.tap(find.text('d6'));
+      await tester.tap(find.text('d6'));
+      await tester.tap(find.text('d8'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('1d8 + 3d6'), findsOneWidget);
+      final clearD6Finder = find.byKey(const ValueKey('clear_die_d6'));
+      expect(clearD6Finder, findsOneWidget);
+      expect(find.byKey(const ValueKey('clear_die_d8')), findsOneWidget);
+
+      // Verify the x badge is completely opaque (alpha == 255) and overhangs the top-left of the button
+      final badgeContainer = tester.widget<Container>(
+        find.descendant(of: clearD6Finder, matching: find.byType(Container)),
+      );
+      final badgeDecoration = badgeContainer.decoration as BoxDecoration;
+      expect(badgeDecoration.color!.a, equals(1.0));
+
+      final d6InkWellFinder = find.ancestor(
+        of: find.text('d6'),
+        matching: find.byType(InkWell),
+      );
+      final buttonRect = tester.getRect(d6InkWellFinder);
+      final badgeRect = tester.getRect(clearD6Finder);
+      expect(badgeRect.left, lessThan(buttonRect.left));
+      expect(badgeRect.top, lessThan(buttonRect.top));
+
+      // Tap the top-left 'x' on d6 to remove all d6s at once
+      await tester.tap(clearD6Finder);
+      await tester.pumpAndSettle();
+
+      // d6 is completely removed from the formula and its 'x' badge is gone
+      expect(find.byKey(const ValueKey('clear_die_d6')), findsNothing);
+      expect(find.byKey(const ValueKey('clear_die_d8')), findsOneWidget);
+      expect(find.text('1d8'), findsOneWidget);
+    },
+  );
+
   testWidgets('ROLL button is disabled when empty, rolls when dice selected', (
     tester,
   ) async {

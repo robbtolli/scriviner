@@ -178,7 +178,23 @@ class DiceDrawerNotifier extends Notifier<DiceDrawerState> {
     } else {
       updated[sides] = current - 1;
     }
-    state = state.copyWith(diceCounts: updated);
+    state = state.copyWith(
+      diceCounts: updated,
+      rollType: (sides == 20 && !updated.containsKey(20))
+          ? RollType.normal
+          : null,
+    );
+  }
+
+  /// Removes all dice of [sides] from the formula at once.
+  void clearDieType(int sides) {
+    final updated = Map<int, int>.from(state.diceCounts);
+    if (!updated.containsKey(sides)) return;
+    updated.remove(sides);
+    state = state.copyWith(
+      diceCounts: updated,
+      rollType: sides == 20 ? RollType.normal : null,
+    );
   }
 
   void clearDice() {

@@ -8,6 +8,7 @@ class PolyhedralDiceTray extends StatelessWidget {
   final int flatModifier;
   final void Function(int sides) onAddDie;
   final void Function(int sides) onRemoveDie;
+  final void Function(int sides)? onClearDieType;
   final void Function(int delta) onAdjustModifier;
 
   /// Pre-rendered dice. When provided, each button shows that die's resting
@@ -20,6 +21,7 @@ class PolyhedralDiceTray extends StatelessWidget {
     required this.flatModifier,
     required this.onAddDie,
     required this.onRemoveDie,
+    this.onClearDieType,
     required this.onAdjustModifier,
     this.atlas,
   });
@@ -95,6 +97,7 @@ class PolyhedralDiceTray extends StatelessWidget {
         // Polyhedral Dice Row
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
+          clipBehavior: Clip.none,
           child: Row(
             children: standardSides.map((sides) {
               final count = diceCounts[sides] ?? 0;
@@ -102,61 +105,90 @@ class PolyhedralDiceTray extends StatelessWidget {
               final clip = atlas?.clipFor(sides);
 
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: InkWell(
-                  onTap: () => onAddDie(sides),
-                  onLongPress: () => onRemoveDie(sides),
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    width: 52,
-                    height: 58,
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? theme.colorScheme.primary.withAlpha(30)
-                          : theme.colorScheme.surface,
+                padding: const EdgeInsets.only(left: 6, right: 4, top: 6),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    InkWell(
+                      onTap: () => onAddDie(sides),
+                      onLongPress: () => onRemoveDie(sides),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isSelected
-                            ? theme.colorScheme.primary
-                            : theme.dividerColor,
-                        width: isSelected ? 1.5 : 1,
+                      child: Container(
+                        width: 52,
+                        height: 58,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? theme.colorScheme.primary.withAlpha(30)
+                              : theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isSelected
+                                ? theme.colorScheme.primary
+                                : theme.dividerColor,
+                            width: isSelected ? 1.5 : 1,
+                          ),
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            if (clip != null)
+                              _spriteFace(theme, clip, sides, isSelected)
+                            else
+                              _iconFace(theme, sides, isSelected),
+                            if (count > 0)
+                              Positioned(
+                                top: 2,
+                                right: 2,
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.primary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  child: Text(
+                                    '$count',
+                                    style: TextStyle(
+                                      color: theme.colorScheme.onPrimary,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        if (clip != null)
-                          _spriteFace(theme, clip, sides, isSelected)
-                        else
-                          _iconFace(theme, sides, isSelected),
-                        if (count > 0)
-                          Positioned(
-                            top: 2,
-                            right: 2,
-                            child: Container(
-                              padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.primary,
-                                shape: BoxShape.circle,
-                              ),
-                              constraints: const BoxConstraints(
-                                minWidth: 16,
-                                minHeight: 16,
-                              ),
-                              child: Text(
-                                '$count',
-                                style: TextStyle(
-                                  color: theme.colorScheme.onPrimary,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
+                    if (count > 0)
+                      Positioned(
+                        top: -5,
+                        left: -5,
+                        child: GestureDetector(
+                          key: ValueKey('clear_die_d$sides'),
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => (onClearDieType ?? onRemoveDie)(sides),
+                          child: Container(
+                            width: 18,
+                            height: 18,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.onSurface,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.close,
+                              size: 12,
+                              color: theme.colorScheme.surface,
                             ),
                           ),
-                      ],
-                    ),
-                  ),
+                        ),
+                      ),
+                  ],
                 ),
               );
             }).toList(),

@@ -222,6 +222,7 @@ class DiceRollerDrawer extends ConsumerWidget {
             flatModifier: state.flatModifier,
             onAddDie: (sides) => notifier.addDie(sides),
             onRemoveDie: (sides) => notifier.removeDie(sides),
+            onClearDieType: (sides) => notifier.clearDieType(sides),
             onAdjustModifier: (delta) => notifier.adjustFlatModifier(delta),
           ),
           const SizedBox(height: 12),
