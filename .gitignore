@@ -53,3 +53,10 @@ app.*.map.json
 *.keystore
 key.properties
 
+# Website & Astro build artifacts
+/site/node_modules/
+/site/dist/
+/site/.astro/
+/site/public/app/
+/site/public/dice-app/
+

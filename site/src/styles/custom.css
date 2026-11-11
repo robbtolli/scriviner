@@ -1,0 +1,30 @@
+/* Scrivener Dark & Fantasy Theme for Starlight */
+:root {
+  --sl-color-accent-low: #2b1f14;
+  --sl-color-accent: #d4a373;
+  --sl-color-accent-high: #faedcd;
+  --sl-font-heading: 'MedievalSharp', 'Cinzel', 'Playfair Display', Georgia, serif;
+}
+
+:root[data-theme='dark'] {
+  --sl-color-accent-low: #1e1b2e;
+  --sl-color-accent: #c084fc;
+  --sl-color-accent-high: #f3e8ff;
+  --sl-color-white: #f8fafc;
+  --sl-color-gray-1: #e2e8f0;
+  --sl-color-gray-2: #cbd5e1;
+  --sl-color-gray-3: #94a3b8;
+  --sl-color-gray-4: #64748b;
+  --sl-color-gray-5: #334155;
+  --sl-color-gray-6: #1e293b;
+  --sl-color-black: #0f172a;
+}
+
+/* Custom styling for documentation markdown */
+.content-panel img {
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+}

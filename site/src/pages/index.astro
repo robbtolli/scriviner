@@ -1,0 +1,544 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Scrivener — Modern TTRPG Character Manager & Rules Engine"
+  description="Dynamic calculation pipeline, fluid 7-tab character sheets, offline-first SQLite persistence, mathematical dice engine, and 7 immersive themes for D&D 5e / 2024."
+>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>Open Source TTRPG Companion • D&D 5e / 2024 & Beyond</span>
+      </div>
+
+      <h1 class="hero-title">
+        Your Tabletop Character,<br /><span class="gradient-text">Masterfully Crafted.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Scrivener blends fluid digital character sheets, an uncompromising mathematical dice engine, offline-first SQLite storage, and 7 rich fantasy themes. Built natively with Flutter & Dart for Mobile, Desktop, and Web.
+      </p>
+
+      <div class="hero-actions">
+        <a href="/demo/" class="btn-primary">
+          <span>Launch Live Web Demo</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="/download/" class="btn-secondary">
+          <span>Download Native App</span>
+        </a>
+        <a href="/user-guide/getting-started/" class="btn-ghost">
+          <span>Documentation →</span>
+        </a>
+      </div>
+
+      <div class="hero-preview">
+        <div class="preview-glow"></div>
+        <img
+          src="/screenshots/06_character_sheet_thorin_ancient_tome.png"
+          alt="Scrivener Character Sheet Preview in Ancient Tome Theme"
+          class="preview-image"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Highlights Grid -->
+  <section class="features-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Engineered for Seamless Tabletop Play</h2>
+        <p class="section-subtitle">
+          Everything you need at the table without the clutter of subscriptions or cloud lock-in.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Dynamic Rules Pipeline</h3>
+          <p>
+            No ad-hoc arithmetic. Bonuses, stacking rules, priority overrides (like <em>Gauntlets of Ogre Power</em>), and spell DCs calculate instantly with mathematical precision.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📜</div>
+          <h3>7-Tab Character Sheet</h3>
+          <p>
+            Dedicated tabs for Stats, Skills, Combat dashboard, Spells, Features, Inventory & Gear, and Bio. Customize navigation between full labels, compact icons, or editorial text.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎲</div>
+          <h3>Mathematical Dice Engine</h3>
+          <p>
+            Full algebraic parser supporting <code>2d20kh1+5</code> (advantage), <code>4d6dl1</code> (drop lowest), critical hit doubling, situational buffs (Bless/Guidance), and roll history.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🪄</div>
+          <h3>Smart Paper & Guided Wizard</h3>
+          <p>
+            Build heroes step-by-step with the 4-step wizard, or jump straight into "Smart Paper" freeform creation to draft homebrew stats and experimental builds in seconds.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>Neutral Quick-Roller</h3>
+          <p>
+            Open the title-bar dice tray anytime for GM checks or monster saves without contaminating your character's active sheet or HP logs.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>100% Offline & Private</h3>
+          <p>
+            Zero accounts. Zero trackers. All characters live locally in high-performance SQLite. Export clean JSON backups, share via peer-to-peer QR, or print 2-page PDFs.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visual Showcase: The 7 Themes -->
+  <section class="themes-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Seven Built-In Immersive Themes</h2>
+        <p class="section-subtitle">
+          Personalize each character sheet to reflect their personality and class archetype.
+        </p>
+      </div>
+
+      <div class="themes-grid">
+        <div class="theme-card">
+          <img src="/screenshots/06_character_sheet_thorin_ancient_tome.png" alt="Ancient Tome Theme" />
+          <div class="theme-info">
+            <h4>Ancient Tome</h4>
+            <p>Aged parchment, sepia inks, and rich burgundy accents.</p>
+          </div>
+        </div>
+
+        <div class="theme-card">
+          <img src="/screenshots/07_character_sheet_lyra_midnight_arcana.png" alt="Midnight Arcana Theme" />
+          <div class="theme-info">
+            <h4>Midnight Arcana</h4>
+            <p>Deep mystic indigo with luminous violet and ethereal glow.</p>
+          </div>
+        </div>
+
+        <div class="theme-card">
+          <img src="/screenshots/08_character_sheet_shadow_scholars_desk.png" alt="Scholar's Desk Theme" />
+          <div class="theme-info">
+            <h4>Scholar's Desk</h4>
+            <p>Dark walnut wood tones, polished brass, and crisp typography.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="theme-tags-list">
+        <span class="theme-tag">Dungeon OLED (Pitch Black)</span>
+        <span class="theme-tag">Emerald Enclave (Forest Flora)</span>
+        <span class="theme-tag">Infernal Brimstone (Magma & Obsidian)</span>
+        <span class="theme-tag">Scrivener Modern (Dark Steel & Sapphire)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Demo CTA Banner -->
+  <section class="demo-cta-section">
+    <div class="container">
+      <div class="demo-banner-box">
+        <div class="demo-banner-text">
+          <h2>Try Scrivener In Your Browser Right Now</h2>
+          <p>
+            No downloads or registration required. Experience the 7-tab sheet, roll polyhedral dice with 3D physics, and test the dynamic rules engine live via WebAssembly.
+          </p>
+        </div>
+        <div class="demo-banner-btn">
+          <a href="/demo/" class="btn-primary btn-large">
+            <span>Launch Web Demo</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Standalone Dice Caster Highlight -->
+  <section class="dice-section">
+    <div class="container dice-grid">
+      <div class="dice-text">
+        <div class="mini-badge">Companion App</div>
+        <h2>Meet Dice Caster</h2>
+        <p>
+          Need only a dedicated polyhedral roller for a fast one-shot, board game, or different RPG? 
+          <strong>Dice Caster</strong> is Scrivener’s standalone dice tray — ultra-responsive, beautiful, and completely decoupled from character sheets.
+        </p>
+        <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+          <a href="/dice/" class="btn-secondary">
+            <span>Try Dice Caster Online</span>
+          </a>
+          <a href="/user-guide/dice-roller/" class="btn-ghost">
+            <span>Dice Formula Guide →</span>
+          </a>
+        </div>
+      </div>
+      <div class="dice-preview-box">
+        <img src="/screenshots/04_dice_roller.png" alt="Dice Caster Interface" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .hero-section {
+    padding: 5rem 0 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(192, 132, 252, 0.1);
+    border: 1px solid rgba(192, 132, 252, 0.25);
+    padding: 0.4rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    color: #e9d5ff;
+    margin-bottom: 1.75rem;
+  }
+
+  .badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #c084fc;
+    box-shadow: 0 0 8px #c084fc;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+    max-width: 900px;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #c084fc 0%, #f59e0b 50%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    max-width: 760px;
+    margin-bottom: 2.25rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: linear-gradient(135deg, #9333ea, #c084fc);
+    color: #fff;
+    padding: 0.85rem 1.75rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: 0 4px 20px rgba(147, 51, 234, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(147, 51, 234, 0.6);
+  }
+
+  .btn-large {
+    padding: 1rem 2.25rem;
+    font-size: 1.1rem;
+  }
+
+  .btn-ghost {
+    color: #c084fc;
+    font-weight: 600;
+    padding: 0.85rem 1rem;
+    transition: color 0.2s ease;
+  }
+
+  .btn-ghost:hover {
+    color: #e9d5ff;
+  }
+
+  /* Preview */
+  .hero-preview {
+    position: relative;
+    max-width: 960px;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .preview-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 80%;
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.25) 0%, transparent 70%);
+    filter: blur(50px);
+    z-index: 0;
+  }
+
+  .preview-image {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  }
+
+  /* Features */
+  .features-section {
+    padding: 5rem 0;
+    background: rgba(17, 24, 39, 0.4);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 3.5rem;
+  }
+
+  .section-title {
+    font-size: 2.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature-card {
+    background: rgba(17, 24, 39, 0.6);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(192, 132, 252, 0.4);
+    transform: translateY(-3px);
+  }
+
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .feature-card p {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .feature-card code {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+    color: #e9d5ff;
+  }
+
+  /* Themes Showcase */
+  .themes-section {
+    padding: 5rem 0;
+  }
+
+  .themes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .theme-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .theme-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: top;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .theme-info {
+    padding: 1.25rem;
+  }
+
+  .theme-info h4 {
+    font-size: 1.15rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .theme-info p {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+  }
+
+  .theme-tags-list {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .theme-tag {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--color-border);
+    padding: 0.45rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  /* Demo Banner */
+  .demo-cta-section {
+    padding: 4rem 0;
+  }
+
+  .demo-banner-box {
+    background: linear-gradient(135deg, rgba(88, 28, 135, 0.4) 0%, rgba(17, 24, 39, 0.9) 100%);
+    border: 1px solid rgba(192, 132, 252, 0.3);
+    border-radius: 16px;
+    padding: 3rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .demo-banner-text h2 {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .demo-banner-text p {
+    color: #cbd5e1;
+    max-width: 600px;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  /* Dice Caster */
+  .dice-section {
+    padding: 4rem 0 6rem;
+  }
+
+  .dice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  .mini-badge {
+    display: inline-block;
+    color: var(--color-accent-gold);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+  }
+
+  .dice-text h2 {
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .dice-text p {
+    color: var(--color-text-muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  .dice-preview-box img {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 2.5rem;
+    }
+    .dice-grid {
+      grid-template-columns: 1fr;
+    }
+    .demo-banner-box {
+      flex-direction: column;
+      text-align: center;
+    }
+    .demo-banner-btn {
+      width: 100%;
+    }
+    .demo-banner-btn a {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

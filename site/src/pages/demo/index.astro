@@ -1,0 +1,309 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Interactive Web Demo — Scrivener TTRPG Companion"
+  description="Experience Scrivener live in your browser. Create heroes, roll dice, and manage characters with local SQLite WebAssembly."
+>
+  <div class="demo-wrapper">
+    <div class="container demo-header">
+      <div class="demo-title-bar">
+        <div>
+          <span class="badge">Live WebAssembly Build</span>
+          <h1>Scrivener In-Browser Demo</h1>
+        </div>
+
+        <div class="demo-controls">
+          <!-- Viewport Mode Buttons -->
+          <div class="viewport-toggles">
+            <button class="toggle-btn" data-width="390px" title="Mobile Phone View">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              <span>Mobile</span>
+            </button>
+            <button class="toggle-btn active" data-width="768px" title="Tablet View">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              <span>Tablet</span>
+            </button>
+            <button class="toggle-btn" data-width="100%" title="Full Width View">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span>Desktop</span>
+            </button>
+          </div>
+
+          <a href="/app/" target="_blank" rel="noreferrer" class="btn-fullscreen" title="Open full screen in a new tab">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            <span>Full Screen Tab</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Frame Container -->
+    <div class="container frame-outer">
+      <div class="device-frame" id="deviceContainer" style="width: 768px; max-width: 100%;">
+        <div class="frame-bar">
+          <div class="frame-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="frame-url">scrivener.app/live-session</span>
+          <a href="/dice/" class="frame-link">Try Dice Caster →</a>
+        </div>
+        <div class="iframe-container">
+          <iframe
+            id="flutterIframe"
+            src="/app/"
+            title="Scrivener Interactive Flutter Web Demo"
+            allow="cross-origin-isolated; fullscreen"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explanatory Details -->
+    <div class="container demo-footer-info">
+      <div class="info-card">
+        <h3>💡 How Data Works In This Web Demo</h3>
+        <p>
+          This demo runs the real Flutter application compiled to JavaScript & WebAssembly. Any characters you create or rolls you perform are saved directly in your browser's private SQLite database (via Drift / IndexedDB / OPFS). When you reload the page, your characters will still be here!
+        </p>
+        <div class="info-actions">
+          <a href="/user-guide/getting-started/" class="text-link">Read Getting Started Guide →</a>
+          <a href="/download/" class="text-link">Download Native Apps for Peak Performance →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Device Viewport Switcher
+  const buttons = document.querySelectorAll('.toggle-btn');
+  const container = document.getElementById('deviceContainer');
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const targetWidth = btn.getAttribute('data-width');
+      if (container && targetWidth) {
+        container.style.width = targetWidth;
+      }
+    });
+  });
+</script>
+
+<style>
+  .demo-wrapper {
+    padding: 2.5rem 0 5rem;
+    min-height: calc(100vh - 4.25rem);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .demo-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .demo-title-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-block;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+  }
+
+  .demo-title-bar h1 {
+    font-size: 2rem;
+  }
+
+  .demo-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .viewport-toggles {
+    display: flex;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.25rem;
+  }
+
+  .toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .toggle-btn:hover {
+    color: #fff;
+  }
+
+  .toggle-btn.active {
+    background: var(--color-surface-hover);
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .btn-fullscreen {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: #cbd5e1;
+    padding: 0.55rem 0.95rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn-fullscreen:hover {
+    background: var(--color-surface-hover);
+    color: #fff;
+    border-color: #3b82f6;
+  }
+
+  /* Device Frame */
+  .frame-outer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+
+  .device-frame {
+    background: #0f172a;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .frame-bar {
+    height: 38px;
+    background: #090d16;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  .frame-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .frame-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #334155;
+  }
+
+  .frame-dots span:nth-child(1) { background: #ef4444; opacity: 0.7; }
+  .frame-dots span:nth-child(2) { background: #f59e0b; opacity: 0.7; }
+  .frame-dots span:nth-child(3) { background: #10b981; opacity: 0.7; }
+
+  .frame-url {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+
+  .frame-link {
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .frame-link:hover {
+    text-decoration: underline;
+  }
+
+  .iframe-container {
+    width: 100%;
+    height: 750px;
+    position: relative;
+    background: #000;
+  }
+
+  .iframe-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* Footer Info */
+  .demo-footer-info {
+    max-width: 900px;
+  }
+
+  .info-card {
+    background: rgba(17, 24, 39, 0.6);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+  }
+
+  .info-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .info-card p {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  .info-actions {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .text-link {
+    color: var(--color-accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .text-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .iframe-container {
+      height: 600px;
+    }
+  }
+</style>

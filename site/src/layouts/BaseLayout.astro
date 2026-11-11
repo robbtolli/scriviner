@@ -1,0 +1,306 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Scrivener — Modern TTRPG Character Manager & Rules Engine",
+  description = "Dynamic calculation pipeline, fluid 7-tab character sheets, offline-first SQLite persistence, mathematical dice engine, and 7 immersive themes for D&D 5e / 2024 and tabletop games.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+
+    <!-- Open Graph / Meta -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/images/hero_roster.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&family=MedievalSharp&display=swap"
+      rel="stylesheet"
+    />
+
+    <style is:global>
+      :root {
+        --color-bg: #090d16;
+        --color-surface: #111827;
+        --color-surface-hover: #1f2937;
+        --color-border: #1f293d;
+        --color-accent: #c084fc;
+        --color-accent-gold: #f59e0b;
+        --color-text-main: #f3f4f6;
+        --color-text-muted: #9ca3af;
+        --font-serif: 'Cinzel', 'MedievalSharp', Georgia, serif;
+        --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: var(--color-bg);
+        color: var(--color-text-main);
+        font-family: var(--font-sans);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+
+      h1, h2, h3, h4 {
+        font-family: var(--font-serif);
+        letter-spacing: 0.03em;
+        color: #fff;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+
+      /* Navbar */
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(9, 13, 22, 0.88);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .nav-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 4.25rem;
+      }
+
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-family: var(--font-serif);
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .brand-logo img {
+        width: 34px;
+        height: 34px;
+        border-radius: 6px;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.75rem;
+        font-size: 0.95rem;
+        font-weight: 500;
+      }
+
+      .nav-links a {
+        color: var(--color-text-muted);
+        transition: color 0.2s ease;
+      }
+
+      .nav-links a:hover {
+        color: #fff;
+      }
+
+      .btn-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-space-gradient;
+        background: linear-gradient(135deg, #9333ea, #c084fc);
+        color: #fff !important;
+        padding: 0.55rem 1.15rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .btn-cta:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(147, 51, 234, 0.45);
+      }
+
+      .btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        color: #fff;
+        padding: 0.55rem 1.15rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: background 0.2s ease, border-color 0.2s ease;
+      }
+
+      .btn-secondary:hover {
+        background: var(--color-surface-hover);
+        border-color: #3b82f6;
+      }
+
+      /* Footer */
+      .site-footer {
+        margin-top: auto;
+        border-top: 1px solid var(--color-border);
+        background: #060910;
+        padding: 3.5rem 0 2rem;
+        font-size: 0.9rem;
+        color: var(--color-text-muted);
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 2.5rem;
+        margin-bottom: 3rem;
+      }
+
+      .footer-col h4 {
+        color: #fff;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .footer-col ul {
+        list-style: none;
+      }
+
+      .footer-col li {
+        margin-bottom: 0.6rem;
+      }
+
+      .footer-col a:hover {
+        color: var(--color-accent);
+      }
+
+      .footer-bottom {
+        padding-top: 2rem;
+        border-top: 1px solid var(--color-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 860px) {
+        .footer-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .nav-links {
+          display: none;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .footer-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-wrapper">
+        <a href="/" class="brand-logo">
+          <img src="/favicon.png" alt="Scrivener Logo" />
+          <span>Scrivener</span>
+        </a>
+
+        <nav class="nav-links">
+          <a href="/">Overview</a>
+          <a href="/user-guide/getting-started/">Documentation</a>
+          <a href="/download/">Downloads</a>
+          <a href="/dice/">Dice Caster</a>
+          <a href="/demo/" class="btn-cta">Live Demo 🚀</a>
+        </nav>
+      </div>
+    </header>
+
+    <main style="flex: 1;">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <div class="brand-logo" style="margin-bottom: 0.75rem;">
+              <img src="/favicon.png" alt="Scrivener Logo" />
+              <span>Scrivener</span>
+            </div>
+            <p style="max-width: 320px; line-height: 1.6;">
+              Modern, high-performance companion app and rules engine for tabletop roleplaying games. Built with Flutter & Dart by Robert Tolliver.
+            </p>
+          </div>
+          <div class="footer-col">
+            <h4>Application</h4>
+            <ul>
+              <li><a href="/demo/">Live Web Demo</a></li>
+              <li><a href="/download/">Download App</a></li>
+              <li><a href="/dice/">Dice Caster Companion</a></li>
+              <li><a href="/user-guide/getting-started/">Getting Started</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Documentation</h4>
+            <ul>
+              <li><a href="/user-guide/character-sheet/">Character Sheets</a></li>
+              <li><a href="/user-guide/dice-roller/">Dice Notation</a></li>
+              <li><a href="/themes/builtin-themes/">Theme Engine</a></li>
+              <li><a href="/plugins/plugin-architecture/">Plugin Developer Guide</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Open Source</h4>
+            <ul>
+              <li><a href="https://github.com/robb/scrivener" target="_blank" rel="noreferrer">GitHub Repository</a></li>
+              <li><a href="https://tollitech.com" target="_blank" rel="noreferrer">Robert Tolliver (tollitech.com)</a></li>
+              <li><a href="/privacy-policy/">Privacy Policy</a></li>
+              <li><a href="https://github.com/robb/scrivener/blob/main/LICENSE" target="_blank" rel="noreferrer">MPL-2.0 License</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>© 2024–2026 Robert Tolliver (<a href="https://tollitech.com" target="_blank" rel="noreferrer" style="color: #c084fc;">tollitech.com</a>). All rights reserved.</p>
+          <p>Licensed under Mozilla Public License 2.0 (MPL-2.0) • D&D 5e SRD 5.1 CC-BY-4.0</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,263 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Dice Caster — Standalone Polyhedral Dice Roller Companion"
+  description="Minimalist, lightning-fast polyhedral dice roller with full mathematical expressions, advantage/disadvantage, roll history, and 7 themes."
+>
+  <div class="dice-page">
+    <div class="container dice-header">
+      <div class="title-area">
+        <span class="tag">Standalone Companion App</span>
+        <h1>Dice Caster</h1>
+        <p class="subtitle">
+          A dedicated polyhedral dice rolling stage with deterministic physics, full mathematical formula evaluation, roll history, and custom themes.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <a href="/dice-app/" target="_blank" rel="noreferrer" class="btn-fullscreen">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          <span>Open Full Screen App</span>
+        </a>
+        <a href="/" class="btn-secondary">
+          <span>← Back to Scrivener</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Embedded Dice Roller Frame -->
+    <div class="container frame-section">
+      <div class="dice-frame">
+        <div class="frame-bar">
+          <div class="frame-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="frame-title">Dice Caster Web Runner (com.tollitech.dicecaster)</span>
+          <a href="/user-guide/dice-roller/" class="frame-link">Syntax Guide →</a>
+        </div>
+        <div class="iframe-container">
+          <iframe
+            src="/dice-app/"
+            title="Dice Caster Standalone Polyhedral Roller"
+            allow="cross-origin-isolated; fullscreen"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dice Formula Reference -->
+    <div class="container formulas-section">
+      <h2>Mathematical Formula Reference</h2>
+      <div class="formulas-grid">
+        <div class="formula-item">
+          <code>1d20+5</code>
+          <p>Standard d20 check with flat modifier</p>
+        </div>
+        <div class="formula-item">
+          <code>2d20kh1+3</code>
+          <p>Roll 2d20 and Keep Highest 1 (Advantage)</p>
+        </div>
+        <div class="formula-item">
+          <code>2d20kl1+3</code>
+          <p>Roll 2d20 and Keep Lowest 1 (Disadvantage)</p>
+        </div>
+        <div class="formula-item">
+          <code>4d6dl1</code>
+          <p>Roll 4d6 and Drop Lowest 1 (Ability Score roll)</p>
+        </div>
+        <div class="formula-item">
+          <code>2d8+1d6+4</code>
+          <p>Compound weapon damage + elemental damage</p>
+        </div>
+        <div class="formula-item">
+          <code>1d100</code>
+          <p>Percentile dice roll (1–100)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .dice-page {
+    padding: 3rem 0 6rem;
+  }
+
+  .dice-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .title-area {
+    max-width: 650px;
+  }
+
+  .tag {
+    color: var(--color-accent-gold);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+  }
+
+  .dice-header h1 {
+    font-size: 2.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-fullscreen {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+  }
+
+  .btn-fullscreen:hover {
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+  }
+
+  /* Frame */
+  .frame-section {
+    margin-bottom: 4rem;
+  }
+
+  .dice-frame {
+    background: #0f172a;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .frame-bar {
+    height: 38px;
+    background: #090d16;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  .frame-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .frame-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #334155;
+  }
+
+  .frame-dots span:nth-child(1) { background: #ef4444; opacity: 0.7; }
+  .frame-dots span:nth-child(2) { background: #f59e0b; opacity: 0.7; }
+  .frame-dots span:nth-child(3) { background: #10b981; opacity: 0.7; }
+
+  .frame-title {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+
+  .frame-link {
+    color: var(--color-accent-gold);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .iframe-container {
+    width: 100%;
+    height: 640px;
+    background: #000;
+  }
+
+  .iframe-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* Formulas */
+  .formulas-section {
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(17, 24, 39, 0.6);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: 2.5rem;
+  }
+
+  .formulas-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .formulas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .formula-item {
+    background: #090d16;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .formula-item code {
+    display: inline-block;
+    color: #f59e0b;
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .formula-item p {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 768px) {
+    .dice-header h1 {
+      font-size: 2.25rem;
+    }
+    .iframe-container {
+      height: 540px;
+    }
+  }
+</style>

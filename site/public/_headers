@@ -1,0 +1,49 @@
+# Cloudflare Pages Custom Headers Configuration
+# Documentation: https://developers.cloudflare.com/pages/configuration/headers/
+
+# Global headers for all routes
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Flutter Web & SQLite WASM Cross-Origin Isolation for Scrivener
+/app/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: credentialless
+  Access-Control-Allow-Origin: *
+
+# Flutter Web & Dice Engine Isolation for Dice Caster
+/dice-app/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: credentialless
+  Access-Control-Allow-Origin: *
+
+# Aggressive immutable caching for static assets
+/screenshots/*
+  Cache-Control: public, max-age=2592000, immutable
+
+/images/*
+  Cache-Control: public, max-age=2592000, immutable
+
+/app/canvaskit/*
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/wasm
+
+/dice-app/canvaskit/*
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/wasm
+
+/app/*.wasm
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/wasm
+
+/dice-app/*.wasm
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/wasm
+
+/app/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/dice-app/assets/*
+  Cache-Control: public, max-age=31536000, immutable
