@@ -1,6 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/sensors/shake_detector.dart';
 import '../models/dice_roll_record.dart';
 import '../providers/dice_drawer_provider.dart';
 import 'dice3d/baked_die.dart';
@@ -13,11 +16,13 @@ import 'widgets/situational_chips_row.dart';
 class DiceRollerDrawer extends ConsumerStatefulWidget {
   final bool isBottomSheet;
   final bool isFullScreen;
+  final ShakeDetector? shakeDetectorOverride;
 
   const DiceRollerDrawer({
     super.key,
     this.isBottomSheet = false,
     this.isFullScreen = false,
+    this.shakeDetectorOverride,
   });
 
   @override
@@ -27,6 +32,8 @@ class DiceRollerDrawer extends ConsumerStatefulWidget {
 class _DiceRollerDrawerState extends ConsumerState<DiceRollerDrawer> {
   late final TextEditingController _formulaController;
   late final FocusNode _formulaFocusNode;
+  final GlobalKey<_RollButtonState> _rollButtonKey = GlobalKey<_RollButtonState>();
+  ShakeDetector? _shakeDetector;
 
   @override
   void initState() {
@@ -34,10 +41,57 @@ class _DiceRollerDrawerState extends ConsumerState<DiceRollerDrawer> {
     final initialFormula = ref.read(diceDrawerProvider).formula;
     _formulaController = TextEditingController(text: initialFormula);
     _formulaFocusNode = FocusNode();
+    _initShakeDetector();
+  }
+
+  void _initShakeDetector() {
+    _shakeDetector?.stopListening();
+    if (widget.shakeDetectorOverride != null) {
+      _shakeDetector = ShakeDetector(
+        onShake: _handleShake,
+        eventStreamOverride: widget.shakeDetectorOverride!.eventStreamOverride,
+        shakeThresholdGravity:
+            widget.shakeDetectorOverride!.shakeThresholdGravity,
+        shakeSlopTimeMs: widget.shakeDetectorOverride!.shakeSlopTimeMs,
+        shakeCountResetTimeMs:
+            widget.shakeDetectorOverride!.shakeCountResetTimeMs,
+        minShakeCount: widget.shakeDetectorOverride!.minShakeCount,
+        clock: widget.shakeDetectorOverride!.clock,
+      );
+    } else {
+      final isMobile = !kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS);
+      if (isMobile) {
+        _shakeDetector = ShakeDetector(onShake: _handleShake);
+      }
+    }
+    _shakeDetector?.startListening();
+  }
+
+  @override
+  void didUpdateWidget(DiceRollerDrawer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.shakeDetectorOverride != widget.shakeDetectorOverride) {
+      _initShakeDetector();
+    }
+  }
+
+  void _handleShake() {
+    if (!mounted) return;
+    final state = ref.read(diceDrawerProvider);
+    final isRolling = _rollButtonKey.currentState?.isAnimating ?? false;
+    if (state.isFormulaValid && !isRolling) {
+      HapticFeedback.mediumImpact();
+      _rollButtonKey.currentState?.triggerRollAnimation();
+      _formulaFocusNode.unfocus();
+      ref.read(diceDrawerProvider.notifier).roll();
+    }
   }
 
   @override
   void dispose() {
+    _shakeDetector?.stopListening();
     _formulaController.dispose();
     _formulaFocusNode.dispose();
     super.dispose();
@@ -383,6 +437,7 @@ class _DiceRollerDrawerState extends ConsumerState<DiceRollerDrawer> {
       bottom: 16,
       child: SafeArea(
         child: _RollButton(
+          key: _rollButtonKey,
           onPressed: state.isFormulaValid
               ? () {
                   _formulaFocusNode.unfocus();
@@ -431,7 +486,7 @@ class _RollButton extends StatefulWidget {
   final VoidCallback? onPressed;
   final DiceAtlasClip? clip;
 
-  const _RollButton({required this.onPressed, this.clip});
+  const _RollButton({super.key, required this.onPressed, this.clip});
 
   @override
   State<_RollButton> createState() => _RollButtonState();
@@ -461,13 +516,20 @@ class _RollButtonState extends State<_RollButton>
     super.dispose();
   }
 
-  void _handlePress() {
-    if (widget.onPressed == null || _animController.isAnimating) return;
-    if (MediaQuery.of(context).disableAnimations) {
+  bool get isAnimating => _animController.isAnimating;
+
+  void triggerRollAnimation() {
+    if (_animController.isAnimating) return;
+    if (MediaQuery.maybeOf(context)?.disableAnimations ?? false) {
       _animController.value = 1.0;
     } else {
       _animController.forward(from: 0.0);
     }
+  }
+
+  void _handlePress() {
+    if (widget.onPressed == null || _animController.isAnimating) return;
+    triggerRollAnimation();
     widget.onPressed!();
   }
 

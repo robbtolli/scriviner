@@ -98,6 +98,8 @@ class CharacterWidgetSummary {
 class CharacterWidgetSyncService {
   static const String characterSummaryKey = 'character_summary_list';
   static const String characterWidgetProvider = 'CharacterWidgetProvider';
+  static const String characterWidgetQualifiedName =
+      'com.tollitech.scrivener.widgets.CharacterWidgetProvider';
 
   /// Whether home screen widget syncing is supported on the current platform.
   /// Android and iOS are supported; Linux, Windows, and Web are not.
@@ -121,7 +123,11 @@ class CharacterWidgetSyncService {
         await _saveCharacterFields(summary);
       }
 
-      await HomeWidget.updateWidget(name: characterWidgetProvider);
+      await HomeWidget.updateWidget(
+        name: characterWidgetProvider,
+        androidName: 'widgets.$characterWidgetProvider',
+        qualifiedAndroidName: characterWidgetQualifiedName,
+      );
     } on MissingPluginException {
       // Ignored if plugin channel is not registered on this platform.
     } catch (e) {
@@ -135,7 +141,11 @@ class CharacterWidgetSyncService {
     try {
       final summary = CharacterWidgetSummary.fromCharacterData(character);
       await _saveCharacterFields(summary);
-      await HomeWidget.updateWidget(name: characterWidgetProvider);
+      await HomeWidget.updateWidget(
+        name: characterWidgetProvider,
+        androidName: 'widgets.$characterWidgetProvider',
+        qualifiedAndroidName: characterWidgetQualifiedName,
+      );
     } on MissingPluginException {
       // Ignored if plugin channel is not registered on this platform.
     } catch (e) {

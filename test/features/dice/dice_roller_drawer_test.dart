@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:scrivener/core/sensors/shake_detector.dart';
 import 'package:scrivener/features/dice/models/dice_roll_record.dart';
 import 'package:scrivener/features/dice/presentation/dice_roller_drawer.dart';
 import 'package:scrivener/features/dice/presentation/widgets/floating_dice_fab.dart';
+import 'package:scrivener/features/dice/providers/dice_drawer_provider.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 void main() {
   Widget createWidgetUnderTest({Widget? child}) {
@@ -426,4 +431,65 @@ void main() {
     expect(find.text('DICE ROLLER'), findsOneWidget);
     expect(find.text('ROLL'), findsOneWidget);
   });
+
+  testWidgets(
+    'Shaking device triggers roll when formula is valid, and ignores when empty or animating',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      final sensorEvents = StreamController<AccelerometerEvent>.broadcast(sync: true);
+      addTearDown(sensorEvents.close);
+
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+
+      var testTime = 1000;
+      final detector = ShakeDetector(
+        onShake: () {},
+        eventStreamOverride: sensorEvents.stream,
+        shakeThresholdGravity: 2.0,
+        clock: () => testTime,
+      );
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            home: Scaffold(
+              body: DiceRollerDrawer(
+                isBottomSheet: true,
+                shakeDetectorOverride: detector,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 1. Shaking with empty formula -> ignored
+      sensorEvents.add(AccelerometerEvent(30.0, 0.0, 0.0, DateTime.now()));
+      await tester.pump();
+      expect(container.read(diceDrawerProvider).history, isEmpty);
+
+      // 2. Select a d20 -> formula becomes valid ("1d20")
+      await tester.tap(find.text('d20'));
+      await tester.pumpAndSettle();
+
+      // Advance clock past slop window (500ms)
+      testTime += 600;
+
+      // Shake phone -> triggers roll!
+      sensorEvents.add(AccelerometerEvent(30.0, 0.0, 0.0, DateTime.now()));
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      expect(container.read(diceDrawerProvider).history.length, equals(1));
+      expect(
+        container.read(diceDrawerProvider).history.first.formula,
+        equals('1d20'),
+      );
+    },
+  );
 }
