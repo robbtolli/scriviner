@@ -22,22 +22,12 @@ class AboutDiceCasterDialog extends StatelessWidget {
     return AlertDialog(
       title: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withAlpha(30),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: theme.colorScheme.primary.withAlpha(80),
-              ),
-            ),
-            child: Icon(
-              Icons.casino,
-              color: theme.colorScheme.primary,
-              size: 24,
-            ),
+          Image.asset(
+            'assets/icons/dice_caster_icon_transparent.png',
+            width: 32,
+            height: 32,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,

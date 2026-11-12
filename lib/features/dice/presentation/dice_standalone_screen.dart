@@ -18,7 +18,11 @@ class DiceStandaloneScreen extends ConsumerWidget {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.casino, color: theme.colorScheme.primary, size: 22),
+            Image.asset(
+              'assets/icons/dice_caster_icon_transparent.png',
+              width: 28,
+              height: 28,
+            ),
             const SizedBox(width: 8),
             Text(
               'DICE CASTER',

@@ -18,6 +18,12 @@ void main() {
 
         expect(find.byType(AppBar), findsOneWidget);
         expect(find.text('DICE CASTER'), findsOneWidget);
+        expect(
+          find.image(
+            const AssetImage('assets/icons/dice_caster_icon_transparent.png'),
+          ),
+          findsOneWidget,
+        );
         expect(find.byIcon(Icons.palette_outlined), findsOneWidget);
         expect(find.byIcon(Icons.info_outline), findsOneWidget);
         expect(find.byType(DiceRollerDrawer), findsOneWidget);
@@ -36,6 +42,15 @@ void main() {
 
       // Verify AboutDiceCasterDialog is shown
       expect(find.byType(AboutDiceCasterDialog), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AboutDiceCasterDialog),
+          matching: find.image(
+            const AssetImage('assets/icons/dice_caster_icon_transparent.png'),
+          ),
+        ),
+        findsOneWidget,
+      );
       expect(find.text('What is a Dice Caster?'), findsOneWidget);
       expect(find.text('Robert Tolliver (tollitech.com)'), findsOneWidget);
       expect(find.text('MPL 2.0'), findsOneWidget);
