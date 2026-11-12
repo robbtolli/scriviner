@@ -89,15 +89,16 @@ Cloudflare Pages Free Tier covers:
 - **SSL / TLS**: Free managed certificates
 - **Global CDN**: 300+ edge locations worldwide
 
-### 2. GitHub Actions Deployment
-The repository includes `.github/workflows/deploy-pages.yml` which triggers automatically on pushes to `master`.
+### 2. Cloudflare Pages Git Integration
+Deployments are triggered automatically by Cloudflare Pages on pushes to `master`:
 
-To enable deployments:
-1. Go to your Cloudflare Dashboard -> **Manage Account** -> **API Tokens**.
-2. Create an API Token with **Cloudflare Pages: Edit** permissions.
-3. In your GitHub repository settings, go to **Settings** -> **Secrets and variables** -> **Actions** and add:
-   - `CLOUDFLARE_API_TOKEN`: Your Cloudflare API token.
-   - `CLOUDFLARE_ACCOUNT_ID`: Your Cloudflare Account ID (visible on Cloudflare Dashboard URL).
-4. In Cloudflare Pages, create a project named `scrivener` and link custom domains:
-   - `scrivener.tollitech.com` -> points to `scrivener.pages.dev`
-   - `dice.tollitech.com` -> points to `scrivener.pages.dev/dice`
+- **Framework preset**: `None`
+- **Build command**:
+  ```bash
+  git clone https://github.com/flutter/flutter.git -b stable --depth 1 /tmp/flutter && export PATH="/tmp/flutter/bin:$PATH" && flutter pub get && cd site && npm ci && npm run build:all
+  ```
+- **Build output directory**: `site/dist`
+- **Environment variable**: `NODE_VERSION=24`
+- **Custom domains**:
+  - `scrivener.tollitech.com` -> points to `scrivener.pages.dev`
+  - `dice.tollitech.com` -> points to `scrivener.pages.dev/dice`
