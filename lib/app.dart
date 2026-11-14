@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
+import 'core/widgets/app_splash_screen.dart';
 import 'features/home/presentation/home_screen.dart';
 
 class ScrivenerApp extends ConsumerWidget {
@@ -24,7 +25,11 @@ class ScrivenerApp extends ConsumerWidget {
         brightnessMode: brightnessMode,
         systemBrightness: systemBrightness,
       ),
-      home: const HomeScreen(),
+      home: const AppSplashScreen(
+        title: 'Scrivener',
+        logoAsset: 'assets/icons/app_icon_transparent.png',
+        child: HomeScreen(),
+      ),
     );
   }
 }

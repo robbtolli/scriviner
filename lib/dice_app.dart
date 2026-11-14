@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
+import 'core/widgets/app_splash_screen.dart';
 import 'features/dice/presentation/dice_standalone_screen.dart';
 
 /// Root application widget for the standalone Dice Caster app.
@@ -25,7 +26,11 @@ class DiceCasterApp extends ConsumerWidget {
         brightnessMode: brightnessMode,
         systemBrightness: systemBrightness,
       ),
-      home: const DiceStandaloneScreen(),
+      home: const AppSplashScreen(
+        title: 'Dice Caster',
+        logoAsset: 'assets/icons/dice_caster_icon_transparent.png',
+        child: DiceStandaloneScreen(),
+      ),
     );
   }
 }
