@@ -21,13 +21,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <!-- Android -->
         <div class="download-card highlight-card">
           <div class="card-icon">🤖</div>
-          <div class="card-badge">Most Popular</div>
+          <div class="card-badge">Coming Soon</div>
           <h3>Android</h3>
           <p class="card-desc">Requires Android 8.0 (Oreo) or higher. Optimized for phones and tablets in portrait and landscape.</p>
           <div class="card-actions">
-            <a href="https://github.com/robb/scrivener/releases" target="_blank" rel="noreferrer" class="btn-primary">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-              <span>Download APK</span>
+            <span class="btn-coming-soon">Coming Soon</span>
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSccB7ZbKybuJjgoPhNablVPCN7G1EaEBDKIvM_KxhSyXh7tbA/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-primary"
+            >
+              <span>Sign Up to Test App</span>
             </a>
           </div>
           <div class="card-notes">
@@ -35,16 +40,36 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </div>
 
+        <!-- iOS -->
+        <div class="download-card highlight-card">
+          <div class="card-icon">📱</div>
+          <div class="card-badge">Coming Soon</div>
+          <h3>iOS</h3>
+          <p class="card-desc">Built for iPhone and iPad with full SafeArea and landscape support. Internal testing available via TestFlight.</p>
+          <div class="card-actions">
+            <span class="btn-coming-soon">Coming Soon</span>
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSccB7ZbKybuJjgoPhNablVPCN7G1EaEBDKIvM_KxhSyXh7tbA/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-primary"
+            >
+              <span>Sign Up to Test App</span>
+            </a>
+          </div>
+          <div class="card-notes">
+            <span>Bundle ID: <code>com.tollitech.scrivener</code></span>
+          </div>
+        </div>
+
         <!-- Linux Desktop -->
         <div class="download-card">
           <div class="card-icon">🐧</div>
+          <div class="card-badge badge-muted">Coming Soon</div>
           <h3>Linux Desktop</h3>
           <p class="card-desc">64-bit native GTK application for Ubuntu, Fedora, Arch, Debian, and all major distributions.</p>
           <div class="card-actions">
-            <a href="https://github.com/robb/scrivener/releases" target="_blank" rel="noreferrer" class="btn-secondary">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-              <span>Download Linux Binary (x86_64)</span>
-            </a>
+            <span class="btn-coming-soon">Coming Soon</span>
           </div>
           <div class="card-notes">
             <span>Includes native SQLite bindings</span>
@@ -54,13 +79,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <!-- Windows -->
         <div class="download-card">
           <div class="card-icon">🪟</div>
+          <div class="card-badge badge-muted">Coming Soon</div>
           <h3>Windows</h3>
           <p class="card-desc">Native Windows 10 & 11 (x64) application with system dark mode and multi-window dice tray support.</p>
           <div class="card-actions">
-            <a href="https://github.com/robb/scrivener/releases" target="_blank" rel="noreferrer" class="btn-secondary">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-              <span>Download Windows Zip (x64)</span>
-            </a>
+            <span class="btn-coming-soon">Coming Soon</span>
           </div>
           <div class="card-notes">
             <span>Portable standalone executable</span>
@@ -70,13 +93,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <!-- macOS -->
         <div class="download-card">
           <div class="card-icon">🍏</div>
+          <div class="card-badge badge-muted">Coming Soon</div>
           <h3>macOS</h3>
           <p class="card-desc">Universal binary supporting both Apple Silicon (M1/M2/M3/M4) and Intel Macs running macOS 11+.</p>
           <div class="card-actions">
-            <a href="https://github.com/robb/scrivener/releases" target="_blank" rel="noreferrer" class="btn-secondary">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-              <span>Download macOS DMG</span>
-            </a>
+            <span class="btn-coming-soon">Coming Soon</span>
           </div>
           <div class="card-notes">
             <span>Metal-accelerated graphics</span>
@@ -116,15 +137,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <!-- Installation Instructions -->
       <div class="install-instructions">
-        <h2>Installation & Setup Instructions</h2>
+        <h2>Internal Testing & Setup Instructions</h2>
 
         <div class="instructions-accordion">
           <div class="instruction-block">
-            <h3>📱 Installing on Android (Sideloading APK)</h3>
+            <h3>📱 Joining iOS & Android Internal Testing</h3>
             <ol>
-              <li>Download the <code>scrivener-release.apk</code> file to your device or browser.</li>
-              <li>When prompted by Android, tap <strong>Settings</strong> and enable <em>"Allow from this source"</em> for your browser or file manager.</li>
-              <li>Tap <strong>Install</strong>. Once completed, Scrivener will appear in your app drawer.</li>
+              <li>Complete the <a href="https://docs.google.com/forms/d/e/1FAIpQLSccB7ZbKybuJjgoPhNablVPCN7G1EaEBDKIvM_KxhSyXh7tbA/viewform" target="_blank" rel="noopener noreferrer" style="color: var(--color-accent); text-decoration: underline;">Internal Testing Sign-Up Form</a> with the email associated with your Google Play Store or Apple ID account.</li>
+              <li>Once added to the testing track, you will receive an opt-in invitation link for Google Play Internal Testing or Apple TestFlight.</li>
+              <li>Accept the invite to install <strong>Scrivener</strong> and/or <strong>Dice Caster</strong> directly on your device.</li>
               <li>Scrivener requires zero special permissions (no camera, no location, no contacts, no network required for local gameplay).</li>
             </ol>
           </div>
@@ -227,6 +248,12 @@ flutter run --flavor dice # Run standalone Dice Caster</code></pre>
     border-radius: 9999px;
   }
 
+  .card-badge.badge-muted {
+    background: rgba(148, 163, 184, 0.12);
+    border-color: rgba(148, 163, 184, 0.3);
+    color: #94a3b8;
+  }
+
   .download-card h3 {
     font-size: 1.35rem;
     margin-bottom: 0.5rem;
@@ -241,12 +268,31 @@ flutter run --flavor dice # Run standalone Dice Caster</code></pre>
   }
 
   .card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
     margin-bottom: 1.25rem;
   }
 
-  .card-actions a {
+  .card-actions a,
+  .card-actions .btn-coming-soon {
     width: 100%;
     justify-content: center;
+  }
+
+  .btn-coming-soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(31, 41, 61, 0.55);
+    border: 1px dashed var(--color-border);
+    color: var(--color-text-muted);
+    padding: 0.65rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: default;
+    user-select: none;
   }
 
   .card-notes {
