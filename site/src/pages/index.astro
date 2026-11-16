@@ -24,28 +24,28 @@ import LiveAppFrame from '../components/LiveAppFrame.astro';
       </p>
 
       <div class="hero-actions">
-        <a href="/demo/" class="btn-primary">
-          <span>Launch Live Web Demo</span>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-        <a href="/download/" class="btn-secondary">
+        <a href="/download/" class="btn-primary">
           <span>Download Native App</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
         <a href="/user-guide/getting-started/" class="btn-ghost">
           <span>Documentation →</span>
+        </a>
+        <a href="/dice/" class="btn-ghost">
+          <span>Try Dice Caster →</span>
         </a>
       </div>
 
       <div class="hero-preview">
         <div class="preview-glow"></div>
         <LiveAppFrame
-          src="/app/index.html?seed=true&char=sample-thorin"
-          title="Scrivener Live Interactive Character Sheet Preview"
-          urlLabel="scrivener.app/live-preview"
+          src="/app/index.html?seed=true"
+          title="Scrivener Live Interactive Preview"
+          urlLabel="Scrivener"
           initialWidth="100%"
           height="680px"
           showViewportToggles={true}
-          rightLinkHref="/app/index.html?seed=true&char=sample-thorin"
+          rightLinkHref="/app/index.html?seed=true"
           rightLinkLabel="Full Screen ↗"
           rightLinkExternal={true}
         />
@@ -156,26 +156,6 @@ import LiveAppFrame from '../components/LiveAppFrame.astro';
         <span class="theme-tag">Emerald Enclave (Forest Flora)</span>
         <span class="theme-tag">Infernal Brimstone (Magma & Obsidian)</span>
         <span class="theme-tag">Scrivener Modern (Dark Steel & Sapphire)</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Interactive Demo CTA Banner -->
-  <section class="demo-cta-section">
-    <div class="container">
-      <div class="demo-banner-box">
-        <div class="demo-banner-text">
-          <h2>Try Scrivener In Your Browser Right Now</h2>
-          <p>
-            No downloads or registration required. Experience the 7-tab sheet, roll polyhedral dice with 3D physics, and test the dynamic rules engine live via WebAssembly.
-          </p>
-        </div>
-        <div class="demo-banner-btn">
-          <a href="/demo/" class="btn-primary btn-large">
-            <span>Launch Web Demo</span>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-        </div>
       </div>
     </div>
   </section>

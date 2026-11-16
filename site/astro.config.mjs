@@ -16,7 +16,6 @@ export default defineConfig({
           label: 'Quick Links',
           items: [
             { label: '← Back to Website', link: '/' },
-            { label: '🚀 Live Web Demo', link: '/demo/' },
             { label: '📥 Download App', link: '/download/' },
             { label: '🎲 Dice Caster', link: '/dice/' },
           ],

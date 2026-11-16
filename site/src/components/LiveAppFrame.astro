@@ -12,15 +12,15 @@ interface Props {
 }
 
 const {
-  src = '/app/index.html?seed=true&char=sample-thorin',
+  src = '/app/index.html?seed=true',
   title = 'Scrivener Interactive Flutter Web Preview',
-  urlLabel = 'scrivener.app/live-preview',
+  urlLabel = 'Scrivener',
   initialWidth = '100%',
   height = '680px',
   showViewportToggles = true,
-  rightLinkHref = '/demo/',
-  rightLinkLabel = 'Open Full Demo →',
-  rightLinkExternal = false,
+  rightLinkHref = '/app/index.html?seed=true',
+  rightLinkLabel = 'Full Screen ↗',
+  rightLinkExternal = true,
 } = Astro.props;
 
 const activeMode =
@@ -31,12 +31,9 @@ const activeMode =
   <div class="device-frame" style={`width: ${initialWidth}; max-width: 100%;`}>
     <div class="frame-bar">
       <div class="frame-left">
-        <div class="frame-dots">
-          <span></span><span></span><span></span>
-        </div>
         <span class="live-pill">
           <span class="live-dot"></span>
-          LIVE
+          LIVE DEMO
         </span>
       </div>
 
@@ -163,22 +160,6 @@ const activeMode =
     align-items: center;
     gap: 0.75rem;
   }
-
-  .frame-dots {
-    display: flex;
-    gap: 6px;
-  }
-
-  .frame-dots span {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #334155;
-  }
-
-  .frame-dots span:nth-child(1) { background: #ef4444; opacity: 0.8; }
-  .frame-dots span:nth-child(2) { background: #f59e0b; opacity: 0.8; }
-  .frame-dots span:nth-child(3) { background: #10b981; opacity: 0.8; }
 
   .live-pill {
     display: inline-flex;
